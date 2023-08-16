@@ -18,6 +18,8 @@ repositories {
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 group = "io.whatap"
+version = "0.0.1"
+description = "The java-grok library supported on www.whatap.io"
 archivesBaseName = "java-grok"
 
 ext {
