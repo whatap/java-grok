@@ -1,3 +1,7 @@
+plugins {
+    id("io.github.gradle-nexus.publish-plugin") version "1.2.0"
+}
+
 apply {
     plugin "base"
     plugin "java"
@@ -5,10 +9,12 @@ apply {
     plugin "jacoco"
     plugin "idea"
     plugin "eclipse"
+    plugin "maven-publish"
+    plugin "signing"
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.6'
+wrapper {
+  gradleVersion = '8.2'
 }
 
 repositories {
@@ -17,7 +23,7 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "io.github.whatap"
+group = "io.whatap"
 version = "0.0.1"
 description = "The java-grok library supported on www.whatap.io"
 archivesBaseName = "java-grok"
@@ -34,22 +40,22 @@ ext {
 }
 
 dependencies {
-    compile "org.apache.commons:commons-lang3:$commonsLang3Version"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:$assertjVersion"
-    testCompile "com.google.guava:guava:$guavaVersion"
-    testCompile "org.hamcrest:hamcrest-core:2.2"
-    testCompile "org.hamcrest:hamcrest-library:2.2"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "com.google.guava:guava:$guavaVersion"
+    testImplementation "org.hamcrest:hamcrest-core:2.2"
+    testImplementation "org.hamcrest:hamcrest-library:2.2"
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -61,6 +67,8 @@ if (project.hasProperty("withDeployment")) {
 checkstyle {
     configFile = file("${project.projectDir}/extra/checkstyle/checkstyle.xml")
     toolVersion = "$checkStyleToolVersion"
+    checkstyleTest.enabled = false
+
 }
 
 checkstyleMain {
@@ -76,7 +84,59 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
+//        xml.enabled false
+//        csv.enabled false
     }
 }
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            packageGroup = "io.whatap"
+            stagingProfileId = "36098d558829d8"
+            username = "hwanseok"
+            password = "&t9V#kas@Es8dAX"
+        }
+    }
+}
+
+signing {
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'java-grok'
+                description = 'Simple API that allows you to easily parse logs and other files'
+                url = 'https://github.com/whatap/java-grok'
+//                properties = [
+//                        myProp: "value",
+//                        "prop.with.dots": "anotherValue"
+//                ]
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://github.com/whatap/java-grok/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'hwanseok'
+                        name = 'HwanSeok Jang'
+                        email = 'hwanseok@whatap.io'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:whatap/java-grok.git'
+                    developerConnection = 'scm:git:git@github.com:whatap/java-grok.git'
+                    url = 'scm:git:git@github.com:whatap/java-grok.git'
+                }
+            }
+        }
+    }
+}
+// https://docs.gradle.org/current/userguide/publishing_maven.html
