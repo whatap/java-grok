@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.exception.GrokException;
 
 import com.google.common.io.Resources;
 import org.assertj.core.api.Assertions;

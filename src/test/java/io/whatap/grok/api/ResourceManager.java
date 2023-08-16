@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 /**
  * {@code ResourceManager} .

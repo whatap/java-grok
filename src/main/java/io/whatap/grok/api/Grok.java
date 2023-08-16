@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import java.io.Serializable;
 import java.time.ZoneId;
@@ -8,10 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.krakens.grok.api.Converter.IConverter;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * {@code Grok} parse arbitrary text and structure it.
@@ -50,7 +46,7 @@ public class Grok implements Serializable {
 
   public final Map<String, Converter.Type> groupTypes;
 
-  public final Map<String, IConverter<? extends Object>> converters;
+  public final Map<String, Converter.IConverter<? extends Object>> converters;
 
   /**
    * {@code Grok} discovery.

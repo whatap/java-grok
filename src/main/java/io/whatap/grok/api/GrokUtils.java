@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -20,17 +20,18 @@ public class GrokUtils {
    */
   public static final Pattern GROK_PATTERN = Pattern.compile(
       "%\\{"
-          + "(?<name>"
-          + "(?<pattern>[A-z0-9]+)"
-          + "(?::(?<subname>[A-z0-9_:;,\\-\\/\\s\\.']+))?"
-          + ")"
-          + "(?:=(?<definition>"
-          + "(?:"
-          + "(?:[^{}]+|\\.+)+"
-          + ")+"
-          + ")"
-          + ")?"
-          + "\\}");
+              + "(?<name>"
+              + "(?<pattern>[a-zA-Z][a-zA-Z0-9\\_\\-\\.]*[a-zA-Z0-9])"
+              + "(?::(?<subname>[a-zA-Z][a-zA-Z0-9_:;,\\-\\/\\s\\.']*[a-zA-Z0-9]))?"
+              + ")"
+              + "(?:=(?<definition>"
+              + "(?:"
+              + "(?:[^{}]+|\\.+)+"
+              + ")+"
+              + ")"
+              + ")?"
+              + "\\}");
+
 
   public static final Pattern NAMED_REGEX = Pattern
       .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");

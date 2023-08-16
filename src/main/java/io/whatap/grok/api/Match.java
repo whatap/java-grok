@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 
 import static java.lang.String.format;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import io.krakens.grok.api.Converter.IConverter;
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.Converter.IConverter;
+import io.whatap.grok.api.exception.GrokException;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.

@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import static java.lang.String.format;
 
@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
 

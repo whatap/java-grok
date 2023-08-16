@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.exception.GrokException;
 
 import com.google.common.io.Resources;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -10,7 +10,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Map;
 
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.exception.GrokException;
 
 import com.google.common.io.Resources;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package io.krakens.grok.api.exception;
+package io.whatap.grok.api.exception;
 
 /**
  * Signals that an {@code Grok} exception of some sort has occurred.

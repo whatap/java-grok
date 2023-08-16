@@ -17,7 +17,7 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "io.krakens"
+group = "io.whatap"
 archivesBaseName = "java-grok"
 
 ext {
@@ -37,6 +37,8 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "com.google.guava:guava:$guavaVersion"
+    testCompile "org.hamcrest:hamcrest-core:2.2"
+    testCompile "org.hamcrest:hamcrest-library:2.2"
 }
 
 task javadocJar(type: Jar) {

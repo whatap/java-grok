@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.krakens.grok.api.exception.GrokException;
+import io.whatap.grok.api.exception.GrokException;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -600,7 +600,7 @@ public class GrokTest {
     GrokCompiler grokCompiler = GrokCompiler.newInstance();
     grokCompiler.registerDefaultPatterns();
 
-    io.krakens.grok.api.Grok grok = grokCompiler.compile(pattern, true);
+    Grok grok = grokCompiler.compile(pattern, true);
 
     Match gm = grok.match(input);
     Map<String, Object> captures = gm.capture();

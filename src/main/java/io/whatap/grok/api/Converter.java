@@ -1,4 +1,4 @@
-package io.krakens.grok.api;
+package io.whatap.grok.api;
 
 import java.time.Instant;
 import java.time.LocalDate;
