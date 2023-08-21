@@ -113,6 +113,14 @@ nexusPublishing {
 publishing {
     publications {
         javaGrokMaven(MavenPublication) {
+            groupId = GROUP_ID
+            artifactId = ARTIFACT_ID
+            version = VERSION
+
+            artifact("$buildDir/libs/${project.getName()}-${version}.jar")
+            artifact sourcesJar
+            artifact javadocJar
+
             pom {
                 name = ARTIFACT_ID
                 description = DESCRIPTION

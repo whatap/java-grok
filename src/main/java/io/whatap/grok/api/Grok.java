@@ -125,7 +125,7 @@ public class Grok implements Serializable {
   }
 
   /**
-   * Match the given <tt>log</tt> with the named regex.
+   * Match the given log with the named regex.
    * And return the json representation of the matched element
    *
    * @param log : log to match
@@ -137,7 +137,7 @@ public class Grok implements Serializable {
   }
 
   /**
-   * Match the given list of <tt>log</tt> with the named regex
+   * Match the given list of log with the named regex
    * and return the list of json representation of the matched elements.
    *
    * @param logs : list of log
@@ -152,7 +152,7 @@ public class Grok implements Serializable {
   }
 
   /**
-   * Match the given <tt>text</tt> with the named regex
+   * Match the given text with the named regex
    * {@code Grok} will extract data from the string and get an extence of {@link Match}.
    *
    * @param text : Single line of log

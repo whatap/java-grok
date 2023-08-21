@@ -80,7 +80,7 @@ public class Match {
   }
 
   /**
-   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
+   * Match to the subject the regex and save the matched element into a map.
    *
    * Multiple values for the same key are stored as list.
    *
@@ -90,7 +90,7 @@ public class Match {
   }
 
   /**
-   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
+   * Match to the subject the regex and save the matched element into a map
    *
    * Multiple values to the same key are flattened to one value: the sole non-null value will be captured.
    * Should there be multiple non-null values a RuntimeException is being thrown.
