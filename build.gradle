@@ -1,3 +1,7 @@
+/**
+ *  @See https://github.com/gradle-nexus/publish-plugin
+ *
+ */
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.2.0"
 }
@@ -13,6 +17,8 @@ apply {
     plugin "signing"
 }
 
+apply from: 'variable.gradle'
+
 wrapper {
   gradleVersion = '8.2'
 }
@@ -23,17 +29,15 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "io.whatap"
-version = "0.0.1"
-description = "The java-grok library supported on www.whatap.io"
-archivesBaseName = "java-grok"
+group = GROUP_ID
+archivesBaseName = ARTIFACT_ID
+version = VERSION
+description = DESCRIPTION
 
 ext {
     checkStyleToolVersion = "6.19"
     jacocoToolVersion = "0.7.9"
-
     commonsLang3Version = "3.7"
-
     junitVersion = "4.12"
     assertjVersion = "3.9.1"
     guavaVersion = "24.0-jre"
@@ -59,6 +63,10 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 // Needed to avoid including all the jar signing and sonatype setup.
 if (project.hasProperty("withDeployment")) {
     apply from: "$rootProject.projectDir/gradle/sonatype.gradle"
@@ -68,7 +76,6 @@ checkstyle {
     configFile = file("${project.projectDir}/extra/checkstyle/checkstyle.xml")
     toolVersion = "$checkStyleToolVersion"
     checkstyleTest.enabled = false
-
 }
 
 checkstyleMain {
@@ -91,52 +98,48 @@ jacocoTestReport {
 
 nexusPublishing {
     repositories {
-        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
+        sonatype {
+            // @See https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            packageGroup = "io.whatap"
-            stagingProfileId = "36098d558829d8"
-            username = "hwanseok"
-            password = "&t9V#kas@Es8dAX"
+            stagingProfileId = SONATYPE_STAGING_PROFILE_ID
+            username = SONATYPE_USERNAME
+            password = SONATYPE_PASSWORD
         }
     }
 }
 
-signing {
-    sign configurations.archives
-}
-
+// @See https://github.com/gradle-nexus/publish-plugin#add-metadata
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        javaGrokMaven(MavenPublication) {
             pom {
-                name = 'java-grok'
-                description = 'Simple API that allows you to easily parse logs and other files'
-                url = 'https://github.com/whatap/java-grok'
-//                properties = [
-//                        myProp: "value",
-//                        "prop.with.dots": "anotherValue"
-//                ]
+                name = ARTIFACT_ID
+                description = DESCRIPTION
+                url = PROJECT_URL
                 licenses {
                     license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'https://github.com/whatap/java-grok/blob/master/LICENSE'
+                        name = LICENSE_NAME
+                        url = LICENSE_URL
                     }
                 }
                 developers {
                     developer {
-                        id = 'hwanseok'
-                        name = 'HwanSeok Jang'
-                        email = 'hwanseok@whatap.io'
+                        id = OSSRH_ID
+                        name = OSSRH_USERNAME
+                        email = OSSRH_EMAIL
                     }
                 }
                 scm {
-                    connection = 'scm:git:git@github.com:whatap/java-grok.git'
-                    developerConnection = 'scm:git:git@github.com:whatap/java-grok.git'
-                    url = 'scm:git:git@github.com:whatap/java-grok.git'
+                    connection = SCM
+                    developerConnection = SCM
+                    url = SCM
                 }
             }
         }
     }
 }
-// https://docs.gradle.org/current/userguide/publishing_maven.html
+
+signing {
+    sign(publishing.publications["javaGrokMaven"])
+}
