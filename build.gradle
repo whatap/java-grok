@@ -1,3 +1,11 @@
+/**
+ *  @See https://github.com/gradle-nexus/publish-plugin
+ *
+ */
+plugins {
+    id("io.github.gradle-nexus.publish-plugin") version "1.2.0"
+}
+
 apply {
     plugin "base"
     plugin "java"
@@ -5,10 +13,14 @@ apply {
     plugin "jacoco"
     plugin "idea"
     plugin "eclipse"
+    plugin "maven-publish"
+    plugin "signing"
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.6'
+apply from: 'variable.gradle'
+
+wrapper {
+  gradleVersion = '8.2'
 }
 
 repositories {
@@ -17,40 +29,42 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "io.github.whatap"
-version = "0.0.1"
-description = "The java-grok library supported on www.whatap.io"
-archivesBaseName = "java-grok"
+group = GROUP_ID
+archivesBaseName = ARTIFACT_ID
+version = VERSION
+description = DESCRIPTION
 
 ext {
     checkStyleToolVersion = "6.19"
     jacocoToolVersion = "0.7.9"
-
     commonsLang3Version = "3.7"
-
     junitVersion = "4.12"
     assertjVersion = "3.9.1"
     guavaVersion = "24.0-jre"
 }
 
 dependencies {
-    compile "org.apache.commons:commons-lang3:$commonsLang3Version"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:$assertjVersion"
-    testCompile "com.google.guava:guava:$guavaVersion"
-    testCompile "org.hamcrest:hamcrest-core:2.2"
-    testCompile "org.hamcrest:hamcrest-library:2.2"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "com.google.guava:guava:$guavaVersion"
+    testImplementation "org.hamcrest:hamcrest-core:2.2"
+    testImplementation "org.hamcrest:hamcrest-library:2.2"
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 // Needed to avoid including all the jar signing and sonatype setup.
@@ -61,6 +75,7 @@ if (project.hasProperty("withDeployment")) {
 checkstyle {
     configFile = file("${project.projectDir}/extra/checkstyle/checkstyle.xml")
     toolVersion = "$checkStyleToolVersion"
+    checkstyleTest.enabled = false
 }
 
 checkstyleMain {
@@ -76,7 +91,55 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
+//        xml.enabled false
+//        csv.enabled false
     }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            // @See https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            stagingProfileId = SONATYPE_STAGING_PROFILE_ID
+            username = SONATYPE_USERNAME
+            password = SONATYPE_PASSWORD
+        }
+    }
+}
+
+// @See https://github.com/gradle-nexus/publish-plugin#add-metadata
+publishing {
+    publications {
+        javaGrokMaven(MavenPublication) {
+            pom {
+                name = ARTIFACT_ID
+                description = DESCRIPTION
+                url = PROJECT_URL
+                licenses {
+                    license {
+                        name = LICENSE_NAME
+                        url = LICENSE_URL
+                    }
+                }
+                developers {
+                    developer {
+                        id = OSSRH_ID
+                        name = OSSRH_USERNAME
+                        email = OSSRH_EMAIL
+                    }
+                }
+                scm {
+                    connection = SCM
+                    developerConnection = SCM
+                    url = SCM
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["javaGrokMaven"])
 }

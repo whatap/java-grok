@@ -5,7 +5,7 @@ package io.whatap.grok.api.exception;
  * This class is the general class of
  * exceptions produced by failed or interrupted Grok operations.
  *
- * @since 0.0.4
+ * @since 0.0.1
  */
 public class GrokException extends RuntimeException {
 
