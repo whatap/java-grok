@@ -1,5 +1,4 @@
 # Grok
-[![Build Status](https://secure.travis-ci.org/thekrakken/java-grok.png?branch=master)](https://travis-ci.org/thekrakken/java-grok)
 
 Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
 
@@ -14,20 +13,66 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 ### Maven repository
 
 ```maven
+<!-- https://mvnrepository.com/artifact/io.github.whatap/java-grok -->
 <dependency>
-  <groupId>io.krakens</groupId>
-  <artifactId>java-grok</artifactId>
-  <version>0.1.9</version>
+    <groupId>io.github.whatap</groupId>
+    <artifactId>java-grok</artifactId>
+    <version>0.0.2</version>
 </dependency>
 ```
 
 Or with gradle
 
 ```gradle
-compile "io.krakens:java-grok:0.1.9"
+// https://mvnrepository.com/artifact/io.github.whatap/java-grok
+implementation 'io.github.whatap:java-grok:0.0.2'
+
 ```
 
-Old release ([Link](https://mvnrepository.com/artifact/io.thekraken/grok))
+### What is different from io.krakens:java-grok
+
+Added characters that can be used in regular expressions that make up Grok patterns.
+
+- io.krakens:java-grok :
+  - pattern : [A-z0-9]+
+  - subname : [A-z0-9_:;,\-\/\s\.']+
+- io.github.whatap :
+  - pattern : [a-zA-Z][a-zA-Z0-9\_\-\.]*[a-zA-Z0-9]
+  - subname : [a-zA-Z][a-zA-Z0-9_:;,\-\/\s\.']*[a-zA-Z0-9]
+- @See [GrokUtils.java](https://github.com/thekrakken/java-grok/blob/901fda38ef6d5c902355eb25cff3f4b4fc3debde/src/main/java/io/krakens/grok/api/GrokUtils.java#L21C1-L33C20)
+```
+// io.krakens:java-grok
+public static final Pattern GROK_PATTERN = Pattern.compile(
+    "%\\{"
+        + "(?<name>"
+        + "(?<pattern>[A-z0-9]+)"
+        + "(?::(?<subname>[A-z0-9_:;,\\-\\/\\s\\.']+))?"
+        + ")"
+        + "(?:=(?<definition>"
+        + "(?:"
+        + "(?:[^{}]+|\\.+)+"
+        + ")+"
+        + ")"
+        + ")?"
+        + "\\}");
+```
+
+```
+// io.github.whatap
+public static final Pattern GROK_PATTERN = Pattern.compile(
+    "%\\{"
+            + "(?<name>"
+            + "(?<pattern>[a-zA-Z][a-zA-Z0-9\\_\\-\\.]*[a-zA-Z0-9])"
+            + "(?::(?<subname>[a-zA-Z][a-zA-Z0-9_:;,\\-\\/\\s\\.']*[a-zA-Z0-9]))?"
+            + ")"
+            + "(?:=(?<definition>"
+            + "(?:"
+            + "(?:[^{}]+|\\.+)+"
+            + ")+"
+            + ")"
+            + ")?"
+            + "\\}");
+```
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Example of how to use java-grok:
@@ -52,17 +97,6 @@ final Map<String, Object> capture = gm.capture();
 ### Build Java Grok
 
 Java Grok support Gradle: `./gradlew assemble`
- 
-### Getting help
-[Mailling List](https://groups.google.com/forum/#!forum/java-grok)
-
-### Thanks to
- * [@joschi](https://github.com/joschi)
- * [@keitaf](https://github.com/keitaf)
- * [@anthonycorbacho](https://github.com/anthonycorbacho)
- * [@nokk](https://github.com/nokk)
- * [@wouterdb](https://github.com/wouterdb)
- * [@Leemoonsoo](https://github.com/Leemoonsoo)
 
 **Any contributions are warmly welcome**
 
