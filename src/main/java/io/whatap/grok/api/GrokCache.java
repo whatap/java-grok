@@ -18,7 +18,8 @@ public class GrokCache {
     
     private static final int DEFAULT_MAX_SIZE = 500; // Reduced for safety
     private static final long CLEANUP_INTERVAL_SECONDS = 300; // 5 minutes
-    private static final long MAX_MEMORY_THRESHOLD = Runtime.getRuntime().maxMemory() / 10; // 10% of max heap
+    
+    private final long maxMemoryThreshold;
     
     private final ConcurrentMap<String, CacheEntry<Grok>> compiledPatterns;
     private final ConcurrentMap<String, CacheEntry<Pattern>> regexPatterns;
@@ -31,7 +32,12 @@ public class GrokCache {
     }
     
     public GrokCache(int maxSize) {
+        this(maxSize, Runtime.getRuntime().maxMemory() / 5); // 20% of max heap by default
+    }
+    
+    public GrokCache(int maxSize, long maxMemoryThreshold) {
         this.maxSize = Math.min(maxSize, 2000); // Hard limit to prevent OOM
+        this.maxMemoryThreshold = maxMemoryThreshold;
         this.compiledPatterns = new ConcurrentHashMap<>();
         this.regexPatterns = new ConcurrentHashMap<>();
         this.cleanupExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
@@ -140,7 +146,7 @@ public class GrokCache {
     private boolean isMemoryPressureHigh() {
         Runtime runtime = Runtime.getRuntime();
         long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-        return usedMemory > MAX_MEMORY_THRESHOLD;
+        return usedMemory > maxMemoryThreshold;
     }
     
     /**

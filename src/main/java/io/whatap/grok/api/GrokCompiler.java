@@ -76,6 +76,41 @@ public class GrokCompiler implements Serializable {
     registerPatternFromClasspath("/patterns/patterns");
   }
 
+  /**
+   * Register patterns from a specific PatternType.
+   * 
+   * @param patternType the pattern type to register
+   * @throws GrokException if pattern cannot be loaded
+   */
+  public void registerPatterns(PatternType patternType) throws GrokException {
+    registerPatternFromClasspath(patternType.getResourcePath());
+  }
+
+  /**
+   * Register patterns from multiple PatternTypes.
+   * 
+   * @param patternTypes the pattern types to register
+   * @throws GrokException if any pattern cannot be loaded
+   */
+  public void registerPatterns(PatternType... patternTypes) throws GrokException {
+    PatternRepository repo = PatternRepository.getInstance();
+    for (PatternType patternType : patternTypes) {
+      // Skip if pattern file is not available
+      if (repo.isPatternFileAvailable(patternType)) {
+        registerPatterns(patternType);
+      }
+    }
+  }
+
+  /**
+   * Register all available patterns.
+   * 
+   * @throws GrokException if any pattern cannot be loaded
+   */
+  public void registerAllPatterns() throws GrokException {
+    registerPatterns(PatternType.values());
+  }
+
   public void registerPatternFromClasspath(String path) throws GrokException {
     registerPatternFromClasspath(path, StandardCharsets.UTF_8);
   }
