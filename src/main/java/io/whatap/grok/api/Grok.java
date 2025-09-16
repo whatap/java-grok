@@ -36,6 +36,11 @@ public class Grok implements Serializable {
    * Pattern of the namedRegex.
    */
   private final Pattern compiledNamedRegex;
+  
+  /**
+   * ThreadLocal matcher pool for improved performance.
+   */
+  private final MatcherPool matcherPool;
 
   /**
    * {@code Grok} patterns definition.
@@ -64,6 +69,7 @@ public class Grok implements Serializable {
     this.originalGrokPattern = pattern;
     this.namedRegex = namedRegex;
     this.compiledNamedRegex = Pattern.compile(namedRegex);
+    this.matcherPool = new MatcherPool(compiledNamedRegex);
     this.namedRegexCollection = namedRegexCollection;
     this.namedGroups = GrokUtils.getNameGroups(namedRegex);
     this.groupTypes = Converter.getGroupTypes(namedRegexCollection.values());
@@ -163,7 +169,7 @@ public class Grok implements Serializable {
       return Match.EMPTY;
     }
 
-    Matcher matcher = compiledNamedRegex.matcher(text);
+    Matcher matcher = matcherPool.getMatcher(text);
     if (matcher.find()) {
       return new Match(
           text, this, matcher, matcher.start(0), matcher.end(0)

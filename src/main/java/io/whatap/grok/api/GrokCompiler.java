@@ -32,6 +32,11 @@ public class GrokCompiler implements Serializable {
    * {@code Grok} patterns definitions.
    */
   private final Map<String, String> grokPatternDefinitions = new HashMap<>();
+  
+  /**
+   * Cache for compiled patterns to improve performance.
+   */
+  private final GrokCache cache = new GrokCache();
 
   private GrokCompiler() {}
 
@@ -139,8 +144,15 @@ public class GrokCompiler implements Serializable {
     if (StringUtils.isBlank(pattern)) {
       throw new IllegalArgumentException("{pattern} should not be empty or null");
     }
+    
+    // Check cache first
+    String cacheKey = pattern + ":" + defaultTimeZone + ":" + namedOnly;
+    Grok cached = cache.getGrok(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
 
-    String namedRegex = pattern;
+    StringBuilder namedRegex = new StringBuilder(pattern);
     int index = 0;
     /** flag for infinite recursion. */
     int iterationLeft = 1000;
@@ -160,7 +172,7 @@ public class GrokCompiler implements Serializable {
       iterationLeft--;
 
       Set<String> namedGroups = GrokUtils.getNameGroups(GrokUtils.GROK_PATTERN.pattern());
-      Matcher matcher = GrokUtils.GROK_PATTERN.matcher(namedRegex);
+      Matcher matcher = GrokUtils.GROK_PATTERN.matcher(namedRegex.toString());
       // Match %{Foo:bar} -> pattern name and subname
       // Match %{Foo=regex} -> add new regex definition
       if (matcher.find()) {
@@ -170,7 +182,8 @@ public class GrokCompiler implements Serializable {
           patternDefinitions.put(group.get("pattern"), group.get("definition"));
           group.put("name", group.get("name") + "=" + group.get("definition"));
         }
-        int count = StringUtils.countMatches(namedRegex, "%{" + group.get("name") + "}");
+        String targetPattern = "%{" + group.get("name") + "}";
+        int count = StringUtils.countMatches(namedRegex.toString(), targetPattern);
         for (int i = 0; i < count; i++) {
           String definitionOfPattern = patternDefinitions.get(group.get("pattern"));
           if (definitionOfPattern == null) {
@@ -183,24 +196,33 @@ public class GrokCompiler implements Serializable {
           }
           namedRegexCollection.put("name" + index,
               (group.get("subname") != null ? group.get("subname") : group.get("name")));
-          namedRegex =
-              StringUtils.replace(namedRegex, "%{" + group.get("name") + "}", replacement,1);
-          // System.out.println(_expanded_pattern);
+          
+          // Use StringBuilder for efficient string replacement
+          String currentRegex = namedRegex.toString();
+          int pos = currentRegex.indexOf(targetPattern);
+          if (pos >= 0) {
+            namedRegex.replace(pos, pos + targetPattern.length(), replacement);
+          }
           index++;
         }
       }
     }
 
-    if (namedRegex.isEmpty()) {
+    if (namedRegex.length() == 0) {
       throw new IllegalArgumentException("Pattern not found");
     }
 
-    return new Grok(
+    Grok result = new Grok(
         pattern,
-        namedRegex,
+        namedRegex.toString(),
         namedRegexCollection,
         patternDefinitions,
         defaultTimeZone
     );
+    
+    // Cache the compiled result
+    cache.putGrok(cacheKey, result);
+    
+    return result;
   }
 }
