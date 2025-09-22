@@ -1,14 +1,24 @@
-# Grok
+# Java Grok
 
-Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
+Java Grok is a powerful API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
+
+## ✨ Features
+
+- **🚀 High Performance**: Built with caching and memory optimization
+- **📦 Enum-based Pattern Management**: 18+ categorized pattern types with 400+ patterns
+- **🔍 Advanced Pattern Search**: Find patterns across multiple types and categories  
+- **📊 Pattern Statistics**: Get comprehensive insights about available patterns
+- **🏷️ Type-safe Pattern Access**: Enum-based approach for better IDE support
+- **🔄 Backward Compatibility**: Drop-in replacement for io.krakens:java-grok
 
 -----------------------
 
 ### What can I use Grok for?
-* reporting errors and other patterns from logs and processes
-* parsing complex text output and converting it to json for external processing
-* apply 'write-once use-everywhere' to regular expressions
-* automatically providing patterns for unknown text inputs (logs you want patterns generated for future matching)
+* **Log Processing**: Parse Apache, Nginx, MongoDB, PostgreSQL, and more log formats
+* **Pattern Discovery**: Search and explore 400+ built-in patterns across 18 categories
+* **JSON Conversion**: Transform unstructured text into structured JSON data
+* **Error Reporting**: Extract specific patterns from logs and processes
+* **Regular Expression Management**: Apply 'write-once use-everywhere' to regex patterns
 
 ### Maven repository
 
@@ -74,30 +84,116 @@ public static final Pattern GROK_PATTERN = Pattern.compile(
             + "\\}");
 ```
 
-### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
-Example of how to use java-grok:
+## 🚀 Quick Start
+
+### Basic Usage
 
 ```java
-/* Create a new grokCompiler instance */
+import io.whatap.grok.api.GrokCompiler;
+import io.whatap.grok.api.Grok;
+import io.whatap.grok.api.Match;
+
+// Create a new grok compiler instance
 GrokCompiler grokCompiler = GrokCompiler.newInstance();
 grokCompiler.registerDefaultPatterns();
 
-/* Grok pattern to compile, here httpd logs */
+// Compile a grok pattern for Apache logs
 final Grok grok = grokCompiler.compile("%{COMBINEDAPACHELOG}");
 
-/* Line of log to match */
+// Parse a log line
 String log = "112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"";
 
-Match gm = grok.match(log);
-
-/* Get the map with matches */
-final Map<String, Object> capture = gm.capture();
+Match match = grok.match(log);
+Map<String, Object> result = match.capture();
 ```
 
-### Build Java Grok
+### 🏷️ Enum-based Pattern Management (New!)
 
-Java Grok support Gradle: `./gradlew assemble`
+```java
+import io.whatap.grok.api.*;
 
-**Any contributions are warmly welcome**
+// Get pattern management service
+PatternManagementService service = new PatternManagementService();
 
-Grok is inspired by the logstash inteceptor or filter available [here](http://logstash.net/docs/1.4.1/filters/grok)
+// Get all available pattern types
+List<PatternManagementService.PatternTypeInfo> types = service.getAllPatternTypes();
+
+// Get patterns by category
+Map<String, List<PatternManagementService.PatternTypeInfo>> categories = 
+    service.getPatternTypesByCategory();
+
+// Load specific pattern type
+PatternManagementService.PatternTypeDetails mongoPatterns = 
+    service.getPatternTypeDetails(PatternType.MONGODB);
+
+// Search for specific patterns
+List<PatternManagementService.PatternInfo> patterns = 
+    service.searchPatterns("MONGO_QUERY");
+
+// Get comprehensive statistics
+PatternManagementService.PatternStatistics stats = service.getPatternStatistics();
+System.out.println("Total patterns: " + stats.getTotalPatterns()); // 400+
+```
+
+### 📦 Using Specific Pattern Types
+
+```java
+// Register only specific pattern types
+GrokCompiler compiler = GrokCompiler.newInstance();
+compiler.registerPatterns(PatternType.MONGODB, PatternType.PATTERNS);
+
+// Or register patterns from specific categories
+PatternRepository repo = PatternRepository.getInstance();
+Map<String, String> awsPatterns = repo.loadPatterns(PatternType.AWS);
+compiler.register(awsPatterns);
+```
+
+## 📋 Available Pattern Types
+
+| Category | Pattern Types | Pattern Count |
+|----------|---------------|---------------|
+| **Core** | PATTERNS | 73 |
+| **Cloud & Infrastructure** | AWS, HAPROXY, HTTPD | 28 |
+| **Databases** | MONGODB, POSTGRESQL | 8 |
+| **System & Network** | LINUX_SYSLOG, FIREWALLS, BIND, JUNOS, BRO | 80 |
+| **Applications** | JAVA, RAILS, RUBY, POSTFIX | 114 |
+| **Monitoring & Backup** | NAGIOS, BACULA, MCOLLECTIVE | 111 |
+
+**Total: 18 pattern types with 400+ patterns**
+
+## 🔧 Build & Test
+
+```bash
+# Build the project
+./gradlew assemble
+
+# Run tests
+./gradlew test
+
+# Run specific tests
+./gradlew test --tests PatternManagementServiceTest
+```
+
+## 📖 Documentation
+
+- [Pattern Management API Examples](src/test/java/io/whatap/grok/api/PatternUsageExamplesTest.java)
+- [Performance Tests](src/test/java/io/whatap/grok/api/PerformanceTest.java)
+- [Available Patterns](src/main/resources/patterns/)
+
+## 🤝 Contributing
+
+**Any contributions are warmly welcome!**
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📜 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+Grok is inspired by the [Logstash Grok filter](http://logstash.net/docs/1.4.1/filters/grok) and builds upon the foundation of io.krakens:java-grok with significant enhancements.
