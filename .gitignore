@@ -122,3 +122,15 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+
+# Maven Central 배포 관련 파일
+upload/
+maven-bundle/
+*.zip
+*.asc
+*.md5
+*.sha1
+/tmp/private.key
+
+# GPG 관련 
+.gnupg/

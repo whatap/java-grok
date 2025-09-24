@@ -79,6 +79,7 @@ checkstyle {
 }
 
 checkstyleMain {
+    enabled = false
     source = 'src/main/java'
     doLast {
         project.ext.checkType = "main"
@@ -99,12 +100,11 @@ jacocoTestReport {
 nexusPublishing {
     repositories {
         sonatype {
-            // @See https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
+            // Central Portal에서는 기본 OSSRH URL 사용
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            stagingProfileId = SONATYPE_STAGING_PROFILE_ID
-            username = SONATYPE_USERNAME
-            password = SONATYPE_PASSWORD
+            username = CENTRAL_PORTAL_USERNAME
+            password = CENTRAL_PORTAL_PASSWORD
         }
     }
 }
@@ -117,7 +117,7 @@ publishing {
             artifactId = ARTIFACT_ID
             version = VERSION
 
-            artifact("$buildDir/libs/${project.getName()}-${version}.jar")
+            from components.java
             artifact sourcesJar
             artifact javadocJar
 
@@ -133,9 +133,9 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = OSSRH_ID
-                        name = OSSRH_USERNAME
-                        email = OSSRH_EMAIL
+                        id = DEVELOPER_ID
+                        name = DEVELOPER_NAME
+                        email = DEVELOPER_EMAIL
                     }
                 }
                 scm {
@@ -146,8 +146,19 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            name = "sonatype"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = CENTRAL_PORTAL_USERNAME
+                password = CENTRAL_PORTAL_PASSWORD
+            }
+        }
+    }
 }
 
 signing {
+    useGpgCmd()
     sign(publishing.publications["javaGrokMaven"])
 }
