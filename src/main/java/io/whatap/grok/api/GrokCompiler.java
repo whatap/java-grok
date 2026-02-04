@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class GrokCompiler implements Serializable {
   /**
    * {@code Grok} patterns definitions.
    */
-  private final Map<String, String> grokPatternDefinitions = new HashMap<>();
+  private final Map<String, String> grokPatternDefinitions = new ConcurrentHashMap<>();
   
   /**
    * Cache for compiled patterns to improve performance.
@@ -192,6 +193,8 @@ public class GrokCompiler implements Serializable {
     /** flag for infinite recursion. */
     int iterationLeft = 1000;
     Boolean continueIteration = true;
+    // Create a defensive copy for pattern resolution to avoid ConcurrentModificationException
+    // while other threads may be registering new patterns
     Map<String, String> patternDefinitions = new HashMap<>(grokPatternDefinitions);
 
     // output

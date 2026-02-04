@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Discovery {
 
+  private static final Logger logger = Logger.getLogger(Discovery.class.getName());
   private Grok grok;
 
   /**
@@ -106,7 +109,7 @@ public class Discovery {
         grok.setSaved_pattern(key);
         groks.put(key, grok);
       } catch (Exception e) {
-        // Add logger
+        logger.log(Level.FINE, "Failed to compile pattern '" + key + "': " + e.getMessage());
       }
 
     }

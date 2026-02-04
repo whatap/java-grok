@@ -4,6 +4,9 @@ S3_ACCESS_LOG %{WORD:[aws][s3access][bucket_owner]} %{NOTSPACE:[aws][s3access][b
 # :long - %{INT:[aws][s3access][bytes_sent]:int}
 # :long - %{INT:[aws][s3access][object_size]:int}
 
+# URIQUERY alias for compatibility (URIPARAM is the standard pattern)
+URIQUERY [A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\-\[\]]*
+
 ELB_URIHOST %{IPORHOST:[url][domain]}(?::%{POSINT:[url][port]:integer})?
 ELB_URIPATHQUERY %{URIPATH:[url][path]}(?:\?%{URIQUERY:[url][query]})?
 # deprecated - old name:

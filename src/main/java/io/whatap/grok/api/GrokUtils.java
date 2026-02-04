@@ -16,13 +16,14 @@ import java.util.regex.Pattern;
 public class GrokUtils {
 
   /**
-   * Extract Grok patter like %{FOO} to FOO, Also Grok pattern with semantic.
+   * Extract Grok pattern like %{FOO} to FOO, Also Grok pattern with semantic.
+   * Supports both traditional names (e.g., "fieldname") and ECS-style nested names (e.g., "[log][level]").
    */
   public static final Pattern GROK_PATTERN = Pattern.compile(
       "%\\{"
               + "(?<name>"
               + "(?<pattern>[a-zA-Z][a-zA-Z0-9\\_\\-\\.]*[a-zA-Z0-9])"
-              + "(?::(?<subname>[a-zA-Z][a-zA-Z0-9_:;,\\-\\/\\s\\.']*[a-zA-Z0-9]))?"
+              + "(?::(?<subname>(?:\\[[a-zA-Z][a-zA-Z0-9_\\.]*\\])+|[a-zA-Z][a-zA-Z0-9_:;,\\-\\/\\s\\.']*[a-zA-Z0-9]))?"
               + ")"
               + "(?:=(?<definition>"
               + "(?:"

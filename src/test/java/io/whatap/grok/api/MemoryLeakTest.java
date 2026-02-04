@@ -51,35 +51,40 @@ public class MemoryLeakTest {
     }
     
     @Test
-    public void testWeakReferenceCleanup() throws InterruptedException {
+    public void testStrongReferenceRetention() throws InterruptedException {
         GrokCache cache = new GrokCache(100);
-        
-        // Create patterns and let them go out of scope
+
+        // Create patterns (now with strong references, they are retained)
         for (int i = 0; i < 50; i++) {
             String pattern = "%{WORD:word" + i + "}";
             Grok grok = compiler.compile(pattern);
             cache.putGrok(pattern, grok);
-            // grok goes out of scope here
         }
-        
-        // Force garbage collection
+
+        // Force garbage collection (should not affect cache)
         System.gc();
         Thread.sleep(100);
         System.gc();
         Thread.sleep(100);
-        
+
         GrokCache.CacheStats beforeStats = cache.getStats();
-        System.out.println("Stats before cleanup: " + beforeStats);
-        
-        // Access cache to trigger cleanup of dead weak references
+        System.out.println("Stats before GC: " + beforeStats);
+        assertEquals("All patterns should be retained", 50, beforeStats.grokCacheSize);
+
+        // Access cache to verify all entries are still present
+        int foundCount = 0;
         for (int i = 0; i < 50; i++) {
             String pattern = "%{WORD:word" + i + "}";
-            cache.getGrok(pattern); // This should clean up dead references
+            Grok grok = cache.getGrok(pattern);
+            if (grok != null) {
+                foundCount++;
+            }
         }
-        
+
         GrokCache.CacheStats afterStats = cache.getStats();
-        System.out.println("Stats after cleanup: " + afterStats);
-        
+        System.out.println("Stats after access: " + afterStats);
+        assertEquals("All patterns should still be in cache", 50, foundCount);
+
         cache.shutdown();
     }
     
@@ -121,9 +126,8 @@ public class MemoryLeakTest {
     
     @Test
     public void testLRUEviction() {
-        // Create cache with relaxed memory limit for testing
-        long relaxedMemoryLimit = Runtime.getRuntime().maxMemory() / 2; // 50% instead of default 20%
-        GrokCache cache = new GrokCache(5, relaxedMemoryLimit);
+        // Create cache with small size for testing LRU eviction
+        GrokCache cache = new GrokCache(5);
         
         // Add patterns to fill cache and keep strong references
         String[] patterns = {

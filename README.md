@@ -4,19 +4,23 @@ Java Grok is a powerful API that allows you to easily parse logs and other files
 
 ## ✨ Features
 
-- **🚀 High Performance**: Built with caching and memory optimization
-- **📦 Enum-based Pattern Management**: 18+ categorized pattern types with 400+ patterns
-- **🔍 Advanced Pattern Search**: Find patterns across multiple types and categories  
+- **🚀 High Performance**: Built with O(1) LRU caching and memory optimization
+- **🔒 Security**: ReDoS protection with configurable input length limits
+- **🧵 Thread-Safe**: Concurrent pattern compilation and matching
+- **📦 Enum-based Pattern Management**: 23 categorized pattern types with 450+ patterns
+- **🔍 Advanced Pattern Search**: Find patterns across multiple types and categories
 - **📊 Pattern Statistics**: Get comprehensive insights about available patterns
 - **🏷️ Type-safe Pattern Access**: Enum-based approach for better IDE support
+- **🔄 ECS Field Support**: Supports Elastic Common Schema style field names like `[log][level]`
 - **🔄 Backward Compatibility**: Drop-in replacement for io.krakens:java-grok
 
 -----------------------
 
 ### What can I use Grok for?
-* **Log Processing**: Parse Apache, Nginx, MongoDB, PostgreSQL, and more log formats
-* **Pattern Discovery**: Search and explore 400+ built-in patterns across 18 categories
+* **Log Processing**: Parse Apache, Nginx, MongoDB, PostgreSQL, Redis, Zeek, and more log formats
+* **Pattern Discovery**: Search and explore 450+ built-in patterns across 23 categories
 * **JSON Conversion**: Transform unstructured text into structured JSON data
+* **ECS Compliance**: Extract fields using Elastic Common Schema naming conventions
 * **Error Reporting**: Extract specific patterns from logs and processes
 * **Regular Expression Management**: Apply 'write-once use-everywhere' to regex patterns
 
@@ -27,7 +31,7 @@ Java Grok is a powerful API that allows you to easily parse logs and other files
 <dependency>
     <groupId>io.github.whatap</groupId>
     <artifactId>java-grok</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -35,54 +39,28 @@ Or with gradle
 
 ```gradle
 // https://mvnrepository.com/artifact/io.github.whatap/java-grok
-implementation 'io.github.whatap:java-grok:0.0.2'
-
+implementation 'io.github.whatap:java-grok:0.0.3'
 ```
 
 ### What is different from io.krakens:java-grok
 
-Added characters that can be used in regular expressions that make up Grok patterns.
+**Key Improvements:**
 
-- io.krakens:java-grok :
-  - pattern : [A-z0-9]+
-  - subname : [A-z0-9_:;,\-\/\s\.']+
-- io.github.whatap :
-  - pattern : [a-zA-Z][a-zA-Z0-9\_\-\.]*[a-zA-Z0-9]
-  - subname : [a-zA-Z][a-zA-Z0-9_:;,\-\/\s\.']*[a-zA-Z0-9]
-- @See [GrokUtils.java](https://github.com/thekrakken/java-grok/blob/901fda38ef6d5c902355eb25cff3f4b4fc3debde/src/main/java/io/krakens/grok/api/GrokUtils.java#L21C1-L33C20)
-```
-// io.krakens:java-grok
-public static final Pattern GROK_PATTERN = Pattern.compile(
-    "%\\{"
-        + "(?<name>"
-        + "(?<pattern>[A-z0-9]+)"
-        + "(?::(?<subname>[A-z0-9_:;,\\-\\/\\s\\.']+))?"
-        + ")"
-        + "(?:=(?<definition>"
-        + "(?:"
-        + "(?:[^{}]+|\\.+)+"
-        + ")+"
-        + ")"
-        + ")?"
-        + "\\}");
-```
+1. **ECS-Style Field Names**: Supports `[log][level]` style nested field names
+2. **Thread Safety**: ConcurrentHashMap for pattern definitions
+3. **O(1) LRU Cache**: Efficient cache eviction using LinkedHashMap
+4. **ReDoS Protection**: Configurable input length limits
+5. **More Patterns**: 23 pattern types (vs 18), 450+ patterns (vs 400+)
+6. **Better Regex**: Improved pattern and subname validation
 
-```
-// io.github.whatap
-public static final Pattern GROK_PATTERN = Pattern.compile(
-    "%\\{"
-            + "(?<name>"
-            + "(?<pattern>[a-zA-Z][a-zA-Z0-9\\_\\-\\.]*[a-zA-Z0-9])"
-            + "(?::(?<subname>[a-zA-Z][a-zA-Z0-9_:;,\\-\\/\\s\\.']*[a-zA-Z0-9]))?"
-            + ")"
-            + "(?:=(?<definition>"
-            + "(?:"
-            + "(?:[^{}]+|\\.+)+"
-            + ")+"
-            + ")"
-            + ")?"
-            + "\\}");
-```
+**Pattern Regex Differences:**
+
+| Feature | io.krakens:java-grok | io.github.whatap |
+|---------|---------------------|------------------|
+| pattern | `[A-z0-9]+` | `[a-zA-Z][a-zA-Z0-9_\-\.]*[a-zA-Z0-9]` |
+| subname | `[A-z0-9_:;,\-\/\s\.']+` | ECS-style `[field][name]` + legacy |
+
+@See [GrokUtils.java](src/main/java/io/whatap/grok/api/GrokUtils.java)
 
 ## 🚀 Quick Start
 
@@ -132,7 +110,7 @@ List<PatternManagementService.PatternInfo> patterns =
 
 // Get comprehensive statistics
 PatternManagementService.PatternStatistics stats = service.getPatternStatistics();
-System.out.println("Total patterns: " + stats.getTotalPatterns()); // 400+
+System.out.println("Total patterns: " + stats.getTotalPatterns()); // 450+
 ```
 
 ### 📦 Using Specific Pattern Types
@@ -148,18 +126,73 @@ Map<String, String> awsPatterns = repo.loadPatterns(PatternType.AWS);
 compiler.register(awsPatterns);
 ```
 
+### 🏷️ ECS-Style Field Names
+
+Supports Elastic Common Schema style nested field names:
+
+```java
+GrokCompiler compiler = GrokCompiler.newInstance();
+compiler.registerDefaultPatterns();
+
+// Use ECS-style field names
+Grok grok = compiler.compile("%{LOGLEVEL:[log][level]} %{IP:[source][ip]}");
+Match match = grok.match("ERROR 192.168.1.1");
+Map<String, Object> result = match.capture();
+
+// Access nested fields
+// result = {log.level=ERROR, source.ip=192.168.1.1}
+```
+
 ## 📋 Available Pattern Types
 
-| Category | Pattern Types | Pattern Count |
-|----------|---------------|---------------|
-| **Core** | PATTERNS | 73 |
-| **Cloud & Infrastructure** | AWS, HAPROXY, HTTPD | 28 |
-| **Databases** | MONGODB, POSTGRESQL | 8 |
-| **System & Network** | LINUX_SYSLOG, FIREWALLS, BIND, JUNOS, BRO | 80 |
-| **Applications** | JAVA, RAILS, RUBY, POSTFIX | 114 |
-| **Monitoring & Backup** | NAGIOS, BACULA, MCOLLECTIVE | 111 |
+| Category | Pattern Types | Description |
+|----------|---------------|-------------|
+| **Core** | PATTERNS | Base Grok patterns (IP, URI, NUMBER, etc.) |
+| **Cloud & Infrastructure** | AWS, HAPROXY, HTTPD, SQUID | S3, ELB, CloudFront, load balancer, proxy logs |
+| **Databases** | MONGODB, POSTGRESQL, REDIS | Database query and server logs |
+| **System & Network** | LINUX_SYSLOG, FIREWALLS, BIND, JUNOS, BRO, ZEEK | Syslog, iptables, DNS, network security |
+| **Applications** | JAVA, RAILS, RUBY, POSTFIX, EXIM | Application and mail server logs |
+| **Monitoring & Backup** | NAGIOS, BACULA, MCOLLECTIVE | Monitoring and backup system logs |
+| **Build Tools** | MAVEN | Version patterns for build tools |
 
-**Total: 18 pattern types with 400+ patterns**
+**Total: 23 pattern types with 450+ patterns**
+
+## 🔒 Security Features
+
+### ReDoS Protection
+
+Java Grok includes protection against Regular Expression Denial of Service (ReDoS) attacks:
+
+```java
+// Default: 1MB input limit
+Grok grok = grokCompiler.compile("%{COMBINEDAPACHELOG}");
+
+// Configure custom limit
+Grok.setMaxInputLength(512 * 1024); // 512KB
+
+// Disable limit (not recommended)
+Grok.setMaxInputLength(0);
+```
+
+### Thread Safety
+
+All pattern compilation and matching operations are thread-safe:
+
+```java
+// Safe for concurrent use
+GrokCompiler compiler = GrokCompiler.newInstance();
+compiler.registerDefaultPatterns();
+Grok grok = compiler.compile("%{IP:client}");
+
+// Can be used from multiple threads
+ExecutorService executor = Executors.newFixedThreadPool(10);
+for (int i = 0; i < 100; i++) {
+    executor.submit(() -> {
+        Match match = grok.match("192.168.1.1");
+        // ...
+    });
+}
+```
 
 ## 🔧 Build & Test
 

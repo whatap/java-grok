@@ -1,2 +1,14 @@
 # Default postgresql pg_log format pattern
-POSTGRESQL %{DATESTAMP:timestamp} %{TZ:[event][timezone]} %{DATA:[user][name]} %{GREEDYDATA:[postgresql][log][connection_id]} %{POSINT:[process][pid]:integer}
+# Format: YYYY-MM-DD HH:MM:SS TZ user_info[pid]
+# Sample: 2023-10-11 22:14:15 EST postgres user@mydb[12345] LOG: message
+#
+# Extracted fields:
+#   - timestamp: The ISO8601 timestamp (YYYY-MM-DD HH:MM:SS)
+#   - [event][timezone]: The timezone abbreviation (EST, UTC, etc.)
+#   - username: User/role and database information (everything before the bracket)
+#   - connid: Connection/process ID number (digits inside brackets)
+#
+# Note: Due to grok pattern compiler limitations with escaped brackets containing
+# pattern references, we use raw regex for username and connid fields.
+# These cannot use ECS-style nested field names like [user][name] or [postgresql][log][connection_id].
+POSTGRESQL %{TIMESTAMP_ISO8601:timestamp} %{TZ:[event][timezone]} (?<username>[^\[]+)\[(?<connid>\d+)\]

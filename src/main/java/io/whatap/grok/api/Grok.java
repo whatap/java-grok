@@ -20,6 +20,16 @@ import java.util.regex.Pattern;
  */
 public class Grok implements Serializable {
   /**
+   * Default maximum input length (1MB).
+   */
+  public static final int DEFAULT_MAX_INPUT_LENGTH = 1024 * 1024;
+
+  /**
+   * Maximum input length for matching. Set to 0 to disable limit.
+   */
+  private static int maxInputLength = DEFAULT_MAX_INPUT_LENGTH;
+
+  /**
    * Named regex of the originalGrokPattern.
    */
   private final String namedRegex;
@@ -77,12 +87,52 @@ public class Grok implements Serializable {
     this.grokPatternDefinition = patternDefinitions;
   }
 
+  /**
+   * @deprecated Use {@link #getSavedPattern()} instead
+   */
+  @Deprecated
   public String getSaved_pattern() {
     return savedPattern;
   }
 
+  /**
+   * Get the saved pattern (used in discovery).
+   * @return saved pattern string
+   */
+  public String getSavedPattern() {
+    return savedPattern;
+  }
+
+  /**
+   * @deprecated Use {@link #setSavedPattern(String)} instead
+   */
+  @Deprecated
   public void setSaved_pattern(String savedpattern) {
     this.savedPattern = savedpattern;
+  }
+
+  /**
+   * Set the saved pattern (used in discovery).
+   * @param savedPattern pattern to save
+   */
+  public void setSavedPattern(String savedPattern) {
+    this.savedPattern = savedPattern;
+  }
+
+  /**
+   * Set the maximum input length for pattern matching.
+   * @param length maximum length in characters, 0 to disable
+   */
+  public static void setMaxInputLength(int length) {
+    maxInputLength = length;
+  }
+
+  /**
+   * Get the current maximum input length.
+   * @return maximum length in characters
+   */
+  public static int getMaxInputLength() {
+    return maxInputLength;
   }
 
   /**
@@ -163,10 +213,18 @@ public class Grok implements Serializable {
    *
    * @param text : Single line of log
    * @return Grok Match
+   * @throws IllegalArgumentException if input length exceeds maximum allowed length
    */
   public Match match(CharSequence text) {
     if (compiledNamedRegex == null || text == null) {
       return Match.EMPTY;
+    }
+
+    // Validate input length to prevent ReDoS attacks
+    if (maxInputLength > 0 && text.length() > maxInputLength) {
+      throw new IllegalArgumentException(
+          String.format("Input length %d exceeds maximum allowed length %d",
+              text.length(), maxInputLength));
     }
 
     Matcher matcher = matcherPool.getMatcher(text);

@@ -1,0 +1,3 @@
+REDISTIMESTAMP %{MONTHDAY} %{MONTH} %{TIME}
+REDISLOG \[%{POSINT:redis_pid:integer}\] %{REDISTIMESTAMP:timestamp} \*
+REDISMONLOG %{NUMBER:timestamp} \[%{INT:redis_db_id} %{IP:client_ip}:%{POSINT:client_port:integer}\] "%{WORD:redis_command}"\s?%{GREEDYDATA:redis_args}

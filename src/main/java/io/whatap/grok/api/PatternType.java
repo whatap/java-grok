@@ -96,8 +96,33 @@ public enum PatternType {
     /**
      * Ruby logger patterns.
      */
-    RUBY("ruby", "Ruby logger patterns");
-    
+    RUBY("ruby", "Ruby logger patterns"),
+
+    /**
+     * Redis database patterns.
+     */
+    REDIS("redis", "Redis database log patterns"),
+
+    /**
+     * Exim mail transfer agent patterns.
+     */
+    EXIM("exim", "Exim mail transfer agent log patterns"),
+
+    /**
+     * Apache Maven build tool patterns.
+     */
+    MAVEN("maven", "Apache Maven version patterns"),
+
+    /**
+     * Squid proxy server patterns.
+     */
+    SQUID("squid", "Squid proxy server log patterns"),
+
+    /**
+     * Zeek network security monitoring patterns.
+     */
+    ZEEK("zeek", "Zeek network security monitoring patterns");
+
     private final String fileName;
     private final String description;
     private final String resourcePath;
