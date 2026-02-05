@@ -162,3 +162,58 @@ signing {
     useGpgCmd()
     sign(publishing.publications["javaGrokMaven"])
 }
+
+// Central Portal용 체크섬 생성 태스크
+task generateChecksums {
+    dependsOn publishToMavenLocal
+
+    doLast {
+        def repoDir = file("${System.getProperty('user.home')}/.m2/repository/io/github/whatap/${ARTIFACT_ID}/${VERSION}")
+
+        repoDir.listFiles().each { file ->
+            if (file.isFile() && !file.name.endsWith('.md5') && !file.name.endsWith('.sha1')) {
+                // MD5 생성
+                def md5 = java.security.MessageDigest.getInstance('MD5')
+                file.eachByte(4096) { bytes, len -> md5.update(bytes, 0, len) }
+                new File(file.path + '.md5').text = md5.digest().encodeHex().toString()
+
+                // SHA1 생성
+                def sha1 = java.security.MessageDigest.getInstance('SHA-1')
+                file.eachByte(4096) { bytes, len -> sha1.update(bytes, 0, len) }
+                new File(file.path + '.sha1').text = sha1.digest().encodeHex().toString()
+
+                println "체크섬 생성: ${file.name}"
+            }
+        }
+    }
+}
+
+// Central Portal bundle 생성 태스크
+task createCentralPortalBundle(type: Zip) {
+    dependsOn generateChecksums
+
+    archiveFileName = "${ARTIFACT_ID}-${VERSION}-bundle.zip"
+    destinationDirectory = file("$buildDir/central-portal")
+
+    // Maven 디렉토리 구조 유지: io/github/whatap/java-grok/0.1.0/
+    from("${System.getProperty('user.home')}/.m2/repository/io/github/whatap/${ARTIFACT_ID}/${VERSION}") {
+        include "*"
+        exclude "maven-metadata-local.xml"
+        exclude "_remote.repositories"
+        into "io/github/whatap/${ARTIFACT_ID}/${VERSION}"
+    }
+
+    doLast {
+        println ""
+        println "========================================"
+        println "Central Portal Bundle 생성 완료!"
+        println "========================================"
+        println "파일: ${destinationDirectory.get()}/${archiveFileName.get()}"
+        println ""
+        println "업로드 방법:"
+        println "1. https://central.sonatype.com 접속"
+        println "2. Publish Component 클릭"
+        println "3. 위 bundle.zip 파일 업로드"
+        println "========================================"
+    }
+}
