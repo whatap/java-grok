@@ -132,5 +132,8 @@ maven-bundle/
 *.sha1
 /tmp/private.key
 
-# GPG 관련 
+# GPG 관련
 .gnupg/
+
+# Claude Code (oh-my-claudecode)
+.omc/

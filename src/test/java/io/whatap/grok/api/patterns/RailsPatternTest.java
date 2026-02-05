@@ -21,13 +21,13 @@ import static org.junit.Assert.*;
  * 1. RUUID uses \h{32} which means "32 horizontal whitespace chars" in Java regex,
  *    but means "32 hex digits" in Ruby/Oniguruma regex.
  *
- * 2. Patterns like RCONTROLLER use (?<[rails][controller][class]>...) syntax which
+ * 2. Patterns like RCONTROLLER use (?<rails.controller.class>...) syntax which
  *    causes PatternSyntaxException in Java because Java interprets (?<...) as a
  *    lookbehind assertion when it starts with (?<.
  *
  * 3. The correct way to use ECS field names in Java grok patterns is to define the
  *    pattern with simple names and then reference them with ECS names when compiling,
- *    like: %{WORD:[log][level]}
+ *    like: %{WORD:log.level}
  *
  * These tests document the current incompatibility between the Rails pattern file
  * (designed for Logstash/Ruby) and the Java grok implementation.
@@ -66,11 +66,11 @@ public class RailsPatternTest {
         // Verify pattern contents match the rails pattern file
         assertEquals("\\h{32}", patterns.get("RUUID"));
         assertTrue("RCONTROLLER should contain controller and action",
-                patterns.get("RCONTROLLER").contains("[rails][controller][class]") &&
-                patterns.get("RCONTROLLER").contains("[rails][controller][action]"));
+                patterns.get("RCONTROLLER").contains("rails.controller.class") &&
+                patterns.get("RCONTROLLER").contains("rails.controller.action"));
         assertTrue("RAILS3HEAD should contain HTTP method and URL",
-                patterns.get("RAILS3HEAD").contains("[http][request][method]") &&
-                patterns.get("RAILS3HEAD").contains("[url][original]"));
+                patterns.get("RAILS3HEAD").contains("http.request.method") &&
+                patterns.get("RAILS3HEAD").contains("url.original"));
     }
 
     // ========== RUUID Pattern Tests (Documenting Incompatibility) ==========
@@ -134,9 +134,9 @@ public class RailsPatternTest {
 
         assertNotNull("RCONTROLLER pattern should be defined", rcontroller);
         assertTrue("Pattern should contain rails controller class field",
-                rcontroller.contains("[rails][controller][class]"));
+                rcontroller.contains("rails.controller.class"));
         assertTrue("Pattern should contain rails controller action field",
-                rcontroller.contains("[rails][controller][action]"));
+                rcontroller.contains("rails.controller.action"));
         assertTrue("Pattern should contain # separator", rcontroller.contains("#"));
     }
 
@@ -158,11 +158,11 @@ public class RailsPatternTest {
 
         assertNotNull("RAILS3HEAD pattern should be defined", rails3head);
         assertTrue("Pattern should contain HTTP request method field",
-                rails3head.contains("[http][request][method]"));
+                rails3head.contains("http.request.method"));
         assertTrue("Pattern should contain URL original field",
-                rails3head.contains("[url][original]"));
+                rails3head.contains("url.original"));
         assertTrue("Pattern should contain source address field",
-                rails3head.contains("[source][address]"));
+                rails3head.contains("source.address"));
         assertTrue("Pattern should contain timestamp field",
                 rails3head.contains("timestamp"));
         assertTrue("Pattern should contain 'Started' keyword",
@@ -180,9 +180,9 @@ public class RailsPatternTest {
 
         assertNotNull("Should match Rails log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
-        assertEquals("GET", captured.get("[http][request][method]"));
-        assertEquals("/users", captured.get("[url][original]"));
-        assertEquals("127.0.0.1", captured.get("[source][address]"));
+        assertEquals("GET", captured.get("http.request.method"));
+        assertEquals("/users", captured.get("url.original"));
+        assertEquals("127.0.0.1", captured.get("source.address"));
         assertEquals("2023-10-11 22:14:15 +0000", captured.get("timestamp"));
     }
 
@@ -204,21 +204,26 @@ public class RailsPatternTest {
         assertNotNull("RPROCESSING pattern should be defined", rprocessing);
         assertTrue("Pattern should contain RCONTROLLER", rprocessing.contains("RCONTROLLER"));
         assertTrue("Pattern should contain request format field",
-                rprocessing.contains("[rails][request][format]"));
+                rprocessing.contains("rails.request.format"));
         assertTrue("Pattern should contain request params field",
-                rprocessing.contains("[rails][request][params]"));
+                rprocessing.contains("rails.request.params"));
         assertTrue("Pattern should contain 'Processing by' text",
                 rprocessing.contains("Processing by"));
     }
 
     // ========== RAILS3PROFILE Pattern Tests (Documenting Incompatibility) ==========
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testRAILS3PROFILEPatternCompilationFails() throws Exception {
-        // NOTE: RAILS3PROFILE uses (?<[field]>...) syntax which is incompatible
-
-        compiler.compile("%{RAILS3PROFILE}");
-        fail("RAILS3PROFILE pattern should throw PatternSyntaxException");
+        // NOTE: RAILS3PROFILE has duplicate named groups (rails.request.duration.active_record)
+        // which causes IllegalStateException in Java regex
+        try {
+            compiler.compile("%{RAILS3PROFILE}");
+            fail("RAILS3PROFILE pattern should throw an exception due to duplicate named groups");
+        } catch (IllegalStateException | java.util.regex.PatternSyntaxException e) {
+            // Expected: duplicate named groups cause compilation issues
+            assertNotNull(e.getMessage());
+        }
     }
 
     @Test
@@ -228,21 +233,25 @@ public class RailsPatternTest {
 
         assertNotNull("RAILS3PROFILE pattern should be defined", rails3profile);
         assertTrue("Pattern should contain view duration field",
-                rails3profile.contains("[rails][request][duration][view]"));
+                rails3profile.contains("rails.request.duration.view"));
         assertTrue("Pattern should contain active_record duration field",
-                rails3profile.contains("[rails][request][duration][active_record]"));
+                rails3profile.contains("rails.request.duration.active_record"));
         assertTrue("Pattern should contain 'Views:' text", rails3profile.contains("Views:"));
         assertTrue("Pattern should contain 'ActiveRecord:' text", rails3profile.contains("ActiveRecord:"));
     }
 
     // ========== RAILS3FOOT Pattern Tests (Documenting Incompatibility) ==========
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testRAILS3FOOTPatternCompilationFails() throws Exception {
-        // NOTE: RAILS3FOOT uses RAILS3PROFILE which has incompatible syntax
-
-        compiler.compile("%{RAILS3FOOT}");
-        fail("RAILS3FOOT pattern should throw PatternSyntaxException");
+        // NOTE: RAILS3FOOT uses RAILS3PROFILE which has duplicate named groups
+        try {
+            compiler.compile("%{RAILS3FOOT}");
+            fail("RAILS3FOOT pattern should throw an exception due to duplicate named groups");
+        } catch (IllegalStateException | java.util.regex.PatternSyntaxException e) {
+            // Expected: inherits duplicate named group issues from RAILS3PROFILE
+            assertNotNull(e.getMessage());
+        }
     }
 
     @Test
@@ -252,9 +261,9 @@ public class RailsPatternTest {
 
         assertNotNull("RAILS3FOOT pattern should be defined", rails3foot);
         assertTrue("Pattern should contain status code field",
-                rails3foot.contains("[http][response][status_code]"));
+                rails3foot.contains("http.response.status_code"));
         assertTrue("Pattern should contain total duration field",
-                rails3foot.contains("[rails][request][duration][total]"));
+                rails3foot.contains("rails.request.duration.total"));
         assertTrue("Pattern should contain RAILS3PROFILE", rails3foot.contains("RAILS3PROFILE"));
         assertTrue("Pattern should contain 'Completed' text", rails3foot.contains("Completed"));
     }
@@ -279,7 +288,7 @@ public class RailsPatternTest {
         assertTrue("Pattern should contain RPROCESSING", rails3.contains("RPROCESSING"));
         assertTrue("Pattern should contain RAILS3FOOT", rails3.contains("RAILS3FOOT"));
         assertTrue("Pattern should contain explain original field",
-                rails3.contains("[rails][request][explain][original]"));
+                rails3.contains("rails.request.explain.original"));
     }
 
     // ========== ECS Field Name Documentation Tests ==========
@@ -293,30 +302,30 @@ public class RailsPatternTest {
 
         // HTTP-related fields
         String[] httpFields = {
-            "[http][request][method]",
-            "[http][response][status_code]"
+            "http.request.method",
+            "http.response.status_code"
         };
 
         // URL-related fields
         String[] urlFields = {
-            "[url][original]"
+            "url.original"
         };
 
         // Source-related fields
         String[] sourceFields = {
-            "[source][address]"
+            "source.address"
         };
 
         // Rails-specific fields
         String[] railsFields = {
-            "[rails][controller][class]",
-            "[rails][controller][action]",
-            "[rails][request][format]",
-            "[rails][request][params]",
-            "[rails][request][duration][total]",
-            "[rails][request][duration][view]",
-            "[rails][request][duration][active_record]",
-            "[rails][request][explain][original]"
+            "rails.controller.class",
+            "rails.controller.action",
+            "rails.request.format",
+            "rails.request.params",
+            "rails.request.duration.total",
+            "rails.request.duration.view",
+            "rails.request.duration.active_record",
+            "rails.request.explain.original"
         };
 
         // Verify HTTP fields are present in pattern definitions
@@ -363,11 +372,11 @@ public class RailsPatternTest {
             "grok implementation uses Java's standard regex engine, which is incompatible " +
             "with several constructs used in the Rails patterns:\n\n" +
             "1. \\h means 'horizontal whitespace' in Java but 'hexadecimal digit' in Ruby\n" +
-            "2. (?<[field][name]>...) syntax for nested field names causes PatternSyntaxException\n\n" +
+            "2. (?<field.name>...) syntax for nested field names causes PatternSyntaxException\n\n" +
             "To use Rails log parsing in Java:\n" +
             "- Option 1: Create custom patterns with Java-compatible syntax\n" +
             "- Option 2: Use simple field names in pattern definitions and apply ECS names " +
-            "when compiling: %{WORD:[log][level]}\n" +
+            "when compiling: %{WORD:log.level}\n" +
             "- Option 3: Fix the rails pattern file to use Java-compatible regex syntax";
 
         // This assertion always passes but documents the issues
@@ -384,15 +393,15 @@ public class RailsPatternTest {
         compiler.register("MY_ACTION", "(\\w+)");
 
         // Compile using the ECS field name syntax (%{PATTERN:[field][name]})
-        Grok grok = compiler.compile("%{MY_CONTROLLER:[rails][controller][class]}#%{MY_ACTION:[rails][controller][action]}");
+        Grok grok = compiler.compile("%{MY_CONTROLLER:rails.controller.class}#%{MY_ACTION:rails.controller.action}");
 
         String controllerLine = "UsersController#index";
         Match match = grok.match(controllerLine);
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match with correct syntax", captured);
-        assertEquals("UsersController", captured.get("[rails][controller][class]"));
-        assertEquals("index", captured.get("[rails][controller][action]"));
+        assertEquals("UsersController", captured.get("rails.controller.class"));
+        assertEquals("index", captured.get("rails.controller.action"));
     }
 
     @Test
@@ -404,8 +413,8 @@ public class RailsPatternTest {
         compiler.register("IP_OR_HOST", "([0-9\\.]+|[a-zA-Z0-9\\.-]+)");
         compiler.register("RAILS_TIMESTAMP", "([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} [+-][0-9]{4})");
 
-        String pattern = "Started %{HTTP_METHOD:[http][request][method]} \"%{RAILS_PATH:[url][original]}\" " +
-                        "for %{IP_OR_HOST:[source][address]} at %{RAILS_TIMESTAMP:timestamp}";
+        String pattern = "Started %{HTTP_METHOD:http.request.method} \"%{RAILS_PATH:url.original}\" " +
+                        "for %{IP_OR_HOST:source.address} at %{RAILS_TIMESTAMP:timestamp}";
 
         Grok grok = compiler.compile(pattern);
 
@@ -414,9 +423,9 @@ public class RailsPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match Rails request line", captured);
-        assertEquals("GET", captured.get("[http][request][method]"));
-        assertEquals("/users", captured.get("[url][original]"));
-        assertEquals("127.0.0.1", captured.get("[source][address]"));
+        assertEquals("GET", captured.get("http.request.method"));
+        assertEquals("/users", captured.get("url.original"));
+        assertEquals("127.0.0.1", captured.get("source.address"));
         assertEquals("2023-10-11 22:14:15 +0000", captured.get("timestamp"));
     }
 }

@@ -91,9 +91,9 @@ public class AwsPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertFalse("Match should succeed", captured.isEmpty());
-        assertEquals("GET", captured.get("[http][request][method]"));
-        assertEquals("/my-bucket/path/to/file.jpg", captured.get("[url][original]"));
-        assertEquals("1.1", captured.get("[http][version]"));
+        assertEquals("GET", captured.get("http.request.method"));
+        assertEquals("/my-bucket/path/to/file.jpg", captured.get("url.original"));
+        assertEquals("1.1", captured.get("http.version"));
     }
 
     @Test
@@ -105,8 +105,8 @@ public class AwsPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertFalse("Match should succeed", captured.isEmpty());
-        assertEquals("PUT", captured.get("[http][request][method]"));
-        assertEquals("/bucket/key", captured.get("[url][original]"));
+        assertEquals("PUT", captured.get("http.request.method"));
+        assertEquals("/bucket/key", captured.get("url.original"));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class AwsPatternTest {
             Map<String, Object> captured = match.capture();
 
             assertFalse("Match should succeed for " + method, captured.isEmpty());
-            assertEquals(method, captured.get("[http][request][method]"));
+            assertEquals(method, captured.get("http.request.method"));
         }
     }
 
@@ -133,9 +133,9 @@ public class AwsPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertFalse("Match should succeed", captured.isEmpty());
-        assertEquals("GET", captured.get("[http][request][method]"));
-        assertEquals("/bucket/object?versioning&acl", captured.get("[url][original]"));
-        assertEquals("1.1", captured.get("[http][version]"));
+        assertEquals("GET", captured.get("http.request.method"));
+        assertEquals("/bucket/object?versioning&acl", captured.get("url.original"));
+        assertEquals("1.1", captured.get("http.version"));
     }
 
     // ========== ECS Field Name Convention Tests ==========
@@ -149,12 +149,12 @@ public class AwsPatternTest {
         Map<String, Object> captured = match.capture();
 
         // Verify ECS-compliant nested field names with square brackets
-        assertTrue("Should use [http][request][method] field name",
-                captured.containsKey("[http][request][method]"));
-        assertTrue("Should use [url][original] field name",
-                captured.containsKey("[url][original]"));
-        assertTrue("Should use [http][version] field name",
-                captured.containsKey("[http][version]"));
+        assertTrue("Should use http.request.method field name",
+                captured.containsKey("http.request.method"));
+        assertTrue("Should use url.original field name",
+                captured.containsKey("url.original"));
+        assertTrue("Should use http.version field name",
+                captured.containsKey("http.version"));
     }
 
     @Test
@@ -164,14 +164,14 @@ public class AwsPatternTest {
         String s3AccessLog = patterns.get("S3_ACCESS_LOG");
 
         // Verify pattern definitions contain ECS-style field references
-        assertTrue("S3_ACCESS_LOG should reference [aws][s3access][bucket_owner]",
-                s3AccessLog.contains("[aws][s3access][bucket_owner]"));
-        assertTrue("S3_ACCESS_LOG should reference [client][ip]",
-                s3AccessLog.contains("[client][ip]"));
-        assertTrue("S3_ACCESS_LOG should reference [http][response][status_code]",
-                s3AccessLog.contains("[http][response][status_code]"));
-        assertTrue("S3_ACCESS_LOG should reference [user_agent][original]",
-                s3AccessLog.contains("[user_agent][original]"));
+        assertTrue("S3_ACCESS_LOG should reference aws.s3access.bucket_owner",
+                s3AccessLog.contains("aws.s3access.bucket_owner"));
+        assertTrue("S3_ACCESS_LOG should reference client.ip",
+                s3AccessLog.contains("client.ip"));
+        assertTrue("S3_ACCESS_LOG should reference http.response.status_code",
+                s3AccessLog.contains("http.response.status_code"));
+        assertTrue("S3_ACCESS_LOG should reference user_agent.original",
+                s3AccessLog.contains("user_agent.original"));
     }
 
     @Test
@@ -181,14 +181,14 @@ public class AwsPatternTest {
         String elbLog = patterns.get("ELB_V1_HTTP_LOG");
 
         // Verify ELB patterns use ECS field names
-        assertTrue("ELB_V1_HTTP_LOG should reference [aws][elb][name]",
-                elbLog.contains("[aws][elb][name]"));
-        assertTrue("ELB_V1_HTTP_LOG should reference [source][ip]",
-                elbLog.contains("[source][ip]"));
-        assertTrue("ELB_V1_HTTP_LOG should reference [source][port]",
-                elbLog.contains("[source][port]"));
-        assertTrue("ELB_V1_HTTP_LOG should reference [aws][elb][backend][ip]",
-                elbLog.contains("[aws][elb][backend][ip]"));
+        assertTrue("ELB_V1_HTTP_LOG should reference aws.elb.name",
+                elbLog.contains("aws.elb.name"));
+        assertTrue("ELB_V1_HTTP_LOG should reference source.ip",
+                elbLog.contains("source.ip"));
+        assertTrue("ELB_V1_HTTP_LOG should reference source.port",
+                elbLog.contains("source.port"));
+        assertTrue("ELB_V1_HTTP_LOG should reference aws.elb.backend.ip",
+                elbLog.contains("aws.elb.backend.ip"));
     }
 
     @Test
@@ -198,14 +198,14 @@ public class AwsPatternTest {
         String cfLog = patterns.get("CLOUDFRONT_ACCESS_LOG");
 
         // Verify CloudFront patterns use ECS field names
-        assertTrue("CLOUDFRONT_ACCESS_LOG should reference [aws][cloudfront][x_edge_location]",
-                cfLog.contains("[aws][cloudfront][x_edge_location]"));
-        assertTrue("CLOUDFRONT_ACCESS_LOG should reference [destination][bytes]",
-                cfLog.contains("[destination][bytes]"));
-        assertTrue("CLOUDFRONT_ACCESS_LOG should reference [source][ip]",
-                cfLog.contains("[source][ip]"));
-        assertTrue("CLOUDFRONT_ACCESS_LOG should reference [network][protocol]",
-                cfLog.contains("[network][protocol]"));
+        assertTrue("CLOUDFRONT_ACCESS_LOG should reference aws.cloudfront.x_edge_location",
+                cfLog.contains("aws.cloudfront.x_edge_location"));
+        assertTrue("CLOUDFRONT_ACCESS_LOG should reference destination.bytes",
+                cfLog.contains("destination.bytes"));
+        assertTrue("CLOUDFRONT_ACCESS_LOG should reference source.ip",
+                cfLog.contains("source.ip"));
+        assertTrue("CLOUDFRONT_ACCESS_LOG should reference network.protocol",
+                cfLog.contains("network.protocol"));
     }
 
     // ========== Pattern Structure Tests ==========
@@ -217,16 +217,16 @@ public class AwsPatternTest {
 
         // Verify key S3 fields are defined in the pattern
         String[] expectedFields = {
-            "[aws][s3access][bucket_owner]",
-            "[aws][s3access][bucket]",
-            "[aws][s3access][request_id]",
-            "[aws][s3access][operation]",
-            "[aws][s3access][key]",
-            "[aws][s3access][bytes_sent]",
-            "[aws][s3access][object_size]",
-            "[aws][s3access][total_time]",
-            "[aws][s3access][turn_around_time]",
-            "[tls][cipher]"
+            "aws.s3access.bucket_owner",
+            "aws.s3access.bucket",
+            "aws.s3access.request_id",
+            "aws.s3access.operation",
+            "aws.s3access.key",
+            "aws.s3access.bytes_sent",
+            "aws.s3access.object_size",
+            "aws.s3access.total_time",
+            "aws.s3access.turn_around_time",
+            "tls.cipher"
         };
 
         for (String field : expectedFields) {
@@ -242,19 +242,19 @@ public class AwsPatternTest {
 
         // Verify key ELB fields are defined in the pattern
         String[] expectedFields = {
-            "[aws][elb][name]",
-            "[source][ip]",
-            "[source][port]",
-            "[aws][elb][backend][ip]",
-            "[aws][elb][backend][port]",
-            "[aws][elb][request_processing_time][sec]",
-            "[aws][elb][backend_processing_time][sec]",
-            "[aws][elb][response_processing_time][sec]",
-            "[http][response][status_code]",
-            "[http][request][body][bytes]",
-            "[http][response][body][bytes]",
-            "[tls][cipher]",
-            "[aws][elb][ssl_protocol]"
+            "aws.elb.name",
+            "source.ip",
+            "source.port",
+            "aws.elb.backend.ip",
+            "aws.elb.backend.port",
+            "aws.elb.request_processing_time.sec",
+            "aws.elb.backend_processing_time.sec",
+            "aws.elb.response_processing_time.sec",
+            "http.response.status_code",
+            "http.request.body.bytes",
+            "http.response.body.bytes",
+            "tls.cipher",
+            "aws.elb.ssl_protocol"
         };
 
         for (String field : expectedFields) {
@@ -270,28 +270,28 @@ public class AwsPatternTest {
 
         // Verify key CloudFront fields are defined in the pattern
         String[] expectedFields = {
-            "[aws][cloudfront][x_edge_location]",
-            "[destination][bytes]",
-            "[source][ip]",
-            "[source][port]",
-            "[source][bytes]",
-            "[http][request][method]",
-            "[url][domain]",
-            "[url][path]",
-            "[url][query]",
-            "[http][response][status_code]",
-            "[http][request][referrer]",
-            "[user_agent][original]",
-            "[aws][cloudfront][x_edge_result_type]",
-            "[aws][cloudfront][x_edge_request_id]",
-            "[network][protocol]",
-            "[aws][cloudfront][time_taken]",
-            "[network][forwarded_ip]",
-            "[aws][cloudfront][ssl_protocol]",
-            "[tls][cipher]",
-            "[aws][cloudfront][time_to_first_byte]",
-            "[http][request][mime_type]",
-            "[aws][cloudfront][http][request][size]"
+            "aws.cloudfront.x_edge_location",
+            "destination.bytes",
+            "source.ip",
+            "source.port",
+            "source.bytes",
+            "http.request.method",
+            "url.domain",
+            "url.path",
+            "url.query",
+            "http.response.status_code",
+            "http.request.referrer",
+            "user_agent.original",
+            "aws.cloudfront.x_edge_result_type",
+            "aws.cloudfront.x_edge_request_id",
+            "network.protocol",
+            "aws.cloudfront.time_taken",
+            "network.forwarded_ip",
+            "aws.cloudfront.ssl_protocol",
+            "tls.cipher",
+            "aws.cloudfront.time_to_first_byte",
+            "http.request.mime_type",
+            "aws.cloudfront.http.request.size"
         };
 
         for (String field : expectedFields) {
@@ -335,13 +335,13 @@ public class AwsPatternTest {
         Map<String, Object> captured = match.capture();
 
         // All S3_REQUEST_LINE fields should be strings
-        Object method = captured.get("[http][request][method]");
+        Object method = captured.get("http.request.method");
         assertTrue("Method should be String", method instanceof String);
 
-        Object url = captured.get("[url][original]");
+        Object url = captured.get("url.original");
         assertTrue("URL should be String", url instanceof String);
 
-        Object version = captured.get("[http][version]");
+        Object version = captured.get("http.version");
         assertTrue("HTTP version should be String", version instanceof String);
     }
 
@@ -353,10 +353,10 @@ public class AwsPatternTest {
 
         // Verify integer type conversions are defined
         assertTrue("S3_ACCESS_LOG should have :integer type for status_code",
-                s3AccessLog.contains("[http][response][status_code]:integer"));
+                s3AccessLog.contains("http.response.status_code:integer"));
         assertTrue("S3_ACCESS_LOG should have :integer type for bytes_sent",
-                s3AccessLog.contains("[aws][s3access][bytes_sent]:integer"));
+                s3AccessLog.contains("aws.s3access.bytes_sent:integer"));
         assertTrue("S3_ACCESS_LOG should have :integer type for object_size",
-                s3AccessLog.contains("[aws][s3access][object_size]:integer"));
+                s3AccessLog.contains("aws.s3access.object_size:integer"));
     }
 }

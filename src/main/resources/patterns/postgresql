@@ -11,4 +11,4 @@
 # Note: Due to grok pattern compiler limitations with escaped brackets containing
 # pattern references, we use raw regex for username and connid fields.
 # These cannot use ECS-style nested field names like [user][name] or [postgresql][log][connection_id].
-POSTGRESQL %{TIMESTAMP_ISO8601:timestamp} %{TZ:[event][timezone]} (?<username>[^\[]+)\[(?<connid>\d+)\]
+POSTGRESQL %{TIMESTAMP_ISO8601:log_timestamp} %{TZ:event.timezone} (?<username>[^\[]+)\[(?<connid>\d+)\]

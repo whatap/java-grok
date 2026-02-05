@@ -50,7 +50,7 @@ public class ApacheDataTypeTest {
 
     Assertions.assertThat(map).doesNotContainKey("Error");
     Instant ts = ZonedDateTime.of(2004, 3, 7, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
-    assertEquals(map.get("timestamp"), ts);
+    assertEquals(ts, map.get("timestamp"));
     assertEquals(map.get("response"), 401);
     assertEquals(map.get("ident"), Boolean.FALSE);
     assertEquals(map.get("httpversion"), 1.1f);
@@ -73,7 +73,7 @@ public class ApacheDataTypeTest {
     Assertions.assertThat(map).doesNotContainKey("Error");
 
     Instant ts = ZonedDateTime.of(2004, 3, 7, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
-    assertEquals(map.get("timestamp"), ts);
+    assertEquals(ts, map.get("timestamp"));
     assertEquals(map.get("response"), 401);
     assertEquals(map.get("ident"), Boolean.FALSE);
     assertEquals(map.get("httpversion"), 1.1f);

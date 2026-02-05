@@ -302,32 +302,47 @@ public class FirewallPatternTest {
         fail("NETSCREENSESSIONLOG should throw PatternSyntaxException due to invalid named group syntax");
     }
 
-    @Test(expected = PatternSyntaxException.class)
-    public void testCiscoFW106001_hasCompilationIssue() throws GrokException {
-        // Cisco ASA patterns use ECS-style field references in their definitions
-        compiler.compile("%{CISCOFW106001}");
-        fail("CISCOFW106001 should throw PatternSyntaxException due to ECS field references");
+    @Test
+    public void testCiscoFW106001_compiles() throws GrokException {
+        // Cisco ASA patterns now use dot notation field names
+        Grok grok = compiler.compile("%{CISCOFW106001}");
+        assertNotNull("CISCOFW106001 should compile successfully with dot notation field names", grok);
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testIptables_hasCompilationIssue() throws GrokException {
-        // IPTABLES pattern uses nested ECS-style field names
-        compiler.compile("%{IPTABLES}");
-        fail("IPTABLES should throw PatternSyntaxException due to ECS field references");
+        // IPTABLES pattern has duplicate named groups causing IllegalStateException
+        try {
+            compiler.compile("%{IPTABLES}");
+            fail("IPTABLES should throw an exception due to duplicate named groups");
+        } catch (IllegalStateException | java.util.regex.PatternSyntaxException e) {
+            // Expected: duplicate named groups cause compilation issues
+            assertNotNull(e.getMessage());
+        }
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testShorewall_hasCompilationIssue() throws GrokException {
-        // SHOREWALL pattern includes IPTABLES which has ECS field issues
-        compiler.compile("%{SHOREWALL}");
-        fail("SHOREWALL should throw PatternSyntaxException due to IPTABLES dependency");
+        // SHOREWALL pattern includes IPTABLES which has duplicate named groups
+        try {
+            compiler.compile("%{SHOREWALL}");
+            fail("SHOREWALL should throw an exception due to IPTABLES duplicate named groups");
+        } catch (IllegalStateException | java.util.regex.PatternSyntaxException e) {
+            // Expected: inherits duplicate named group issues from IPTABLES
+            assertNotNull(e.getMessage());
+        }
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testSFW2_hasCompilationIssue() throws GrokException {
-        // SFW2 pattern includes IPTABLES which has ECS field issues
-        compiler.compile("%{SFW2}");
-        fail("SFW2 should throw PatternSyntaxException due to IPTABLES dependency");
+        // SFW2 pattern includes IPTABLES which has duplicate named groups
+        try {
+            compiler.compile("%{SFW2}");
+            fail("SFW2 should throw an exception due to IPTABLES duplicate named groups");
+        } catch (IllegalStateException | java.util.regex.PatternSyntaxException e) {
+            // Expected: inherits duplicate named group issues from IPTABLES
+            assertNotNull(e.getMessage());
+        }
     }
 
     // ========================================
@@ -342,22 +357,22 @@ public class FirewallPatternTest {
         assertNotNull("NETSCREENSESSIONLOG pattern should exist", pattern);
 
         // Verify pattern contains expected field names (even if they cause compilation errors)
-        assertTrue("Pattern should reference [observer][hostname]",
-            pattern.contains("[observer][hostname]"));
-        assertTrue("Pattern should reference [observer][product]",
-            pattern.contains("[observer][product]"));
-        assertTrue("Pattern should reference [netscreen][device_id]",
-            pattern.contains("[netscreen][device_id]"));
-        assertTrue("Pattern should reference [event][code]",
-            pattern.contains("[event][code]"));
-        assertTrue("Pattern should reference [source][bytes]",
-            pattern.contains("[source][bytes]"));
-        assertTrue("Pattern should reference [destination][bytes]",
-            pattern.contains("[destination][bytes]"));
-        assertTrue("Pattern should reference [source][address]",
-            pattern.contains("[source][address]"));
-        assertTrue("Pattern should reference [destination][address]",
-            pattern.contains("[destination][address]"));
+        assertTrue("Pattern should reference observer.hostname",
+            pattern.contains("observer.hostname"));
+        assertTrue("Pattern should reference observer.product",
+            pattern.contains("observer.product"));
+        assertTrue("Pattern should reference netscreen.device_id",
+            pattern.contains("netscreen.device_id"));
+        assertTrue("Pattern should reference event.code",
+            pattern.contains("event.code"));
+        assertTrue("Pattern should reference source.bytes",
+            pattern.contains("source.bytes"));
+        assertTrue("Pattern should reference destination.bytes",
+            pattern.contains("destination.bytes"));
+        assertTrue("Pattern should reference source.address",
+            pattern.contains("source.address"));
+        assertTrue("Pattern should reference destination.address",
+            pattern.contains("destination.address"));
     }
 
     @Test
@@ -369,20 +384,20 @@ public class FirewallPatternTest {
 
         // Verify pattern contains expected field names
         // Note: IP addresses are in IPTABLES4_PART and IPTABLES6_PART, not directly in IPTABLES
-        assertTrue("Pattern should reference [observer][ingress][interface][name]",
-            pattern.contains("[observer][ingress][interface][name]"));
-        assertTrue("Pattern should reference [observer][egress][interface][name]",
-            pattern.contains("[observer][egress][interface][name]"));
-        assertTrue("Pattern should reference [destination][mac]",
-            pattern.contains("[destination][mac]"));
-        assertTrue("Pattern should reference [source][mac]",
-            pattern.contains("[source][mac]"));
-        assertTrue("Pattern should reference [network][transport]",
-            pattern.contains("[network][transport]"));
-        assertTrue("Pattern should reference [source][port]",
-            pattern.contains("[source][port]"));
-        assertTrue("Pattern should reference [destination][port]",
-            pattern.contains("[destination][port]"));
+        assertTrue("Pattern should reference observer.ingress.interface.name",
+            pattern.contains("observer.ingress.interface.name"));
+        assertTrue("Pattern should reference observer.egress.interface.name",
+            pattern.contains("observer.egress.interface.name"));
+        assertTrue("Pattern should reference destination.mac",
+            pattern.contains("destination.mac"));
+        assertTrue("Pattern should reference source.mac",
+            pattern.contains("source.mac"));
+        assertTrue("Pattern should reference network.transport",
+            pattern.contains("network.transport"));
+        assertTrue("Pattern should reference source.port",
+            pattern.contains("source.port"));
+        assertTrue("Pattern should reference destination.port",
+            pattern.contains("destination.port"));
         assertTrue("Pattern should reference IPTABLES4_PART or IPTABLES6_PART",
             pattern.contains("IPTABLES4_PART") || pattern.contains("IPTABLES6_PART"));
     }
@@ -395,14 +410,14 @@ public class FirewallPatternTest {
         assertNotNull("IPTABLES4_PART pattern should exist", pattern);
 
         // Verify IPv4-specific fields
-        assertTrue("Pattern should reference [source][ip]",
-            pattern.contains("[source][ip]"));
-        assertTrue("Pattern should reference [destination][ip]",
-            pattern.contains("[destination][ip]"));
-        assertTrue("Pattern should reference [iptables][length]",
-            pattern.contains("[iptables][length]"));
-        assertTrue("Pattern should reference [iptables][ttl]",
-            pattern.contains("[iptables][ttl]"));
+        assertTrue("Pattern should reference source.ip",
+            pattern.contains("source.ip"));
+        assertTrue("Pattern should reference destination.ip",
+            pattern.contains("destination.ip"));
+        assertTrue("Pattern should reference iptables.length",
+            pattern.contains("iptables.length"));
+        assertTrue("Pattern should reference iptables.ttl",
+            pattern.contains("iptables.ttl"));
     }
 
     @Test
@@ -413,14 +428,14 @@ public class FirewallPatternTest {
         assertNotNull("IPTABLES6_PART pattern should exist", pattern);
 
         // Verify IPv6-specific fields
-        assertTrue("Pattern should reference [source][ip]",
-            pattern.contains("[source][ip]"));
-        assertTrue("Pattern should reference [destination][ip]",
-            pattern.contains("[destination][ip]"));
-        assertTrue("Pattern should reference [iptables][length]",
-            pattern.contains("[iptables][length]"));
-        assertTrue("Pattern should reference [iptables][ttl]",
-            pattern.contains("[iptables][ttl]"));
+        assertTrue("Pattern should reference source.ip",
+            pattern.contains("source.ip"));
+        assertTrue("Pattern should reference destination.ip",
+            pattern.contains("destination.ip"));
+        assertTrue("Pattern should reference iptables.length",
+            pattern.contains("iptables.length"));
+        assertTrue("Pattern should reference iptables.ttl",
+            pattern.contains("iptables.ttl"));
     }
 
     @Test
@@ -431,14 +446,14 @@ public class FirewallPatternTest {
         assertNotNull("CISCOFW302013_302014_302015_302016 pattern should exist", pattern);
 
         // Verify pattern contains expected Cisco ASA fields
-        assertTrue("Pattern should reference [cisco][asa][outcome]",
-            pattern.contains("[cisco][asa][outcome]"));
-        assertTrue("Pattern should reference [cisco][asa][network][direction]",
-            pattern.contains("[cisco][asa][network][direction]"));
-        assertTrue("Pattern should reference [cisco][asa][network][transport]",
-            pattern.contains("[cisco][asa][network][transport]"));
-        assertTrue("Pattern should reference [cisco][asa][connection_id]",
-            pattern.contains("[cisco][asa][connection_id]"));
+        assertTrue("Pattern should reference cisco.asa.outcome",
+            pattern.contains("cisco.asa.outcome"));
+        assertTrue("Pattern should reference cisco.asa.network.direction",
+            pattern.contains("cisco.asa.network.direction"));
+        assertTrue("Pattern should reference cisco.asa.network.transport",
+            pattern.contains("cisco.asa.network.transport"));
+        assertTrue("Pattern should reference cisco.asa.connection_id",
+            pattern.contains("cisco.asa.connection_id"));
     }
 
     // ========================================

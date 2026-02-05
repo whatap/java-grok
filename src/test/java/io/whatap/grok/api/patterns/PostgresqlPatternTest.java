@@ -40,7 +40,7 @@ public class PostgresqlPatternTest {
 
         // Verify the pattern contains expected field references
         assertTrue("Pattern should contain timestamp", patternDef.contains("timestamp"));
-        assertTrue("Pattern should contain [event][timezone]", patternDef.contains("[event][timezone]"));
+        assertTrue("Pattern should contain event.timezone", patternDef.contains("event.timezone"));
         assertTrue("Pattern should contain username", patternDef.contains("username"));
         assertTrue("Pattern should contain connid", patternDef.contains("connid"));
     }
@@ -64,8 +64,8 @@ public class PostgresqlPatternTest {
 
         assertNotNull("Failed to match basic PostgreSQL log", captured);
 
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("EST", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("EST", captured.get("event.timezone"));
         assertEquals("postgres user@mydb", captured.get("username"));
         assertEquals("12345", captured.get("connid"));
     }
@@ -80,8 +80,8 @@ public class PostgresqlPatternTest {
 
         assertNotNull("Failed to match PostgreSQL error log", captured);
 
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("UTC", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("UTC", captured.get("event.timezone"));
         assertEquals("admin system@production", captured.get("username"));
         assertEquals("67890", captured.get("connid"));
     }
@@ -106,7 +106,7 @@ public class PostgresqlPatternTest {
             Match match = grok.match(logLines[i]);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line with timezone: " + expectedTimezones[i], captured);
-            assertEquals(expectedTimezones[i], captured.get("[event][timezone]"));
+            assertEquals(expectedTimezones[i], captured.get("event.timezone"));
         }
     }
 
@@ -212,8 +212,8 @@ public class PostgresqlPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify all expected fields are present
-        assertTrue("Missing timestamp", captured.containsKey("timestamp"));
-        assertTrue("Missing [event][timezone]", captured.containsKey("[event][timezone]"));
+        assertTrue("Missing timestamp", captured.containsKey("log_timestamp"));
+        assertTrue("Missing event.timezone", captured.containsKey("event.timezone"));
         assertTrue("Missing username", captured.containsKey("username"));
         assertTrue("Missing connid", captured.containsKey("connid"));
     }
@@ -229,8 +229,8 @@ public class PostgresqlPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify field values are correctly extracted
-        assertEquals("Timestamp mismatch", "2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("Timezone mismatch", "EST", captured.get("[event][timezone]"));
+        assertEquals("Timestamp mismatch", "2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("Timezone mismatch", "EST", captured.get("event.timezone"));
         assertEquals("Username mismatch", "postgres user@mydb", captured.get("username"));
         assertEquals("Connection ID mismatch", "12345", captured.get("connid"));
     }
@@ -246,8 +246,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world SELECT statement", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("EST", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("EST", captured.get("event.timezone"));
         assertEquals("postgres user@mydb", captured.get("username"));
         assertEquals("12345", captured.get("connid"));
     }
@@ -261,8 +261,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world connection error", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("UTC", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("UTC", captured.get("event.timezone"));
         assertEquals("admin system@production", captured.get("username"));
         assertEquals("67890", captured.get("connid"));
     }
@@ -276,8 +276,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world database startup", captured);
-        assertEquals("2023-10-11 08:00:00", captured.get("timestamp"));
-        assertEquals("UTC", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 08:00:00", captured.get("log_timestamp"));
+        assertEquals("UTC", captured.get("event.timezone"));
         assertEquals("postgres postgres@template1", captured.get("username"));
         assertEquals("1234", captured.get("connid"));
     }
@@ -291,8 +291,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world query execution", captured);
-        assertEquals("2023-10-11 14:30:22", captured.get("timestamp"));
-        assertEquals("PST", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 14:30:22", captured.get("log_timestamp"));
+        assertEquals("PST", captured.get("event.timezone"));
         assertEquals("appuser myapp@production_db", captured.get("username"));
         assertEquals("98765", captured.get("connid"));
     }
@@ -306,8 +306,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world FATAL error", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
-        assertEquals("EST", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("EST", captured.get("event.timezone"));
         assertEquals("postgres admin@postgres", captured.get("username"));
         assertEquals("11111", captured.get("connid"));
     }
@@ -321,8 +321,8 @@ public class PostgresqlPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real-world autovacuum log", captured);
-        assertEquals("2023-10-11 03:00:00", captured.get("timestamp"));
-        assertEquals("UTC", captured.get("[event][timezone]"));
+        assertEquals("2023-10-11 03:00:00", captured.get("log_timestamp"));
+        assertEquals("UTC", captured.get("event.timezone"));
         assertEquals("postgres autovacuum@mydb", captured.get("username"));
         assertEquals("55555", captured.get("connid"));
     }
@@ -346,8 +346,8 @@ public class PostgresqlPatternTest {
             Match match = grok.match(line);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + line, captured);
-            assertNotNull("Missing timestamp in: " + line, captured.get("timestamp"));
-            assertNotNull("Missing timezone in: " + line, captured.get("[event][timezone]"));
+            assertNotNull("Missing timestamp in: " + line, captured.get("log_timestamp"));
+            assertNotNull("Missing timezone in: " + line, captured.get("event.timezone"));
             assertNotNull("Missing username in: " + line, captured.get("username"));
             assertNotNull("Missing connection ID in: " + line, captured.get("connid"));
         }
@@ -411,7 +411,7 @@ public class PostgresqlPatternTest {
             Match match = grok.match(logLines[i]);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log with timestamp: " + expectedTimestamps[i], captured);
-            assertEquals(expectedTimestamps[i], captured.get("timestamp"));
+            assertEquals(expectedTimestamps[i], captured.get("log_timestamp"));
         }
     }
 
@@ -429,8 +429,8 @@ public class PostgresqlPatternTest {
 
         // Count primary extracted fields (not intermediate pattern fields)
         int primaryFieldCount = 0;
-        if (captured.containsKey("timestamp")) primaryFieldCount++;
-        if (captured.containsKey("[event][timezone]")) primaryFieldCount++;
+        if (captured.containsKey("log_timestamp")) primaryFieldCount++;
+        if (captured.containsKey("event.timezone")) primaryFieldCount++;
         if (captured.containsKey("username")) primaryFieldCount++;
         if (captured.containsKey("connid")) primaryFieldCount++;
 
@@ -448,8 +448,8 @@ public class PostgresqlPatternTest {
         assertNotNull("Failed to match complete log line", captured);
 
         // Verify the pattern captured the essential fields
-        assertNotNull("Timestamp should be captured", captured.get("timestamp"));
-        assertNotNull("Timezone should be captured", captured.get("[event][timezone]"));
+        assertNotNull("Timestamp should be captured", captured.get("log_timestamp"));
+        assertNotNull("Timezone should be captured", captured.get("event.timezone"));
         assertNotNull("Username should be captured", captured.get("username"));
         assertNotNull("Connection ID should be captured", captured.get("connid"));
     }

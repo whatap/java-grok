@@ -142,20 +142,20 @@ public class NagiosPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
 
         String serviceAlert = patterns.get("NAGIOS_SERVICE_ALERT");
-        assertTrue("NAGIOS_SERVICE_ALERT should use [nagios][log][type]", serviceAlert.contains("[nagios][log][type]"));
-        assertTrue("NAGIOS_SERVICE_ALERT should use [host][hostname]", serviceAlert.contains("[host][hostname]"));
-        assertTrue("NAGIOS_SERVICE_ALERT should use [service][name]", serviceAlert.contains("[service][name]"));
-        assertTrue("NAGIOS_SERVICE_ALERT should use [service][state]", serviceAlert.contains("[service][state]"));
-        assertTrue("NAGIOS_SERVICE_ALERT should use [nagios][log][state_type]", serviceAlert.contains("[nagios][log][state_type]"));
-        assertTrue("NAGIOS_SERVICE_ALERT should use [nagios][log][attempt]:integer", serviceAlert.contains("[nagios][log][attempt]:integer"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use nagios.log.type", serviceAlert.contains("nagios.log.type"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use host.hostname", serviceAlert.contains("host.hostname"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use service.name", serviceAlert.contains("service.name"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use service.state", serviceAlert.contains("service.state"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use nagios.log.state_type", serviceAlert.contains("nagios.log.state_type"));
+        assertTrue("NAGIOS_SERVICE_ALERT should use nagios.log.attempt:integer", serviceAlert.contains("nagios.log.attempt:integer"));
 
         String serviceNotification = patterns.get("NAGIOS_SERVICE_NOTIFICATION");
-        assertTrue("NAGIOS_SERVICE_NOTIFICATION should use [user][name]", serviceNotification.contains("[user][name]"));
-        assertTrue("NAGIOS_SERVICE_NOTIFICATION should use [nagios][log][notification_command]", serviceNotification.contains("[nagios][log][notification_command]"));
+        assertTrue("NAGIOS_SERVICE_NOTIFICATION should use user.name", serviceNotification.contains("user.name"));
+        assertTrue("NAGIOS_SERVICE_NOTIFICATION should use nagios.log.notification_command", serviceNotification.contains("nagios.log.notification_command"));
 
         String timeperiodTransition = patterns.get("NAGIOS_TIMEPERIOD_TRANSITION");
-        assertTrue("NAGIOS_TIMEPERIOD_TRANSITION should use [nagios][log][period_from]:integer", timeperiodTransition.contains("[nagios][log][period_from]:integer"));
-        assertTrue("NAGIOS_TIMEPERIOD_TRANSITION should use [nagios][log][period_to]:integer", timeperiodTransition.contains("[nagios][log][period_to]:integer"));
+        assertTrue("NAGIOS_TIMEPERIOD_TRANSITION should use nagios.log.period_from:integer", timeperiodTransition.contains("nagios.log.period_from:integer"));
+        assertTrue("NAGIOS_TIMEPERIOD_TRANSITION should use nagios.log.period_to:integer", timeperiodTransition.contains("nagios.log.period_to:integer"));
     }
 
     // ========================================
@@ -226,17 +226,17 @@ public class NagiosPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
 
         String scheduleDowntime = patterns.get("NAGIOS_EC_LINE_SCHEDULE_HOST_DOWNTIME");
-        assertTrue("Should define start_time", scheduleDowntime.contains("[nagios][log][start_time]"));
-        assertTrue("Should define end_time", scheduleDowntime.contains("[nagios][log][end_time]"));
-        assertTrue("Should define fixed", scheduleDowntime.contains("[nagios][log][fixed]"));
-        assertTrue("Should define trigger_id", scheduleDowntime.contains("[nagios][log][trigger_id]"));
-        assertTrue("Should define duration with integer type", scheduleDowntime.contains("[nagios][log][duration]:integer"));
-        assertTrue("Should define user name", scheduleDowntime.contains("[user][name]"));
-        assertTrue("Should define comment", scheduleDowntime.contains("[nagios][log][comment]"));
+        assertTrue("Should define start_time", scheduleDowntime.contains("nagios.log.start_time"));
+        assertTrue("Should define end_time", scheduleDowntime.contains("nagios.log.end_time"));
+        assertTrue("Should define fixed", scheduleDowntime.contains("nagios.log.fixed"));
+        assertTrue("Should define trigger_id", scheduleDowntime.contains("nagios.log.trigger_id"));
+        assertTrue("Should define duration with integer type", scheduleDowntime.contains("nagios.log.duration:integer"));
+        assertTrue("Should define user name", scheduleDowntime.contains("user.name"));
+        assertTrue("Should define comment", scheduleDowntime.contains("nagios.log.comment"));
 
         String processServiceCheck = patterns.get("NAGIOS_EC_LINE_PROCESS_SERVICE_CHECK_RESULT");
-        assertTrue("Should define check_result", processServiceCheck.contains("[nagios][log][check_result]"));
-        assertTrue("Should define service state", processServiceCheck.contains("[service][state]"));
+        assertTrue("Should define check_result", processServiceCheck.contains("nagios.log.check_result"));
+        assertTrue("Should define service state", processServiceCheck.contains("service.state"));
     }
 
     @Test
@@ -246,17 +246,17 @@ public class NagiosPatternTest {
         // Verify integer type conversions are defined where expected
         String serviceAlert = patterns.get("NAGIOS_SERVICE_ALERT");
         assertTrue("Service alert should have integer attempt field",
-            serviceAlert.contains("[nagios][log][attempt]:integer"));
+            serviceAlert.contains("nagios.log.attempt:integer"));
 
         String hostAlert = patterns.get("NAGIOS_HOST_ALERT");
         assertTrue("Host alert should have integer attempt field",
-            hostAlert.contains("[nagios][log][attempt]:integer"));
+            hostAlert.contains("nagios.log.attempt:integer"));
 
         String timeperiod = patterns.get("NAGIOS_TIMEPERIOD_TRANSITION");
         assertTrue("Timeperiod should have integer period_from field",
-            timeperiod.contains("[nagios][log][period_from]:integer"));
+            timeperiod.contains("nagios.log.period_from:integer"));
         assertTrue("Timeperiod should have integer period_to field",
-            timeperiod.contains("[nagios][log][period_to]:integer"));
+            timeperiod.contains("nagios.log.period_to:integer"));
     }
 
     // ========================================

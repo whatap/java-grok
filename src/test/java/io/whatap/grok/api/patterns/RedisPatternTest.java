@@ -122,7 +122,7 @@ public class RedisPatternTest {
 
         assertNotNull("Failed to match Redis log", captured);
         assertEquals(12345, captured.get("redis_pid"));
-        assertEquals("11 Feb 22:14:15", captured.get("timestamp"));
+        assertEquals("11 Feb 22:14:15", captured.get("log_timestamp"));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class RedisPatternTest {
 
         // Verify field names
         assertTrue("Missing redis_pid", captured.containsKey("redis_pid"));
-        assertTrue("Missing timestamp", captured.containsKey("timestamp"));
+        assertTrue("Missing log_timestamp", captured.containsKey("log_timestamp"));
 
         assertEquals(12345, captured.get("redis_pid"));
     }
@@ -191,7 +191,7 @@ public class RedisPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match Redis monitor log", captured);
-        assertEquals("1612345678.123456", captured.get("timestamp"));
+        assertEquals("1612345678.123456", captured.get("log_timestamp"));
         assertEquals("0", captured.get("redis_db_id"));
         assertEquals("127.0.0.1", captured.get("client_ip"));
         assertEquals(6379, captured.get("client_port"));
@@ -303,14 +303,14 @@ public class RedisPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify all field names are captured correctly
-        assertTrue("Missing timestamp", captured.containsKey("timestamp"));
+        assertTrue("Missing log_timestamp", captured.containsKey("log_timestamp"));
         assertTrue("Missing redis_db_id", captured.containsKey("redis_db_id"));
         assertTrue("Missing client_ip", captured.containsKey("client_ip"));
         assertTrue("Missing client_port", captured.containsKey("client_port"));
         assertTrue("Missing redis_command", captured.containsKey("redis_command"));
         assertTrue("Missing redis_args", captured.containsKey("redis_args"));
 
-        assertEquals("1612345678.123456", captured.get("timestamp"));
+        assertEquals("1612345678.123456", captured.get("log_timestamp"));
         assertEquals("0", captured.get("redis_db_id"));
         assertEquals("127.0.0.1", captured.get("client_ip"));
         assertEquals(6379, captured.get("client_port"));
@@ -364,7 +364,7 @@ public class RedisPatternTest {
 
         assertNotNull("Failed to match real Redis startup log", captured);
         assertEquals(1234, captured.get("redis_pid"));
-        assertEquals("11 Feb 22:14:15", captured.get("timestamp"));
+        assertEquals("11 Feb 22:14:15", captured.get("log_timestamp"));
     }
 
     @Test
@@ -376,7 +376,7 @@ public class RedisPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real Redis GET command", captured);
-        assertEquals("1612345678.123456", captured.get("timestamp"));
+        assertEquals("1612345678.123456", captured.get("log_timestamp"));
         assertEquals("0", captured.get("redis_db_id"));
         assertEquals("127.0.0.1", captured.get("client_ip"));
         assertEquals(6379, captured.get("client_port"));
@@ -511,7 +511,7 @@ public class RedisPatternTest {
         Match monMatch = monlogGrok.match(monlog);
         Map<String, Object> monCapture = monMatch.capture();
         assertNotNull("Failed to match REDISMONLOG timestamp", monCapture);
-        assertEquals("1612345678.123456", monCapture.get("timestamp"));
+        assertEquals("1612345678.123456", monCapture.get("log_timestamp"));
     }
 
     @Test

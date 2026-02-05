@@ -138,7 +138,7 @@ public class SquidPatternTest {
         assertNotNull("Match should not be null", result);
         assertFalse("Match should not be empty", result.isEmpty());
 
-        assertEquals("1612345678.123", result.get("timestamp"));
+        assertEquals("1612345678.123", result.get("log_timestamp"));
         assertEquals("100", result.get("duration"));
         assertEquals("192.168.1.1", result.get("clientip"));
         assertEquals("TCP_MISS", result.get("action"));
@@ -163,7 +163,7 @@ public class SquidPatternTest {
         assertNotNull("Match should not be null", result);
         assertFalse("Match should not be empty", result.isEmpty());
 
-        assertEquals("1612345678.456", result.get("timestamp"));
+        assertEquals("1612345678.456", result.get("log_timestamp"));
         assertEquals("50", result.get("duration"));
         assertEquals("10.0.0.5", result.get("clientip"));
         assertEquals("TCP_HIT", result.get("action"));
@@ -186,7 +186,7 @@ public class SquidPatternTest {
         Map<String, Object> result = match.capture();
 
         assertNotNull("Match should not be null", result);
-        assertEquals("1612345680.789", result.get("timestamp"));
+        assertEquals("1612345680.789", result.get("log_timestamp"));
         assertEquals("200", result.get("duration"));
         assertEquals("172.16.0.10", result.get("clientip"));
         assertEquals("TCP_MISS", result.get("action"));
@@ -351,7 +351,7 @@ public class SquidPatternTest {
             Map<String, Object> result = match.capture();
 
             assertNotNull("Timestamp " + timestamp + " should match", result);
-            assertEquals("Timestamp should be extracted correctly", timestamp, result.get("timestamp"));
+            assertEquals("Timestamp should be extracted correctly", timestamp, result.get("log_timestamp"));
         }
     }
 

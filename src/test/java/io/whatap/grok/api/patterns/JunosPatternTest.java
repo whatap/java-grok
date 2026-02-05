@@ -15,8 +15,7 @@ import static org.junit.Assert.*;
  * Test suite for Junos (Juniper SRX) pattern parsing.
  * Tests RT_FLOW patterns for session events with ECS-style field extraction.
  *
- * <p>IMPORTANT: The junos pattern file has a trailing space in its filename: "junos "
- * This must be accounted for when registering patterns from classpath.
+ * <p>Junos patterns are registered from the classpath at /patterns/junos.
  *
  * <p>Junos patterns include:
  * <ul>
@@ -60,8 +59,7 @@ public class JunosPatternTest {
     public void setup() throws GrokException {
         compiler = GrokCompiler.newInstance();
         compiler.registerDefaultPatterns();
-        // IMPORTANT: The junos file has a trailing space in its filename
-        compiler.registerPatternFromClasspath("/patterns/junos ");
+        compiler.registerPatternFromClasspath("/patterns/junos");
     }
 
     // ========== Pattern Registration Tests ==========
@@ -199,11 +197,11 @@ public class JunosPatternTest {
         String rtFlow1 = patterns.get("RT_FLOW1");
 
         // Verify key ECS field names are defined in the pattern
-        assertTrue("Should contain [juniper][srx][tag]", rtFlow1.contains("[juniper][srx][tag]"));
-        assertTrue("Should contain [source][ip]", rtFlow1.contains("[source][ip]"));
-        assertTrue("Should contain [destination][ip]", rtFlow1.contains("[destination][ip]"));
-        assertTrue("Should contain [network][iana_number]", rtFlow1.contains("[network][iana_number]"));
-        assertTrue("Should contain [rule][name]", rtFlow1.contains("[rule][name]"));
+        assertTrue("Should contain juniper.srx.tag", rtFlow1.contains("juniper.srx.tag"));
+        assertTrue("Should contain source.ip", rtFlow1.contains("source.ip"));
+        assertTrue("Should contain destination.ip", rtFlow1.contains("destination.ip"));
+        assertTrue("Should contain network.iana_number", rtFlow1.contains("network.iana_number"));
+        assertTrue("Should contain rule.name", rtFlow1.contains("rule.name"));
     }
 
     @Test
@@ -212,10 +210,10 @@ public class JunosPatternTest {
         String rtFlow1 = patterns.get("RT_FLOW1");
 
         // Verify integer type casting is specified for numeric fields
-        assertTrue("Should cast [source][port] to integer", rtFlow1.contains("[source][port]:integer"));
-        assertTrue("Should cast [destination][port] to integer", rtFlow1.contains("[destination][port]:integer"));
-        assertTrue("Should cast [source][bytes] to integer", rtFlow1.contains("[source][bytes]:integer"));
-        assertTrue("Should cast [destination][bytes] to integer", rtFlow1.contains("[destination][bytes]:integer"));
+        assertTrue("Should cast source.port to integer", rtFlow1.contains("source.port:integer"));
+        assertTrue("Should cast destination.port to integer", rtFlow1.contains("destination.port:integer"));
+        assertTrue("Should cast source.bytes to integer", rtFlow1.contains("source.bytes:integer"));
+        assertTrue("Should cast destination.bytes to integer", rtFlow1.contains("destination.bytes:integer"));
     }
 
     // ========== RT_FLOW2 Pattern Tests ==========
@@ -238,10 +236,10 @@ public class JunosPatternTest {
         String rtFlow2 = patterns.get("RT_FLOW2");
 
         // Verify key ECS field names for session created events
-        assertTrue("Should contain [juniper][srx][tag]", rtFlow2.contains("[juniper][srx][tag]"));
-        assertTrue("Should contain [source][ip]", rtFlow2.contains("[source][ip]"));
-        assertTrue("Should contain [destination][ip]", rtFlow2.contains("[destination][ip]"));
-        assertTrue("Should contain [juniper][srx][session_id]", rtFlow2.contains("[juniper][srx][session_id]"));
+        assertTrue("Should contain juniper.srx.tag", rtFlow2.contains("juniper.srx.tag"));
+        assertTrue("Should contain source.ip", rtFlow2.contains("source.ip"));
+        assertTrue("Should contain destination.ip", rtFlow2.contains("destination.ip"));
+        assertTrue("Should contain juniper.srx.session_id", rtFlow2.contains("juniper.srx.session_id"));
     }
 
     @Test
@@ -250,12 +248,12 @@ public class JunosPatternTest {
         String rtFlow2 = patterns.get("RT_FLOW2");
 
         // Verify NAT-related fields
-        assertTrue("Should contain [source][nat][ip]", rtFlow2.contains("[source][nat][ip]"));
-        assertTrue("Should contain [destination][nat][ip]", rtFlow2.contains("[destination][nat][ip]"));
-        assertTrue("Should contain [juniper][srx][src_nat_rule_name]",
-                rtFlow2.contains("[juniper][srx][src_nat_rule_name]"));
-        assertTrue("Should contain [juniper][srx][dst_nat_rule_name]",
-                rtFlow2.contains("[juniper][srx][dst_nat_rule_name]"));
+        assertTrue("Should contain source.nat.ip", rtFlow2.contains("source.nat.ip"));
+        assertTrue("Should contain destination.nat.ip", rtFlow2.contains("destination.nat.ip"));
+        assertTrue("Should contain juniper.srx.src_nat_rule_name",
+                rtFlow2.contains("juniper.srx.src_nat_rule_name"));
+        assertTrue("Should contain juniper.srx.dst_nat_rule_name",
+                rtFlow2.contains("juniper.srx.dst_nat_rule_name"));
     }
 
     // ========== RT_FLOW3 Pattern Tests ==========
@@ -278,11 +276,11 @@ public class JunosPatternTest {
         String rtFlow3 = patterns.get("RT_FLOW3");
 
         // Verify key ECS field names for session denied events
-        assertTrue("Should contain [juniper][srx][tag]", rtFlow3.contains("[juniper][srx][tag]"));
-        assertTrue("Should contain [source][ip]", rtFlow3.contains("[source][ip]"));
-        assertTrue("Should contain [destination][ip]", rtFlow3.contains("[destination][ip]"));
-        assertTrue("Should contain [observer][ingress][zone]", rtFlow3.contains("[observer][ingress][zone]"));
-        assertTrue("Should contain [observer][egress][zone]", rtFlow3.contains("[observer][egress][zone]"));
+        assertTrue("Should contain juniper.srx.tag", rtFlow3.contains("juniper.srx.tag"));
+        assertTrue("Should contain source.ip", rtFlow3.contains("source.ip"));
+        assertTrue("Should contain destination.ip", rtFlow3.contains("destination.ip"));
+        assertTrue("Should contain observer.ingress.zone", rtFlow3.contains("observer.ingress.zone"));
+        assertTrue("Should contain observer.egress.zone", rtFlow3.contains("observer.egress.zone"));
     }
 
     @Test
@@ -291,8 +289,8 @@ public class JunosPatternTest {
         String rtFlow3 = patterns.get("RT_FLOW3");
 
         // Verify protocol and rule fields
-        assertTrue("Should contain [network][iana_number]", rtFlow3.contains("[network][iana_number]"));
-        assertTrue("Should contain [rule][name]", rtFlow3.contains("[rule][name]"));
+        assertTrue("Should contain network.iana_number", rtFlow3.contains("network.iana_number"));
+        assertTrue("Should contain rule.name", rtFlow3.contains("rule.name"));
     }
 
     // ========== Pattern Structure Tests ==========
@@ -303,11 +301,11 @@ public class JunosPatternTest {
         String rtFlow1 = patterns.get("RT_FLOW1");
 
         // Verify all major field categories are present
-        assertTrue("Should contain service name field", rtFlow1.contains("[juniper][srx][service_name]"));
-        assertTrue("Should contain NAT fields", rtFlow1.contains("[source][nat]"));
-        assertTrue("Should contain zone fields", rtFlow1.contains("[observer][ingress][zone]"));
-        assertTrue("Should contain byte count fields", rtFlow1.contains("[source][bytes]"));
-        assertTrue("Should contain elapsed time", rtFlow1.contains("[juniper][srx][elapsed_time]"));
+        assertTrue("Should contain service name field", rtFlow1.contains("juniper.srx.service_name"));
+        assertTrue("Should contain NAT fields", rtFlow1.contains("source.nat"));
+        assertTrue("Should contain zone fields", rtFlow1.contains("observer.ingress.zone"));
+        assertTrue("Should contain byte count fields", rtFlow1.contains("source.bytes"));
+        assertTrue("Should contain elapsed time", rtFlow1.contains("juniper.srx.elapsed_time"));
     }
 
     @Test
@@ -317,8 +315,8 @@ public class JunosPatternTest {
 
         // Verify RT_FLOW2 specific structure
         assertTrue("Should reference RT_FLOW_TAG", rtFlow2.contains("RT_FLOW_TAG"));
-        assertTrue("Should have service name field", rtFlow2.contains("[juniper][srx][service_name]"));
-        assertTrue("Should have session ID field", rtFlow2.contains("[juniper][srx][session_id]"));
+        assertTrue("Should have service name field", rtFlow2.contains("juniper.srx.service_name"));
+        assertTrue("Should have session ID field", rtFlow2.contains("juniper.srx.session_id"));
     }
 
     @Test
@@ -328,8 +326,8 @@ public class JunosPatternTest {
 
         // Verify RT_FLOW3 specific structure
         assertTrue("Should reference RT_FLOW_TAG", rtFlow3.contains("RT_FLOW_TAG"));
-        assertTrue("Should have service name field", rtFlow3.contains("[juniper][srx][service_name]"));
-        assertTrue("Should have zone fields", rtFlow3.contains("[observer][ingress][zone]"));
+        assertTrue("Should have service name field", rtFlow3.contains("juniper.srx.service_name"));
+        assertTrue("Should have zone fields", rtFlow3.contains("observer.ingress.zone"));
     }
 
     // ========== Pattern Dependency Tests ==========

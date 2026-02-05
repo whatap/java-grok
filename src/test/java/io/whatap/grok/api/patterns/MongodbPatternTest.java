@@ -61,9 +61,9 @@ public class MongodbPatternTest {
 
         assertNotNull("Failed to match MongoDB 2.x log", captured);
 
-        assertEquals("Oct 11 22:14:15.003", captured.get("timestamp"));
-        assertEquals("conn1", captured.get("[mongodb][component]"));
-        assertEquals("insert mydb.users", captured.get("message"));
+        assertEquals("Oct 11 22:14:15.003", captured.get("log_timestamp"));
+        assertEquals("conn1", captured.get("mongodb.component"));
+        assertEquals("insert mydb.users", captured.get("log_message"));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MongodbPatternTest {
             Match match = grok.match(logLines[i]);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + logLines[i], captured);
-            assertEquals(expectedComponents[i], captured.get("[mongodb][component]"));
+            assertEquals(expectedComponents[i], captured.get("mongodb.component"));
         }
     }
 
@@ -189,11 +189,11 @@ public class MongodbPatternTest {
 
         assertNotNull("Failed to match MongoDB 3.x log", captured);
 
-        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("timestamp"));
-        assertEquals("I", captured.get("[log][level]"));
-        assertEquals("NETWORK", captured.get("[mongodb][component]"));
-        assertEquals("listener", captured.get("[mongodb][context]"));
-        assertEquals("connection accepted from 127.0.0.1:12345 #1", captured.get("message"));
+        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("log_timestamp"));
+        assertEquals("I", captured.get("log.level"));
+        assertEquals("NETWORK", captured.get("mongodb.component"));
+        assertEquals("listener", captured.get("mongodb.context"));
+        assertEquals("connection accepted from 127.0.0.1:12345 #1", captured.get("log_message"));
     }
 
     @Test
@@ -206,11 +206,11 @@ public class MongodbPatternTest {
 
         assertNotNull("Failed to match MongoDB 3.x log without component", captured);
 
-        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("timestamp"));
-        assertEquals("I", captured.get("[log][level]"));
-        assertNull("Component should be null for dash", captured.get("[mongodb][component]"));
-        assertEquals("conn1", captured.get("[mongodb][context]"));
-        assertEquals("command test.$cmd", captured.get("message"));
+        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("log_timestamp"));
+        assertEquals("I", captured.get("log.level"));
+        assertNull("Component should be null for dash", captured.get("mongodb.component"));
+        assertEquals("conn1", captured.get("mongodb.context"));
+        assertEquals("command test.$cmd", captured.get("log_message"));
     }
 
     @Test
@@ -223,11 +223,11 @@ public class MongodbPatternTest {
 
         assertNotNull("Failed to match MongoDB 3.x log without context", captured);
 
-        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("timestamp"));
-        assertEquals("W", captured.get("[log][level]"));
-        assertEquals("CONTROL", captured.get("[mongodb][component]"));
-        assertNull("Context should be null", captured.get("[mongodb][context]"));
-        assertEquals("MongoDB starting", captured.get("message"));
+        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("log_timestamp"));
+        assertEquals("W", captured.get("log.level"));
+        assertEquals("CONTROL", captured.get("mongodb.component"));
+        assertNull("Context should be null", captured.get("mongodb.context"));
+        assertEquals("MongoDB starting", captured.get("log_message"));
     }
 
     @Test
@@ -249,8 +249,8 @@ public class MongodbPatternTest {
             Match match = grok.match(logLines[i]);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + logLines[i], captured);
-            assertEquals(expectedLevels[i], captured.get("[log][level]"));
-            assertEquals(expectedComponents[i], captured.get("[mongodb][component]"));
+            assertEquals(expectedLevels[i], captured.get("log.level"));
+            assertEquals(expectedComponents[i], captured.get("mongodb.component"));
         }
     }
 
@@ -267,11 +267,11 @@ public class MongodbPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify ECS-style field names
-        assertTrue("Missing [mongodb][component]", captured.containsKey("[mongodb][component]"));
-        assertTrue("Missing timestamp", captured.containsKey("timestamp"));
-        assertTrue("Missing message", captured.containsKey("message"));
+        assertTrue("Missing mongodb.component", captured.containsKey("mongodb.component"));
+        assertTrue("Missing timestamp", captured.containsKey("log_timestamp"));
+        assertTrue("Missing message", captured.containsKey("log_message"));
 
-        assertEquals("conn1", captured.get("[mongodb][component]"));
+        assertEquals("conn1", captured.get("mongodb.component"));
     }
 
     @Test
@@ -285,15 +285,15 @@ public class MongodbPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify all ECS-style field names are captured correctly
-        assertTrue("Missing [log][level]", captured.containsKey("[log][level]"));
-        assertTrue("Missing [mongodb][component]", captured.containsKey("[mongodb][component]"));
-        assertTrue("Missing [mongodb][context]", captured.containsKey("[mongodb][context]"));
-        assertTrue("Missing timestamp", captured.containsKey("timestamp"));
-        assertTrue("Missing message", captured.containsKey("message"));
+        assertTrue("Missing log.level", captured.containsKey("log.level"));
+        assertTrue("Missing mongodb.component", captured.containsKey("mongodb.component"));
+        assertTrue("Missing mongodb.context", captured.containsKey("mongodb.context"));
+        assertTrue("Missing timestamp", captured.containsKey("log_timestamp"));
+        assertTrue("Missing message", captured.containsKey("log_message"));
 
-        assertEquals("I", captured.get("[log][level]"));
-        assertEquals("NETWORK", captured.get("[mongodb][component]"));
-        assertEquals("listener", captured.get("[mongodb][context]"));
+        assertEquals("I", captured.get("log.level"));
+        assertEquals("NETWORK", captured.get("mongodb.component"));
+        assertEquals("listener", captured.get("mongodb.context"));
     }
 
     @Test
@@ -307,24 +307,24 @@ public class MongodbPatternTest {
         assertNotNull("MONGO_SLOWQUERY should be defined", slowQueryPattern);
 
         // Verify ECS-style field names are present in the pattern definition
-        assertTrue("Should contain [mongodb][profile][op]",
-            slowQueryPattern.contains("[mongodb][profile][op]"));
-        assertTrue("Should contain [mongodb][database]",
-            slowQueryPattern.contains("[mongodb][database]"));
-        assertTrue("Should contain [mongodb][collection]",
-            slowQueryPattern.contains("[mongodb][collection]"));
-        assertTrue("Should contain [mongodb][query][original]",
-            slowQueryPattern.contains("[mongodb][query][original]"));
-        assertTrue("Should contain [mongodb][profile][ntoreturn]:integer",
-            slowQueryPattern.contains("[mongodb][profile][ntoreturn]:integer"));
-        assertTrue("Should contain [mongodb][profile][ntoskip]:integer",
-            slowQueryPattern.contains("[mongodb][profile][ntoskip]:integer"));
-        assertTrue("Should contain [mongodb][profile][nscanned]:integer",
-            slowQueryPattern.contains("[mongodb][profile][nscanned]:integer"));
-        assertTrue("Should contain [mongodb][profile][nreturned]:integer",
-            slowQueryPattern.contains("[mongodb][profile][nreturned]:integer"));
-        assertTrue("Should contain [mongodb][profile][duration]:integer",
-            slowQueryPattern.contains("[mongodb][profile][duration]:integer"));
+        assertTrue("Should contain mongodb.profile.op",
+            slowQueryPattern.contains("mongodb.profile.op"));
+        assertTrue("Should contain mongodb.database",
+            slowQueryPattern.contains("mongodb.database"));
+        assertTrue("Should contain mongodb.collection",
+            slowQueryPattern.contains("mongodb.collection"));
+        assertTrue("Should contain mongodb.query.original",
+            slowQueryPattern.contains("mongodb.query.original"));
+        assertTrue("Should contain mongodb.profile.ntoreturn:integer",
+            slowQueryPattern.contains("mongodb.profile.ntoreturn:integer"));
+        assertTrue("Should contain mongodb.profile.ntoskip:integer",
+            slowQueryPattern.contains("mongodb.profile.ntoskip:integer"));
+        assertTrue("Should contain mongodb.profile.nscanned:integer",
+            slowQueryPattern.contains("mongodb.profile.nscanned:integer"));
+        assertTrue("Should contain mongodb.profile.nreturned:integer",
+            slowQueryPattern.contains("mongodb.profile.nreturned:integer"));
+        assertTrue("Should contain mongodb.profile.duration:integer",
+            slowQueryPattern.contains("mongodb.profile.duration:integer"));
     }
 
     // ========== Real-world Log Examples ==========
@@ -333,14 +333,14 @@ public class MongodbPatternTest {
     public void testRealWorldMongo2xInsertLog() throws Exception {
         Grok grok = compiler.compile("%{MONGO_LOG}");
 
-        String logLine = "Oct 11 22:14:15.123 [conn1] insert mydb.users 1ms";
+        String logLine = "Oct 11 22:14:15 [conn1] insert mydb.users 1ms";
         Match match = grok.match(logLine);
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real MongoDB 2.x insert log", captured);
-        assertEquals("Oct 11 22:14:15.123", captured.get("timestamp"));
-        assertEquals("conn1", captured.get("[mongodb][component]"));
-        assertEquals("insert mydb.users 1ms", captured.get("message"));
+        assertEquals("Oct 11 22:14:15", captured.get("log_timestamp"));
+        assertEquals("conn1", captured.get("mongodb.component"));
+        assertEquals("insert mydb.users 1ms", captured.get("log_message"));
     }
 
     @Test
@@ -357,19 +357,19 @@ public class MongodbPatternTest {
         assertNotNull("MONGO_SLOWQUERY pattern should be defined", pattern);
 
         // Verify the pattern would extract these fields (if it could compile):
-        // [mongodb][profile][op] = "query"
-        // [mongodb][database] = "production"
-        // [mongodb][collection] = "orders"
-        // [mongodb][query][original] = "{ status: \"pending\", ... }"
-        // [mongodb][profile][ntoreturn] = 100 (integer)
-        // [mongodb][profile][ntoskip] = 0 (integer)
-        // [mongodb][profile][nscanned] = 10000 (integer)
-        // [mongodb][profile][nreturned] = 85 (integer)
-        // [mongodb][profile][duration] = 2500 (integer)
+        // mongodb.profile.op = "query"
+        // mongodb.database = "production"
+        // mongodb.collection = "orders"
+        // mongodb.query.original = "{ status: \"pending\", ... }"
+        // mongodb.profile.ntoreturn = 100 (integer)
+        // mongodb.profile.ntoskip = 0 (integer)
+        // mongodb.profile.nscanned = 10000 (integer)
+        // mongodb.profile.nreturned = 85 (integer)
+        // mongodb.profile.duration = 2500 (integer)
 
-        assertTrue("Pattern should contain operation capture", pattern.contains("[mongodb][profile][op]"));
-        assertTrue("Pattern should contain database capture", pattern.contains("[mongodb][database]"));
-        assertTrue("Pattern should contain collection capture", pattern.contains("[mongodb][collection]"));
+        assertTrue("Pattern should contain operation capture", pattern.contains("mongodb.profile.op"));
+        assertTrue("Pattern should contain database capture", pattern.contains("mongodb.database"));
+        assertTrue("Pattern should contain collection capture", pattern.contains("mongodb.collection"));
     }
 
     @Test
@@ -381,12 +381,12 @@ public class MongodbPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real MongoDB 3.x startup log", captured);
-        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("timestamp"));
-        assertEquals("I", captured.get("[log][level]"));
-        assertEquals("CONTROL", captured.get("[mongodb][component]"));
-        assertEquals("initandlisten", captured.get("[mongodb][context]"));
+        assertEquals("2023-10-11T22:14:15.003+0000", captured.get("log_timestamp"));
+        assertEquals("I", captured.get("log.level"));
+        assertEquals("CONTROL", captured.get("mongodb.component"));
+        assertEquals("initandlisten", captured.get("mongodb.context"));
         assertTrue("Message should contain startup info",
-            ((String) captured.get("message")).contains("MongoDB starting"));
+            ((String) captured.get("log_message")).contains("MongoDB starting"));
     }
 
     @Test
@@ -398,11 +398,11 @@ public class MongodbPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real MongoDB 3.x connection log", captured);
-        assertEquals("I", captured.get("[log][level]"));
-        assertEquals("NETWORK", captured.get("[mongodb][component]"));
-        assertEquals("listener", captured.get("[mongodb][context]"));
+        assertEquals("I", captured.get("log.level"));
+        assertEquals("NETWORK", captured.get("mongodb.component"));
+        assertEquals("listener", captured.get("mongodb.context"));
         assertTrue("Message should contain connection info",
-            ((String) captured.get("message")).contains("connection accepted"));
+            ((String) captured.get("log_message")).contains("connection accepted"));
     }
 
     @Test
@@ -414,27 +414,27 @@ public class MongodbPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real MongoDB 3.x replication log", captured);
-        assertEquals("I", captured.get("[log][level]"));
-        assertEquals("REPL", captured.get("[mongodb][component]"));
-        assertEquals("rsSync", captured.get("[mongodb][context]"));
+        assertEquals("I", captured.get("log.level"));
+        assertEquals("REPL", captured.get("mongodb.component"));
+        assertEquals("rsSync", captured.get("mongodb.context"));
         assertTrue("Message should contain replication info",
-            ((String) captured.get("message")).contains("replSet syncing"));
+            ((String) captured.get("log_message")).contains("replSet syncing"));
     }
 
     @Test
     public void testRealWorldMongo3xErrorLog() throws Exception {
         Grok grok = compiler.compile("%{MONGO3_LOG}");
 
-        String logLine = "2023-10-11T22:14:15.003+0000 E STORAGE  [conn1] WiredTiger error (28) [1234:5678], file size limit exceeded";
+        String logLine = "2023-10-11T22:14:15.003+0000 E STORAGE  [conn1] WiredTiger error (28) 1234:5678, file size limit exceeded";
         Match match = grok.match(logLine);
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real MongoDB 3.x error log", captured);
-        assertEquals("E", captured.get("[log][level]"));
-        assertEquals("STORAGE", captured.get("[mongodb][component]"));
-        assertEquals("conn1", captured.get("[mongodb][context]"));
+        assertEquals("E", captured.get("log.level"));
+        assertEquals("STORAGE", captured.get("mongodb.component"));
+        assertEquals("conn1", captured.get("mongodb.context"));
         assertTrue("Message should contain error info",
-            ((String) captured.get("message")).contains("WiredTiger error"));
+            ((String) captured.get("log_message")).contains("WiredTiger error"));
     }
 
     @Test
@@ -478,9 +478,9 @@ public class MongodbPatternTest {
             Match match = grok.match(line);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + line, captured);
-            assertEquals("I", captured.get("[log][level]"));
-            assertNotNull("Missing component in: " + line, captured.get("[mongodb][component]"));
-            assertNotNull("Missing context in: " + line, captured.get("[mongodb][context]"));
+            assertEquals("I", captured.get("log.level"));
+            assertNotNull("Missing component in: " + line, captured.get("mongodb.component"));
+            assertNotNull("Missing context in: " + line, captured.get("mongodb.context"));
         }
     }
 }

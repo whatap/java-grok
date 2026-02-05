@@ -409,7 +409,7 @@ public class EximPatternTest {
         // This is a known limitation similar to MCOLLECTIVE pattern.
         // Workaround: Use a simplified pattern without type modifier for testing.
 
-        String pidWorkaroundPattern = "\\[%{POSINT:[process][pid]}\\]";
+        String pidWorkaroundPattern = "\\[%{POSINT:process.pid}\\]";
         Grok grok = compiler.compile("%{EXIM_DATE:timestamp} " + pidWorkaroundPattern + " %{EXIM_MSGID:msgid}");
 
         String[] logLinesWithPids = {
@@ -424,7 +424,7 @@ public class EximPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + logLine, captured);
             // The workaround pattern captures to [process][pid] field as string
-            assertNotNull("Missing process.pid field", captured.get("[process][pid]"));
+            assertNotNull("Missing process.pid field", captured.get("process.pid"));
         }
     }
 
@@ -438,7 +438,7 @@ public class EximPatternTest {
 
         // Verify the pattern structure (even though it can't be compiled directly)
         assertTrue("EXIM_PID should contain POSINT reference", eximPidDef.contains("POSINT"));
-        assertTrue("EXIM_PID should capture to [process][pid] field", eximPidDef.contains("[process][pid]"));
+        assertTrue("EXIM_PID should capture to process.pid field", eximPidDef.contains("process.pid"));
         assertTrue("EXIM_PID should have :int type modifier", eximPidDef.contains(":int"));
         assertTrue("EXIM_PID should be wrapped in brackets", eximPidDef.contains("\\[") && eximPidDef.contains("\\]"));
     }

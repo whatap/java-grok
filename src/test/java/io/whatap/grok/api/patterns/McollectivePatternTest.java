@@ -71,9 +71,9 @@ public class McollectivePatternTest {
 
     // Workaround pattern: removes :integer type modifier to avoid regex compilation error
     // with ECS field names inside escaped brackets. Original pattern:
-    // ., \[%{TIMESTAMP_ISO8601:timestamp} #%{POSINT:[process][pid]:integer}\]%{SPACE}%{LOGLEVEL:[log][level]}
+    // ., \[%{TIMESTAMP_ISO8601:log_timestamp} #%{POSINT:[process][pid]:integer}\]%{SPACE}%{LOGLEVEL:[log][level]}
     private static final String MCOLLECTIVE_WORKAROUND =
-        "., \\[%{TIMESTAMP_ISO8601:timestamp} #%{POSINT:[process][pid]}\\]%{SPACE}%{LOGLEVEL:[log][level]}";
+        "., \\[%{TIMESTAMP_ISO8601:log_timestamp} #%{POSINT:process.pid}\\]%{SPACE}%{LOGLEVEL:log.level}";
 
     @Before
     public void setUp() throws Exception {
@@ -118,9 +118,9 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match MCollective log", captured);
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
-        assertEquals("12345", captured.get("[process][pid]"));
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
+        assertEquals("12345", captured.get("process.pid"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class McollectivePatternTest {
             Map<String, Object> captured = match.capture();
 
             assertNotNull("Failed to match log with level: " + expectedLevel, captured);
-            assertEquals("Wrong log level captured", expectedLevel, captured.get("[log][level]"));
+            assertEquals("Wrong log level captured", expectedLevel, captured.get("log.level"));
         }
     }
 
@@ -165,7 +165,7 @@ public class McollectivePatternTest {
             Map<String, Object> captured = match.capture();
 
             assertNotNull("Failed to match log with PID: " + expectedPid, captured);
-            assertEquals("Wrong PID captured", expectedPid, captured.get("[process][pid]"));
+            assertEquals("Wrong PID captured", expectedPid, captured.get("process.pid"));
             // Verify it's a valid integer
             Integer.parseInt(expectedPid);
         }
@@ -180,7 +180,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match log", captured);
-        Object pid = captured.get("[process][pid]");
+        Object pid = captured.get("process.pid");
         assertTrue("PID should be String type", pid instanceof String);
         assertEquals("12345", pid);
         // Verify it can be parsed as integer
@@ -197,7 +197,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match log with single space", captured);
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     @Test
@@ -210,7 +210,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match log with multiple spaces", captured);
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     @Test
@@ -228,7 +228,7 @@ public class McollectivePatternTest {
             Match match = grok.match(logLine);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp in: " + logLine, captured);
-            assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
+            assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
         }
     }
 
@@ -243,14 +243,14 @@ public class McollectivePatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify all ECS-style field names are present
-        assertTrue("Missing timestamp field", captured.containsKey("timestamp"));
-        assertTrue("Missing [process][pid] field", captured.containsKey("[process][pid]"));
-        assertTrue("Missing [log][level] field", captured.containsKey("[log][level]"));
+        assertTrue("Missing timestamp field", captured.containsKey("log_timestamp"));
+        assertTrue("Missing process.pid field", captured.containsKey("process.pid"));
+        assertTrue("Missing log.level field", captured.containsKey("log.level"));
 
         // Verify values
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
-        assertEquals("12345", captured.get("[process][pid]"));
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
+        assertEquals("12345", captured.get("process.pid"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     // ========== MCOLLECTIVEAUDIT Pattern Tests ==========
@@ -264,7 +264,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match MCollective audit log", captured);
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
     }
 
     @Test
@@ -283,7 +283,7 @@ public class McollectivePatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match audit timestamp: " + logLine, captured);
             String expectedTimestamp = logLine.substring(0, logLine.length() - 1); // Remove trailing colon
-            assertEquals(expectedTimestamp, captured.get("timestamp"));
+            assertEquals(expectedTimestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -297,7 +297,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match audit log with message", captured);
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("user=admin action=deploy target=server01", captured.get("message"));
     }
 
@@ -311,7 +311,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match audit log with colon", captured);
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
     }
 
     // ========== Real-world Log Examples ==========
@@ -331,9 +331,9 @@ public class McollectivePatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match real log: " + log, captured);
-            assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
-            assertTrue("Should contain PID", captured.containsKey("[process][pid]"));
-            assertTrue("Should contain log level", captured.containsKey("[log][level]"));
+            assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
+            assertTrue("Should contain PID", captured.containsKey("process.pid"));
+            assertTrue("Should contain log level", captured.containsKey("log.level"));
         }
     }
 
@@ -351,7 +351,7 @@ public class McollectivePatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match real audit log: " + log, captured);
-            assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
+            assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
             assertTrue("Should contain message", captured.containsKey("message"));
         }
     }
@@ -372,7 +372,7 @@ public class McollectivePatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log in sequence: " + log, captured);
-            assertEquals("PID should be consistent", "12345", captured.get("[process][pid]"));
+            assertEquals("PID should be consistent", "12345", captured.get("process.pid"));
         }
     }
 
@@ -387,7 +387,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match log with minimal PID", captured);
-        assertEquals("1", captured.get("[process][pid]"));
+        assertEquals("1", captured.get("process.pid"));
     }
 
     @Test
@@ -399,9 +399,9 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match log with large PID", captured);
-        assertEquals("2147483647", captured.get("[process][pid]"));
+        assertEquals("2147483647", captured.get("process.pid"));
         // Verify it's within integer range
-        Integer.parseInt((String) captured.get("[process][pid]"));
+        Integer.parseInt((String) captured.get("process.pid"));
     }
 
     @Test
@@ -420,7 +420,7 @@ public class McollectivePatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log with microseconds: " + log, captured);
             assertTrue("Should have timestamp with microseconds",
-                ((String)captured.get("timestamp")).contains("."));
+                ((String)captured.get("log_timestamp")).contains("."));
         }
     }
 
@@ -433,7 +433,7 @@ public class McollectivePatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match audit timestamp only", captured);
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
     }
 
     @Test
@@ -472,16 +472,16 @@ public class McollectivePatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify field types
-        Object timestamp = captured.get("timestamp");
+        Object timestamp = captured.get("log_timestamp");
         assertTrue("Timestamp should be String", timestamp instanceof String);
 
-        Object pid = captured.get("[process][pid]");
+        Object pid = captured.get("process.pid");
         assertTrue("PID should be String", pid instanceof String);
         // But should be parseable as integer
         assertNotNull("PID should not be null", pid);
         Integer.parseInt((String) pid);
 
-        Object level = captured.get("[log][level]");
+        Object level = captured.get("log.level");
         assertTrue("Log level should be String", level instanceof String);
     }
 
@@ -496,14 +496,14 @@ public class McollectivePatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Comprehensive field validation
-        assertEquals("Wrong timestamp", "2023-10-11T22:14:15.123456", captured.get("timestamp"));
-        assertEquals("Wrong PID", "12345", captured.get("[process][pid]"));
-        assertEquals("Wrong log level", "WARN", captured.get("[log][level]"));
+        assertEquals("Wrong timestamp", "2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
+        assertEquals("Wrong PID", "12345", captured.get("process.pid"));
+        assertEquals("Wrong log level", "WARN", captured.get("log.level"));
 
         // Verify all expected fields are present (may include intermediate named groups)
-        assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
-        assertTrue("Should contain PID", captured.containsKey("[process][pid]"));
-        assertTrue("Should contain log level", captured.containsKey("[log][level]"));
+        assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
+        assertTrue("Should contain PID", captured.containsKey("process.pid"));
+        assertTrue("Should contain log level", captured.containsKey("log.level"));
     }
 
     @Test
@@ -517,9 +517,9 @@ public class McollectivePatternTest {
         assertNotNull("Failed to match audit log", captured);
 
         // Verify timestamp field
-        assertEquals("Wrong timestamp", "2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("Wrong timestamp", "2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
 
         // Verify the primary field is present (may include intermediate named groups)
-        assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
+        assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
     }
 }

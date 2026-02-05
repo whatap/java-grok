@@ -254,13 +254,13 @@ public class GrokTest {
             + "Chrome/25.0.1364.152 Safari/537.22\"");
     Map<String, Object> map = gm.capture();
     assertEquals(
-        map.get("agent").toString(),
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) "
-            + "Chrome/25.0.1364.152 Safari/537.22");
-    assertEquals(map.get("clientip").toString(), "112.169.19.192");
-    assertEquals(map.get("httpversion").toString(), "1.1");
-    assertEquals(map.get("timestamp").toString(), "06/Mar/2013:01:36:30 +0900");
-    assertEquals(map.get("TIME").toString(), "01:36:30");
+            + "Chrome/25.0.1364.152 Safari/537.22",
+        map.get("agent").toString());
+    assertEquals("112.169.19.192", map.get("clientip").toString());
+    assertEquals("1.1", map.get("httpversion").toString());
+    assertEquals("06/Mar/2013:01:36:30 +0900", map.get("log_timestamp").toString());
+    assertEquals("01:36:30", map.get("TIME").toString());
 
     gm =
         grok.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET "
@@ -269,14 +269,14 @@ public class GrokTest {
             + "AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
     map = gm.capture();
     assertEquals(
-        map.get("agent").toString(),
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) "
-            + "Chrome/25.0.1364.152 Safari/537.22");
-    assertEquals(map.get("clientip").toString(), "112.169.19.192");
-    assertEquals(map.get("httpversion").toString(), "1.1");
-    assertEquals(map.get("request").toString(),
-        "/wp-content/plugins/easy-table/themes/default/style.css?ver=1.0");
-    assertEquals(map.get("TIME").toString(), "01:36:30");
+            + "Chrome/25.0.1364.152 Safari/537.22",
+        map.get("agent").toString());
+    assertEquals("112.169.19.192", map.get("clientip").toString());
+    assertEquals("1.1", map.get("httpversion").toString());
+    assertEquals("/wp-content/plugins/easy-table/themes/default/style.css?ver=1.0",
+        map.get("request").toString());
+    assertEquals("01:36:30", map.get("TIME").toString());
   }
 
   @Test
@@ -305,7 +305,7 @@ public class GrokTest {
       Match match = grok.match(day);
       Map<String, Object> map = match.capture();
       assertNotNull(map);
-      assertEquals(map.get("DAY"), days.get(counter));
+      assertEquals(days.get(counter), map.get("DAY"));
       counter++;
     }
   }
@@ -322,7 +322,7 @@ public class GrokTest {
         Match gm = grok.match(line);
         final Map<String, Object> map = gm.capture();
         Assertions.assertThat(map).doesNotContainKey("Error");
-        assertEquals(map.get("IP"), line);
+        assertEquals(line, map.get("IP"));
       }
     }
   }
@@ -340,7 +340,7 @@ public class GrokTest {
       Match match = grok.match(month);
       Map<String, Object> map = match.capture();
       assertNotNull(map);
-      assertEquals(map.get("MONTH"), months[counter]);
+      assertEquals(months[counter], map.get("MONTH"));
       counter++;
     }
   }
@@ -370,7 +370,7 @@ public class GrokTest {
       Match match = grok.match(time);
       Map<String, Object> map = match.capture();
       assertNotNull(map);
-      assertEquals(map.get("TIMESTAMP_ISO8601"), times[counter]);
+      assertEquals(times[counter], map.get("TIMESTAMP_ISO8601"));
       counter++;
     }
   }
@@ -413,7 +413,7 @@ public class GrokTest {
       Match match = grok.match(uri);
       Map<String, Object> map = match.capture();
       assertNotNull(map);
-      assertEquals(map.get("URI"), uris[counter]);
+      assertEquals(uris[counter], map.get("URI"));
       assertNotNull(map.get("URIPROTO"));
       counter++;
     }

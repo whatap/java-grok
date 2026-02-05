@@ -204,18 +204,18 @@ public class ZeekPatternTest {
         String zeekHttp = patterns.get("ZEEK_HTTP");
 
         // Verify pattern contains core ECS field references
-        assertTrue("ZEEK_HTTP should reference [zeek][session_id]",
-                zeekHttp.contains("[zeek][session_id]"));
-        assertTrue("ZEEK_HTTP should reference [source][ip]",
-                zeekHttp.contains("[source][ip]"));
-        assertTrue("ZEEK_HTTP should reference [source][port]",
-                zeekHttp.contains("[source][port]"));
-        assertTrue("ZEEK_HTTP should reference [destination][ip]",
-                zeekHttp.contains("[destination][ip]"));
-        assertTrue("ZEEK_HTTP should reference [destination][port]",
-                zeekHttp.contains("[destination][port]"));
-        assertTrue("ZEEK_HTTP should reference [http][request][method]",
-                zeekHttp.contains("[http][request][method]"));
+        assertTrue("ZEEK_HTTP should reference zeek.session_id",
+                zeekHttp.contains("zeek.session_id"));
+        assertTrue("ZEEK_HTTP should reference source.ip",
+                zeekHttp.contains("source.ip"));
+        assertTrue("ZEEK_HTTP should reference source.port",
+                zeekHttp.contains("source.port"));
+        assertTrue("ZEEK_HTTP should reference destination.ip",
+                zeekHttp.contains("destination.ip"));
+        assertTrue("ZEEK_HTTP should reference destination.port",
+                zeekHttp.contains("destination.port"));
+        assertTrue("ZEEK_HTTP should reference http.request.method",
+                zeekHttp.contains("http.request.method"));
     }
 
     @Test
@@ -225,29 +225,29 @@ public class ZeekPatternTest {
 
         // Verify key ZEEK HTTP fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:int",
-            "[destination][ip]",
-            "[destination][port]:int",
-            "[zeek][http][trans_depth]:int",
-            "[http][request][method]",
-            "[url][domain]",
-            "[url][original]",
-            "[http][request][referrer]",
-            "[http][version]",
-            "[user_agent][original]",
-            "[zeek][http][origin]",
-            "[http][request][body][bytes]:int",
-            "[http][response][body][bytes]:int",
-            "[http][response][status_code]:int",
-            "[zeek][http][status_msg]",
-            "[url][username]",
-            "[url][password]",
-            "[zeek][http][orig_filenames]",
-            "[zeek][http][resp_filenames]",
-            "[http][request][mime_type]",
-            "[http][response][mime_type]"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:int",
+            "destination.ip",
+            "destination.port:int",
+            "zeek.http.trans_depth:int",
+            "http.request.method",
+            "url.domain",
+            "url.original",
+            "http.request.referrer",
+            "http.version",
+            "user_agent.original",
+            "zeek.http.origin",
+            "http.request.body.bytes:int",
+            "http.response.body.bytes:int",
+            "http.response.status_code:int",
+            "zeek.http.status_msg",
+            "url.username",
+            "url.password",
+            "zeek.http.orig_filenames",
+            "zeek.http.resp_filenames",
+            "http.request.mime_type",
+            "http.response.mime_type"
         };
 
         for (String field : expectedFields) {
@@ -262,14 +262,14 @@ public class ZeekPatternTest {
         String zeekHttp = patterns.get("ZEEK_HTTP");
 
         // New fields in ZEEK_HTTP compared to BRO_HTTP
-        assertTrue("ZEEK_HTTP should have [http][version] field",
-                zeekHttp.contains("[http][version]"));
-        assertTrue("ZEEK_HTTP should have [zeek][http][origin] field",
-                zeekHttp.contains("[zeek][http][origin]"));
-        assertTrue("ZEEK_HTTP should have [zeek][http][orig_filenames] field",
-                zeekHttp.contains("[zeek][http][orig_filenames]"));
-        assertTrue("ZEEK_HTTP should have [zeek][http][resp_filenames] field",
-                zeekHttp.contains("[zeek][http][resp_filenames]"));
+        assertTrue("ZEEK_HTTP should have http.version field",
+                zeekHttp.contains("http.version"));
+        assertTrue("ZEEK_HTTP should have zeek.http.origin field",
+                zeekHttp.contains("zeek.http.origin"));
+        assertTrue("ZEEK_HTTP should have zeek.http.orig_filenames field",
+                zeekHttp.contains("zeek.http.orig_filenames"));
+        assertTrue("ZEEK_HTTP should have zeek.http.resp_filenames field",
+                zeekHttp.contains("zeek.http.resp_filenames"));
     }
 
     // ========== ZEEK_DNS Pattern Definition Tests ==========
@@ -281,20 +281,20 @@ public class ZeekPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String zeekDns = patterns.get("ZEEK_DNS");
 
-        assertTrue("ZEEK_DNS should reference [zeek][session_id]",
-                zeekDns.contains("[zeek][session_id]"));
-        assertTrue("ZEEK_DNS should reference [source][ip]",
-                zeekDns.contains("[source][ip]"));
-        assertTrue("ZEEK_DNS should reference [source][port]",
-                zeekDns.contains("[source][port]"));
-        assertTrue("ZEEK_DNS should reference [destination][ip]",
-                zeekDns.contains("[destination][ip]"));
-        assertTrue("ZEEK_DNS should reference [destination][port]",
-                zeekDns.contains("[destination][port]"));
-        assertTrue("ZEEK_DNS should reference [network][transport]",
-                zeekDns.contains("[network][transport]"));
-        assertTrue("ZEEK_DNS should reference [dns][question][name]",
-                zeekDns.contains("[dns][question][name]"));
+        assertTrue("ZEEK_DNS should reference zeek.session_id",
+                zeekDns.contains("zeek.session_id"));
+        assertTrue("ZEEK_DNS should reference source.ip",
+                zeekDns.contains("source.ip"));
+        assertTrue("ZEEK_DNS should reference source.port",
+                zeekDns.contains("source.port"));
+        assertTrue("ZEEK_DNS should reference destination.ip",
+                zeekDns.contains("destination.ip"));
+        assertTrue("ZEEK_DNS should reference destination.port",
+                zeekDns.contains("destination.port"));
+        assertTrue("ZEEK_DNS should reference network.transport",
+                zeekDns.contains("network.transport"));
+        assertTrue("ZEEK_DNS should reference dns.question.name",
+                zeekDns.contains("dns.question.name"));
     }
 
     @Test
@@ -304,29 +304,29 @@ public class ZeekPatternTest {
 
         // Verify key ZEEK DNS fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:int",
-            "[destination][ip]",
-            "[destination][port]:int",
-            "[network][transport]",
-            "[dns][id]:int",
-            "[zeek][dns][rtt]:float",
-            "[dns][question][name]",
-            "[zeek][dns][qclass]:int",
-            "[zeek][dns][qclass_name]",
-            "[zeek][dns][qtype]:int",
-            "[dns][question][type]",
-            "[zeek][dns][rcode]:int",
-            "[dns][response_code]",
-            "[zeek][dns][AA]",
-            "[zeek][dns][TC]",
-            "[zeek][dns][RD]",
-            "[zeek][dns][RA]",
-            "[zeek][dns][Z]:int",
-            "[zeek][dns][answers]",
-            "[zeek][dns][TTLs]",
-            "[zeek][dns][rejected]"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:int",
+            "destination.ip",
+            "destination.port:int",
+            "network.transport",
+            "dns.id:int",
+            "zeek.dns.rtt:float",
+            "dns.question.name",
+            "zeek.dns.qclass:int",
+            "zeek.dns.qclass_name",
+            "zeek.dns.qtype:int",
+            "dns.question.type",
+            "zeek.dns.rcode:int",
+            "dns.response_code",
+            "zeek.dns.AA",
+            "zeek.dns.TC",
+            "zeek.dns.RD",
+            "zeek.dns.RA",
+            "zeek.dns.Z:int",
+            "zeek.dns.answers",
+            "zeek.dns.TTLs",
+            "zeek.dns.rejected"
         };
 
         for (String field : expectedFields) {
@@ -341,8 +341,8 @@ public class ZeekPatternTest {
         String zeekDns = patterns.get("ZEEK_DNS");
 
         // New field in ZEEK_DNS compared to BRO_DNS
-        assertTrue("ZEEK_DNS should have [zeek][dns][rtt]:float field for round-trip time",
-                zeekDns.contains("[zeek][dns][rtt]:float"));
+        assertTrue("ZEEK_DNS should have zeek.dns.rtt:float field for round-trip time",
+                zeekDns.contains("zeek.dns.rtt:float"));
     }
 
     @Test
@@ -352,13 +352,13 @@ public class ZeekPatternTest {
 
         // Verify ZEEK_BOOL is used for DNS flags
         assertTrue("ZEEK_DNS should use ZEEK_BOOL for AA flag",
-                zeekDns.contains("ZEEK_BOOL:[zeek][dns][AA]"));
+                zeekDns.contains("ZEEK_BOOL:zeek.dns.AA"));
         assertTrue("ZEEK_DNS should use ZEEK_BOOL for TC flag",
-                zeekDns.contains("ZEEK_BOOL:[zeek][dns][TC]"));
+                zeekDns.contains("ZEEK_BOOL:zeek.dns.TC"));
         assertTrue("ZEEK_DNS should use ZEEK_BOOL for RD flag",
-                zeekDns.contains("ZEEK_BOOL:[zeek][dns][RD]"));
+                zeekDns.contains("ZEEK_BOOL:zeek.dns.RD"));
         assertTrue("ZEEK_DNS should use ZEEK_BOOL for RA flag",
-                zeekDns.contains("ZEEK_BOOL:[zeek][dns][RA]"));
+                zeekDns.contains("ZEEK_BOOL:zeek.dns.RA"));
     }
 
     // ========== ZEEK_CONN Pattern Definition Tests ==========
@@ -370,20 +370,20 @@ public class ZeekPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String zeekConn = patterns.get("ZEEK_CONN");
 
-        assertTrue("ZEEK_CONN should reference [zeek][session_id]",
-                zeekConn.contains("[zeek][session_id]"));
-        assertTrue("ZEEK_CONN should reference [source][ip]",
-                zeekConn.contains("[source][ip]"));
-        assertTrue("ZEEK_CONN should reference [source][port]",
-                zeekConn.contains("[source][port]"));
-        assertTrue("ZEEK_CONN should reference [destination][ip]",
-                zeekConn.contains("[destination][ip]"));
-        assertTrue("ZEEK_CONN should reference [destination][port]",
-                zeekConn.contains("[destination][port]"));
-        assertTrue("ZEEK_CONN should reference [network][transport]",
-                zeekConn.contains("[network][transport]"));
-        assertTrue("ZEEK_CONN should reference [network][protocol]",
-                zeekConn.contains("[network][protocol]"));
+        assertTrue("ZEEK_CONN should reference zeek.session_id",
+                zeekConn.contains("zeek.session_id"));
+        assertTrue("ZEEK_CONN should reference source.ip",
+                zeekConn.contains("source.ip"));
+        assertTrue("ZEEK_CONN should reference source.port",
+                zeekConn.contains("source.port"));
+        assertTrue("ZEEK_CONN should reference destination.ip",
+                zeekConn.contains("destination.ip"));
+        assertTrue("ZEEK_CONN should reference destination.port",
+                zeekConn.contains("destination.port"));
+        assertTrue("ZEEK_CONN should reference network.transport",
+                zeekConn.contains("network.transport"));
+        assertTrue("ZEEK_CONN should reference network.protocol",
+                zeekConn.contains("network.protocol"));
     }
 
     @Test
@@ -393,26 +393,26 @@ public class ZeekPatternTest {
 
         // Verify key ZEEK CONN fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:int",
-            "[destination][ip]",
-            "[destination][port]:int",
-            "[network][transport]",
-            "[network][protocol]",
-            "[zeek][connection][duration]:float",
-            "[zeek][connection][orig_bytes]:int",
-            "[zeek][connection][resp_bytes]:int",
-            "[zeek][connection][state]",
-            "[zeek][connection][local_orig]",
-            "[zeek][connection][local_resp]",
-            "[zeek][connection][missed_bytes]:int",
-            "[zeek][connection][history]",
-            "[source][packets]:int",
-            "[source][bytes]:int",
-            "[destination][packets]:int",
-            "[destination][bytes]:int",
-            "[zeek][connection][tunnel_parents]"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:int",
+            "destination.ip",
+            "destination.port:int",
+            "network.transport",
+            "network.protocol",
+            "zeek.connection.duration:float",
+            "zeek.connection.orig_bytes:int",
+            "zeek.connection.resp_bytes:int",
+            "zeek.connection.state",
+            "zeek.connection.local_orig",
+            "zeek.connection.local_resp",
+            "zeek.connection.missed_bytes:int",
+            "zeek.connection.history",
+            "source.packets:int",
+            "source.bytes:int",
+            "destination.packets:int",
+            "destination.bytes:int",
+            "zeek.connection.tunnel_parents"
         };
 
         for (String field : expectedFields) {
@@ -427,8 +427,8 @@ public class ZeekPatternTest {
         String zeekConn = patterns.get("ZEEK_CONN");
 
         // New field required in ZEEK_CONN
-        assertTrue("ZEEK_CONN should have [zeek][connection][local_resp] field",
-                zeekConn.contains("[zeek][connection][local_resp]"));
+        assertTrue("ZEEK_CONN should have zeek.connection.local_resp field",
+                zeekConn.contains("zeek.connection.local_resp"));
     }
 
     @Test
@@ -437,10 +437,10 @@ public class ZeekPatternTest {
         String zeekConn = patterns.get("ZEEK_CONN");
 
         // Optional MAC address fields
-        assertTrue("ZEEK_CONN should support [source][mac] field",
-                zeekConn.contains("[source][mac]"));
-        assertTrue("ZEEK_CONN should support [destination][mac] field",
-                zeekConn.contains("[destination][mac]"));
+        assertTrue("ZEEK_CONN should support source.mac field",
+                zeekConn.contains("source.mac"));
+        assertTrue("ZEEK_CONN should support destination.mac field",
+                zeekConn.contains("destination.mac"));
         assertTrue("ZEEK_CONN should reference COMMONMAC pattern",
                 zeekConn.contains("COMMONMAC"));
     }
@@ -454,14 +454,14 @@ public class ZeekPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String zeekFiles = patterns.get("ZEEK_FILES");
 
-        assertTrue("ZEEK_FILES should reference [zeek][files][fuid]",
-                zeekFiles.contains("[zeek][files][fuid]"));
-        assertTrue("ZEEK_FILES should reference [file][mime_type]",
-                zeekFiles.contains("[file][mime_type]"));
-        assertTrue("ZEEK_FILES should reference [file][name]",
-                zeekFiles.contains("[file][name]"));
-        assertTrue("ZEEK_FILES should reference [file][size]",
-                zeekFiles.contains("[file][size]"));
+        assertTrue("ZEEK_FILES should reference zeek.files.fuid",
+                zeekFiles.contains("zeek.files.fuid"));
+        assertTrue("ZEEK_FILES should reference file.mime_type",
+                zeekFiles.contains("file.mime_type"));
+        assertTrue("ZEEK_FILES should reference file.name",
+                zeekFiles.contains("file.name"));
+        assertTrue("ZEEK_FILES should reference file.size",
+                zeekFiles.contains("file.size"));
     }
 
     @Test
@@ -472,28 +472,28 @@ public class ZeekPatternTest {
         // Verify key ZEEK FILES fields are defined
         // Note: [server][ip] and [client][ip] are in helper patterns, not directly in ZEEK_FILES
         String[] expectedFields = {
-            "[zeek][files][fuid]",
-            "[zeek][files][session_ids]",
-            "[zeek][files][source]",
-            "[zeek][files][depth]:int",
-            "[zeek][files][analyzers]",
-            "[file][mime_type]",
-            "[file][name]",
-            "[zeek][files][duration]:float",
-            "[zeek][files][local_orig]",
-            "[zeek][files][is_orig]",
-            "[zeek][files][seen_bytes]:int",
-            "[file][size]:int",
-            "[zeek][files][missing_bytes]:int",
-            "[zeek][files][overflow_bytes]:int",
-            "[zeek][files][timedout]",
-            "[zeek][files][parent_fuid]",
-            "[file][hash][md5]",
-            "[file][hash][sha1]",
-            "[file][hash][sha256]",
-            "[zeek][files][extracted]",
-            "[zeek][files][extracted_cutoff]",
-            "[zeek][files][extracted_size]:int"
+            "zeek.files.fuid",
+            "zeek.files.session_ids",
+            "zeek.files.source",
+            "zeek.files.depth:int",
+            "zeek.files.analyzers",
+            "file.mime_type",
+            "file.name",
+            "zeek.files.duration:float",
+            "zeek.files.local_orig",
+            "zeek.files.is_orig",
+            "zeek.files.seen_bytes:int",
+            "file.size:int",
+            "zeek.files.missing_bytes:int",
+            "zeek.files.overflow_bytes:int",
+            "zeek.files.timedout",
+            "zeek.files.parent_fuid",
+            "file.hash.md5",
+            "file.hash.sha1",
+            "file.hash.sha256",
+            "zeek.files.extracted",
+            "zeek.files.extracted_cutoff",
+            "zeek.files.extracted_size:int"
         };
 
         for (String field : expectedFields) {
@@ -508,10 +508,10 @@ public class ZeekPatternTest {
         String zeekFiles = patterns.get("ZEEK_FILES");
 
         // New fields added at the end in ZEEK_FILES
-        assertTrue("ZEEK_FILES should have [zeek][files][extracted_cutoff] field",
-                zeekFiles.contains("[zeek][files][extracted_cutoff]"));
-        assertTrue("ZEEK_FILES should have [zeek][files][extracted_size]:int field",
-                zeekFiles.contains("[zeek][files][extracted_size]:int"));
+        assertTrue("ZEEK_FILES should have zeek.files.extracted_cutoff field",
+                zeekFiles.contains("zeek.files.extracted_cutoff"));
+        assertTrue("ZEEK_FILES should have zeek.files.extracted_size:int field",
+                zeekFiles.contains("zeek.files.extracted_size:int"));
     }
 
     @Test
@@ -533,11 +533,11 @@ public class ZeekPatternTest {
 
         // Verify all hash types are supported
         assertTrue("ZEEK_FILES should support MD5 hash",
-                zeekFiles.contains("[file][hash][md5]"));
+                zeekFiles.contains("file.hash.md5"));
         assertTrue("ZEEK_FILES should support SHA1 hash",
-                zeekFiles.contains("[file][hash][sha1]"));
+                zeekFiles.contains("file.hash.sha1"));
         assertTrue("ZEEK_FILES should support SHA256 hash",
-                zeekFiles.contains("[file][hash][sha256]"));
+                zeekFiles.contains("file.hash.sha256"));
     }
 
     // ========== ZEEK_FILES Helper Pattern Tests ==========
@@ -565,10 +565,10 @@ public class ZeekPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String txHosts = patterns.get("ZEEK_FILES_TX_HOSTS");
 
-        assertTrue("ZEEK_FILES_TX_HOSTS should reference [server][ip]",
-                txHosts.contains("[server][ip]"));
-        assertTrue("ZEEK_FILES_TX_HOSTS should reference [zeek][files][tx_hosts]",
-                txHosts.contains("[zeek][files][tx_hosts]"));
+        assertTrue("ZEEK_FILES_TX_HOSTS should reference server.ip",
+                txHosts.contains("server.ip"));
+        assertTrue("ZEEK_FILES_TX_HOSTS should reference zeek.files.tx_hosts",
+                txHosts.contains("zeek.files.tx_hosts"));
     }
 
     @Test
@@ -576,10 +576,10 @@ public class ZeekPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String rxHosts = patterns.get("ZEEK_FILES_RX_HOSTS");
 
-        assertTrue("ZEEK_FILES_RX_HOSTS should reference [client][ip]",
-                rxHosts.contains("[client][ip]"));
-        assertTrue("ZEEK_FILES_RX_HOSTS should reference [zeek][files][rx_hosts]",
-                rxHosts.contains("[zeek][files][rx_hosts]"));
+        assertTrue("ZEEK_FILES_RX_HOSTS should reference client.ip",
+                rxHosts.contains("client.ip"));
+        assertTrue("ZEEK_FILES_RX_HOSTS should reference zeek.files.rx_hosts",
+                rxHosts.contains("zeek.files.rx_hosts"));
     }
 
     // ========== Pattern Structure Tests ==========
@@ -650,7 +650,7 @@ public class ZeekPatternTest {
         for (String patternName : mainPatterns) {
             String pattern = patterns.get(patternName);
             assertTrue(patternName + " should start with timestamp field",
-                    pattern.startsWith("%{NUMBER:timestamp}"));
+                    pattern.startsWith("%{NUMBER:log_timestamp}"));
         }
     }
 }

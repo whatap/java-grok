@@ -153,9 +153,9 @@ public class HaproxyPatternTest {
         // The pattern uses DATA which doesn't preserve field names without explicit field name in pattern
         // Verify the field exists with ECS-style name
         assertTrue("Should contain ECS-style field",
-            captured.containsKey("[haproxy][http][request][captured_headers]"));
+            captured.containsKey("haproxy.http.request.captured_headers"));
         assertNotNull("Field value should not be null",
-            captured.get("[haproxy][http][request][captured_headers]"));
+            captured.get("haproxy.http.request.captured_headers"));
     }
 
     @Test
@@ -173,9 +173,9 @@ public class HaproxyPatternTest {
         // The pattern uses DATA which doesn't preserve field names without explicit field name in pattern
         // Verify the field exists with ECS-style name
         assertTrue("Should contain ECS-style field",
-            captured.containsKey("[haproxy][http][response][captured_headers]"));
+            captured.containsKey("haproxy.http.response.captured_headers"));
         assertNotNull("Field value should not be null",
-            captured.get("[haproxy][http][response][captured_headers]"));
+            captured.get("haproxy.http.response.captured_headers"));
     }
 
     // ========== ECS Field Name Tests ==========
@@ -192,17 +192,17 @@ public class HaproxyPatternTest {
         Map<String, Object> requestCaptured = requestMatch.capture();
         assertFalse("Request match should not be empty", requestCaptured.isEmpty());
         assertTrue("Should contain ECS-style request header field",
-            requestCaptured.containsKey("[haproxy][http][request][captured_headers]"));
+            requestCaptured.containsKey("haproxy.http.request.captured_headers"));
         assertNotNull("Request headers field should not be null",
-            requestCaptured.get("[haproxy][http][request][captured_headers]"));
+            requestCaptured.get("haproxy.http.request.captured_headers"));
 
         Match responseMatch = responseGrok.match(responseHeaders);
         Map<String, Object> responseCaptured = responseMatch.capture();
         assertFalse("Response match should not be empty", responseCaptured.isEmpty());
         assertTrue("Should contain ECS-style response header field",
-            responseCaptured.containsKey("[haproxy][http][response][captured_headers]"));
+            responseCaptured.containsKey("haproxy.http.response.captured_headers"));
         assertNotNull("Response headers field should not be null",
-            responseCaptured.get("[haproxy][http][response][captured_headers]"));
+            responseCaptured.get("haproxy.http.response.captured_headers"));
     }
 
     @Test
@@ -212,15 +212,15 @@ public class HaproxyPatternTest {
         // Verify that HAProxy patterns use ECS-style field names
         String requestHeadersPattern = patterns.get("HAPROXYCAPTUREDREQUESTHEADERS");
         assertTrue("Request headers should use ECS naming",
-            requestHeadersPattern.contains("[haproxy][http][request][captured_headers]"));
+            requestHeadersPattern.contains("haproxy.http.request.captured_headers"));
 
         String responseHeadersPattern = patterns.get("HAPROXYCAPTUREDRESPONSEHEADERS");
         assertTrue("Response headers should use ECS naming",
-            responseHeadersPattern.contains("[haproxy][http][response][captured_headers]"));
+            responseHeadersPattern.contains("haproxy.http.response.captured_headers"));
 
-        // Verify URI pattern uses ECS naming
+        // Verify URI pattern uses ECS naming with dot notation
         String uriPattern = patterns.get("HAPROXYURI");
-        assertTrue("URI pattern should use ECS [url] fields", uriPattern.contains("[url]["));
+        assertTrue("URI pattern should use ECS url.* fields", uriPattern.contains("url."));
     }
 
     // ========== Known Limitations Tests ==========
@@ -254,14 +254,14 @@ public class HaproxyPatternTest {
 
         // Check for key ECS fields in the pattern definition
         String[] expectedECSFields = {
-            "[source][address]",
-            "[source][port]",
-            "[haproxy][request_date]",
-            "[haproxy][frontend_name]",
-            "[haproxy][backend_name]",
-            "[haproxy][server_name]",
-            "[http][response][status_code]",
-            "[source][bytes]"
+            "source.address",
+            "source.port",
+            "haproxy.request_date",
+            "haproxy.frontend_name",
+            "haproxy.backend_name",
+            "haproxy.server_name",
+            "http.response.status_code",
+            "source.bytes"
         };
 
         for (String field : expectedECSFields) {
@@ -279,11 +279,11 @@ public class HaproxyPatternTest {
 
         // Verify integer type modifiers are present for numeric fields
         assertTrue("Should have port with :integer modifier",
-            httpBasePattern.contains("[source][port]:integer"));
+            httpBasePattern.contains("source.port:integer"));
         assertTrue("Should have status_code with :integer modifier",
-            httpBasePattern.contains("[http][response][status_code]:integer"));
+            httpBasePattern.contains("http.response.status_code:integer"));
         assertTrue("Should have bytes with :integer modifier",
-            httpBasePattern.contains("[source][bytes]:integer"));
+            httpBasePattern.contains("source.bytes:integer"));
     }
 
     // ========== Sample Log Format Documentation ==========

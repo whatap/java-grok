@@ -213,9 +213,9 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match max capacity log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("1,234,567", captured.get("[bacula][volume][max_capacity]"));
-        assertEquals("FileStorage", captured.get("[bacula][volume][device]"));
-        assertEquals("/var/bacula/storage", captured.get("[bacula][volume][path]"));
+        assertEquals("1,234,567", captured.get("bacula.volume.max_capacity"));
+        assertEquals("FileStorage", captured.get("bacula.volume.device"));
+        assertEquals("/var/bacula/storage", captured.get("bacula.volume.path"));
     }
 
     @Test
@@ -229,10 +229,10 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match end volume log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0001", captured.get("[bacula][volume][name]"));
-        assertEquals("1,234,567", captured.get("[bacula][volume][bytes]"));
-        assertEquals("123", captured.get("[bacula][volume][blocks]"));
-        assertEquals("11-Oct 13:55", captured.get("[bacula][timestamp]"));
+        assertEquals("Vol-0001", captured.get("bacula.volume.name"));
+        assertEquals("1,234,567", captured.get("bacula.volume.bytes"));
+        assertEquals("123", captured.get("bacula.volume.blocks"));
+        assertEquals("11-Oct 13:55", captured.get("bacula.timestamp"));
     }
 
     @Test
@@ -246,7 +246,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match new volume log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0002", captured.get("[bacula][volume][name]"));
+        assertEquals("Vol-0002", captured.get("bacula.volume.name"));
     }
 
     @Test
@@ -265,9 +265,9 @@ public class BaculaPatternTest {
 
             assertNotNull("Failed to match new label log: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have volume name", captured.containsKey("[bacula][volume][name]"));
-            assertTrue("Should have device name", captured.containsKey("[bacula][volume][device]"));
-            assertTrue("Should have device path", captured.containsKey("[bacula][volume][path]"));
+            assertTrue("Should have volume name", captured.containsKey("bacula.volume.name"));
+            assertTrue("Should have device name", captured.containsKey("bacula.volume.device"));
+            assertTrue("Should have device path", captured.containsKey("bacula.volume.path"));
         }
     }
 
@@ -282,9 +282,9 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match wrote label log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0005", captured.get("[bacula][volume][name]"));
-        assertEquals("FileStorage", captured.get("[bacula][volume][device]"));
-        assertEquals("/var/bacula/storage", captured.get("[bacula][volume][path]"));
+        assertEquals("Vol-0005", captured.get("bacula.volume.name"));
+        assertEquals("FileStorage", captured.get("bacula.volume.device"));
+        assertEquals("/var/bacula/storage", captured.get("bacula.volume.path"));
     }
 
     @Test
@@ -298,10 +298,10 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match new mount log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0006", captured.get("[bacula][volume][name]"));
-        assertEquals("TapeDevice", captured.get("[bacula][volume][device]"));
-        assertEquals("/dev/nst0", captured.get("[bacula][volume][path]"));
-        assertEquals("11-Oct 14:00", captured.get("[bacula][timestamp]"));
+        assertEquals("Vol-0006", captured.get("bacula.volume.name"));
+        assertEquals("TapeDevice", captured.get("bacula.volume.device"));
+        assertEquals("/dev/nst0", captured.get("bacula.volume.path"));
+        assertEquals("11-Oct 14:00", captured.get("bacula.timestamp"));
     }
 
     @Test
@@ -319,7 +319,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match volume already written: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have volume name", captured.containsKey("[bacula][volume][name]"));
+            assertTrue("Should have volume name", captured.containsKey("bacula.volume.name"));
         }
     }
 
@@ -331,9 +331,9 @@ public class BaculaPatternTest {
         String pattern = patterns.get("BACULA_LOG_READYAPPEND");
         assertNotNull("BACULA_LOG_READYAPPEND pattern should exist", pattern);
         assertTrue("Pattern should contain volume name field",
-            pattern.contains("[bacula][volume][name]"));
+            pattern.contains("bacula.volume.name"));
         assertTrue("Pattern should contain volume size field with integer modifier",
-            pattern.contains("[bacula][volume][size]:integer"));
+            pattern.contains("bacula.volume.size:integer"));
     }
 
     // ========== File System Error Log Tests ==========
@@ -349,7 +349,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match no open log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Permission denied", captured.get("[error][message]"));
+        assertEquals("Permission denied", captured.get("error.message"));
     }
 
     @Test
@@ -367,8 +367,8 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match no open dir: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have file path", captured.containsKey("[file][path]"));
-            assertTrue("Should have error message", captured.containsKey("[error][message]"));
+            assertTrue("Should have file path", captured.containsKey("file.path"));
+            assertTrue("Should have error message", captured.containsKey("error.message"));
         }
     }
 
@@ -383,8 +383,8 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match no stat log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("/home/user/file.txt", captured.get("[file][path]"));
-        assertEquals("No such file or directory", captured.get("[error][message]"));
+        assertEquals("/home/user/file.txt", captured.get("file.path"));
+        assertEquals("No such file or directory", captured.get("error.message"));
     }
 
     @Test
@@ -413,7 +413,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match start job log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("BackupClient1.2024-01-15_23.05.00_03", captured.get("[bacula][job][name]"));
+        assertEquals("BackupClient1.2024-01-15_23.05.00_03", captured.get("bacula.job.name"));
     }
 
     @Test
@@ -427,7 +427,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match start restore log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("RestoreFiles.2024-01-16_10.30.00_05", captured.get("[bacula][job][name]"));
+        assertEquals("RestoreFiles.2024-01-16_10.30.00_05", captured.get("bacula.job.name"));
     }
 
     @Test
@@ -441,7 +441,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match use device log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("FileStorage", captured.get("[bacula][volume][device]"));
+        assertEquals("FileStorage", captured.get("bacula.volume.device"));
     }
 
     @Test
@@ -460,7 +460,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match job end: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have elapsed time", captured.containsKey("[bacula][job][elapsed_time]"));
+            assertTrue("Should have elapsed time", captured.containsKey("bacula.job.elapsed_time"));
         }
     }
 
@@ -475,7 +475,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match cancelling log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("67890", captured.get("[bacula][job][other_id]"));
+        assertEquals("67890", captured.get("bacula.job.other_id"));
     }
 
     @Test
@@ -489,8 +489,8 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match mark cancel log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("12345", captured.get("[bacula][job][id]"));
-        assertEquals("BackupClient1.2024-01-15_23.05.00_03", captured.get("[bacula][job][name]"));
+        assertEquals("12345", captured.get("bacula.job.id"));
+        assertEquals("BackupClient1.2024-01-15_23.05.00_03", captured.get("bacula.job.name"));
     }
 
     @Test
@@ -505,7 +505,7 @@ public class BaculaPatternTest {
         assertNotNull("Failed to match client run before job log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
         assertEquals("/usr/local/bin/pre-backup.sh",
-            captured.get("[bacula][job][client_run_before_command]"));
+            captured.get("bacula.job.client_run_before_command"));
     }
 
     @Test
@@ -542,7 +542,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match no jobs log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0010", captured.get("[bacula][volume][name]"));
+        assertEquals("Vol-0010", captured.get("bacula.volume.name"));
     }
 
     @Test
@@ -556,7 +556,7 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match all records pruned log", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0011", captured.get("[bacula][volume][name]"));
+        assertEquals("Vol-0011", captured.get("bacula.volume.name"));
     }
 
     @Test
@@ -600,7 +600,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match pruned jobs: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have client name", captured.containsKey("[bacula][client][name]"));
+            assertTrue("Should have client name", captured.containsKey("bacula.client.name"));
         }
     }
 
@@ -619,7 +619,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match pruned files: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have client name", captured.containsKey("[bacula][client][name]"));
+            assertTrue("Should have client name", captured.containsKey("bacula.client.name"));
         }
     }
 
@@ -697,7 +697,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match duplicate: " + logLine, captured);
             assertFalse("Match should not be empty", captured.isEmpty());
-            assertTrue("Should have other job ID", captured.containsKey("[bacula][job][other_id]"));
+            assertTrue("Should have other job ID", captured.containsKey("bacula.job.other_id"));
         }
     }
 
@@ -727,13 +727,13 @@ public class BaculaPatternTest {
         String pattern = patterns.get("BACULA_LOG_FATAL_CONN");
         assertNotNull("BACULA_LOG_FATAL_CONN pattern should exist", pattern);
         assertTrue("Pattern should contain client name field",
-            pattern.contains("[bacula][client][name]"));
+            pattern.contains("bacula.client.name"));
         assertTrue("Pattern should contain client address field",
-            pattern.contains("[client][address]"));
+            pattern.contains("client.address"));
         assertTrue("Pattern should contain client port field with integer modifier",
-            pattern.contains("[client][port]:integer"));
+            pattern.contains("client.port:integer"));
         assertTrue("Pattern should contain error message field",
-            pattern.contains("[error][message]"));
+            pattern.contains("error.message"));
     }
 
     @Test
@@ -744,13 +744,13 @@ public class BaculaPatternTest {
         String pattern = patterns.get("BACULA_LOG_NO_CONNECT");
         assertNotNull("BACULA_LOG_NO_CONNECT pattern should exist", pattern);
         assertTrue("Pattern should contain client name field",
-            pattern.contains("[bacula][client][name]"));
+            pattern.contains("bacula.client.name"));
         assertTrue("Pattern should contain client address field",
-            pattern.contains("[client][address]"));
+            pattern.contains("client.address"));
         assertTrue("Pattern should contain client port field with integer modifier",
-            pattern.contains("[client][port]:integer"));
+            pattern.contains("client.port:integer"));
         assertTrue("Pattern should contain error message field",
-            pattern.contains("[error][message]"));
+            pattern.contains("error.message"));
     }
 
     @Test
@@ -761,9 +761,9 @@ public class BaculaPatternTest {
         String pattern = patterns.get("BACULA_LOG_NO_AUTH");
         assertNotNull("BACULA_LOG_NO_AUTH pattern should exist", pattern);
         assertTrue("Pattern should contain client address field",
-            pattern.contains("[client][address]"));
+            pattern.contains("client.address"));
         assertTrue("Pattern should contain optional client port field with integer modifier",
-            pattern.contains("[client][port]:integer"));
+            pattern.contains("client.port:integer"));
     }
 
     @Test
@@ -820,9 +820,9 @@ public class BaculaPatternTest {
         String baculaLogPattern = patterns.get("BACULA_LOG");
 
         assertNotNull("BACULA_LOG pattern should exist", baculaLogPattern);
-        assertTrue("Pattern should include timestamp", baculaLogPattern.contains("BACULA_TIMESTAMP:timestamp"));
-        assertTrue("Pattern should include hostname", baculaLogPattern.contains("[host][hostname]"));
-        assertTrue("Pattern should include optional JobId", baculaLogPattern.contains("[bacula][job][id]"));
+        assertTrue("Pattern should include timestamp", baculaLogPattern.contains("BACULA_TIMESTAMP:log_timestamp"));
+        assertTrue("Pattern should include hostname", baculaLogPattern.contains("host.hostname"));
+        assertTrue("Pattern should include optional JobId", baculaLogPattern.contains("bacula.job.id"));
         assertTrue("Pattern should include BACULA_LOG_MAX_CAPACITY", baculaLogPattern.contains("BACULA_LOG_MAX_CAPACITY"));
     }
 
@@ -838,10 +838,10 @@ public class BaculaPatternTest {
 
         assertNotNull("Failed to match complete log line", captured);
         assertFalse("Match should not be empty", captured.isEmpty());
-        assertEquals("Vol-0001", captured.get("[bacula][volume][name]"));
-        assertEquals("9,876,543", captured.get("[bacula][volume][bytes]"));
-        assertEquals("987", captured.get("[bacula][volume][blocks]"));
-        assertEquals("15-Jan 10:30", captured.get("[bacula][timestamp]"));
+        assertEquals("Vol-0001", captured.get("bacula.volume.name"));
+        assertEquals("9,876,543", captured.get("bacula.volume.bytes"));
+        assertEquals("987", captured.get("bacula.volume.blocks"));
+        assertEquals("15-Jan 10:30", captured.get("bacula.timestamp"));
     }
 
     @Test
@@ -866,10 +866,10 @@ public class BaculaPatternTest {
         String pattern = patterns.get("BACULA_LOG_FATAL_CONN");
 
         assertNotNull("BACULA_LOG_FATAL_CONN pattern should exist", pattern);
-        assertTrue("Pattern should contain client name field", pattern.contains("[bacula][client][name]"));
-        assertTrue("Pattern should contain client address field", pattern.contains("[client][address]"));
-        assertTrue("Pattern should contain client port field", pattern.contains("[client][port]:integer"));
-        assertTrue("Pattern should contain error message field", pattern.contains("[error][message]"));
+        assertTrue("Pattern should contain client name field", pattern.contains("bacula.client.name"));
+        assertTrue("Pattern should contain client address field", pattern.contains("client.address"));
+        assertTrue("Pattern should contain client port field", pattern.contains("client.port:integer"));
+        assertTrue("Pattern should contain error message field", pattern.contains("error.message"));
     }
 
     // ========== ECS Field Name Validation Tests ==========
@@ -880,34 +880,34 @@ public class BaculaPatternTest {
 
         // Verify volume-related ECS fields
         String maxCapacityPattern = patterns.get("BACULA_LOG_MAX_CAPACITY");
-        assertTrue("Should use [bacula][volume][max_capacity]",
-            maxCapacityPattern.contains("[bacula][volume][max_capacity]"));
-        assertTrue("Should use [bacula][volume][device]",
-            maxCapacityPattern.contains("[bacula][volume][device]"));
-        assertTrue("Should use [bacula][volume][path]",
-            maxCapacityPattern.contains("[bacula][volume][path]"));
+        assertTrue("Should use bacula.volume.max_capacity",
+            maxCapacityPattern.contains("bacula.volume.max_capacity"));
+        assertTrue("Should use bacula.volume.device",
+            maxCapacityPattern.contains("bacula.volume.device"));
+        assertTrue("Should use bacula.volume.path",
+            maxCapacityPattern.contains("bacula.volume.path"));
 
         // Verify error-related ECS fields
         String noOpenPattern = patterns.get("BACULA_LOG_NOOPEN");
-        assertTrue("Should use [error][message]",
-            noOpenPattern.contains("[error][message]"));
+        assertTrue("Should use error.message",
+            noOpenPattern.contains("error.message"));
 
         // Verify job-related ECS fields
         String startJobPattern = patterns.get("BACULA_LOG_STARTJOB");
-        assertTrue("Should use [bacula][job][name]",
-            startJobPattern.contains("[bacula][job][name]"));
+        assertTrue("Should use bacula.job.name",
+            startJobPattern.contains("bacula.job.name"));
 
         // Verify client-related ECS fields
         String fatalConnPattern = patterns.get("BACULA_LOG_FATAL_CONN");
-        assertTrue("Should use [client][address]",
-            fatalConnPattern.contains("[client][address]"));
-        assertTrue("Should use [client][port]",
-            fatalConnPattern.contains("[client][port]"));
+        assertTrue("Should use client.address",
+            fatalConnPattern.contains("client.address"));
+        assertTrue("Should use client.port",
+            fatalConnPattern.contains("client.port"));
 
         // Verify host ECS field
         String baculaLogPattern = patterns.get("BACULA_LOG");
-        assertTrue("Should use [host][hostname]",
-            baculaLogPattern.contains("[host][hostname]"));
+        assertTrue("Should use host.hostname",
+            baculaLogPattern.contains("host.hostname"));
     }
 
     @Test
@@ -917,11 +917,11 @@ public class BaculaPatternTest {
         // Verify integer type modifiers are present for numeric fields
         String readyAppendPattern = patterns.get("BACULA_LOG_READYAPPEND");
         assertTrue("Should have size with :integer modifier",
-            readyAppendPattern.contains("[bacula][volume][size]:integer"));
+            readyAppendPattern.contains("bacula.volume.size:integer"));
 
         String fatalConnPattern = patterns.get("BACULA_LOG_FATAL_CONN");
         assertTrue("Should have port with :integer modifier",
-            fatalConnPattern.contains("[client][port]:integer"));
+            fatalConnPattern.contains("client.port:integer"));
     }
 
     // ========== Edge Cases and Validation Tests ==========

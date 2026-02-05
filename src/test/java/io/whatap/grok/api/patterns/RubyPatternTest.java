@@ -139,11 +139,11 @@ public class RubyPatternTest {
         assertNotNull("Failed to match DEBUG log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
 
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("DEBUG", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("Debug message", captured.get("message"));
+        assertEquals("Debug message", captured.get("log_message"));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match DEBUG log with multi-word message", captured);
-        assertEquals("This is a longer debug message with multiple words", captured.get("message"));
+        assertEquals("This is a longer debug message with multiple words", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - INFO Level ==========
@@ -171,11 +171,11 @@ public class RubyPatternTest {
         assertNotNull("Failed to match INFO log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
 
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("INFO", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("Info message", captured.get("message"));
+        assertEquals("Info message", captured.get("log_message"));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match INFO log with special characters", captured);
-        assertEquals("User logged in: user@example.com", captured.get("message"));
+        assertEquals("User logged in: user@example.com", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - WARN Level ==========
@@ -203,11 +203,11 @@ public class RubyPatternTest {
         assertNotNull("Failed to match WARN log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
 
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("WARN", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("Warning message", captured.get("message"));
+        assertEquals("Warning message", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - ERROR Level ==========
@@ -223,11 +223,11 @@ public class RubyPatternTest {
         assertNotNull("Failed to match ERROR log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
 
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("ERROR", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("Error message", captured.get("message"));
+        assertEquals("Error message", captured.get("log_message"));
     }
 
     @Test
@@ -239,7 +239,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match ERROR log with exception", captured);
-        assertEquals("RuntimeError: Something went wrong", captured.get("message"));
+        assertEquals("RuntimeError: Something went wrong", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - FATAL Level ==========
@@ -255,11 +255,11 @@ public class RubyPatternTest {
         assertNotNull("Failed to match FATAL log line", captured);
         assertFalse("Should capture fields", captured.isEmpty());
 
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("FATAL", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("Fatal error occurred", captured.get("message"));
+        assertEquals("Fatal error occurred", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - Variations ==========
@@ -325,7 +325,7 @@ public class RubyPatternTest {
             Map<String, Object> captured = match.capture();
 
             assertNotNull("Failed to match log with timestamp: " + timestamp, captured);
-            assertEquals("Should capture timestamp: " + timestamp, timestamp, captured.get("timestamp"));
+            assertEquals("Should capture timestamp: " + timestamp, timestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -345,7 +345,7 @@ public class RubyPatternTest {
             Match match = grok.match(logLine);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log with varying whitespace: " + logLine, captured);
-            assertNotNull("Should capture message", captured.get("message"));
+            assertNotNull("Should capture message", captured.get("log_message"));
         }
     }
 
@@ -364,7 +364,7 @@ public class RubyPatternTest {
             Match match = grok.match(logLine);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log with varying progname spacing: " + logLine, captured);
-            assertNotNull("Should capture message", captured.get("message"));
+            assertNotNull("Should capture message", captured.get("log_message"));
         }
     }
 
@@ -379,7 +379,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match log with empty message", captured);
-        assertEquals("", captured.get("message"));
+        assertEquals("", captured.get("log_message"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - Real-world Examples ==========
@@ -395,7 +395,7 @@ public class RubyPatternTest {
         assertNotNull("Failed to match Rails log", captured);
         assertEquals("INFO", captured.get("loglevel"));
         assertTrue("Should capture Rails request message",
-                captured.get("message").toString().contains("Started GET"));
+                captured.get("log_message").toString().contains("Started GET"));
     }
 
     @Test
@@ -409,7 +409,7 @@ public class RubyPatternTest {
         assertNotNull("Failed to match Sidekiq log", captured);
         assertEquals("INFO", captured.get("loglevel"));
         assertTrue("Should capture Sidekiq startup message",
-                captured.get("message").toString().contains("Sidekiq"));
+                captured.get("log_message").toString().contains("Sidekiq"));
     }
 
     @Test
@@ -423,7 +423,7 @@ public class RubyPatternTest {
         assertNotNull("Failed to match Rake task log", captured);
         assertEquals("DEBUG", captured.get("loglevel"));
         assertEquals("rake", captured.get("progname"));
-        assertEquals("Running database migration", captured.get("message"));
+        assertEquals("Running database migration", captured.get("log_message"));
     }
 
     @Test
@@ -438,7 +438,7 @@ public class RubyPatternTest {
         assertEquals("ERROR", captured.get("loglevel"));
         assertEquals("app", captured.get("progname"));
         assertTrue("Should capture ActiveRecord exception",
-                captured.get("message").toString().contains("ActiveRecord::RecordNotFound"));
+                captured.get("log_message").toString().contains("ActiveRecord::RecordNotFound"));
     }
 
     // ========== RUBY_LOGGER Pattern Tests - Edge Cases ==========
@@ -452,7 +452,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match log with colons in message", captured);
-        assertEquals("Key: value, Another: value2", captured.get("message"));
+        assertEquals("Key: value, Another: value2", captured.get("log_message"));
     }
 
     @Test
@@ -465,7 +465,7 @@ public class RubyPatternTest {
 
         assertNotNull("Should match log with URL in message", captured);
         assertTrue("Should capture URL in message",
-                captured.get("message").toString().contains("https://api.example.com/v1/users"));
+                captured.get("log_message").toString().contains("https://api.example.com/v1/users"));
     }
 
     @Test
@@ -478,7 +478,7 @@ public class RubyPatternTest {
 
         assertNotNull("Should match log with JSON in message", captured);
         assertTrue("Should capture JSON in message",
-                captured.get("message").toString().contains("{\"status\":\"ok\""));
+                captured.get("log_message").toString().contains("{\"status\":\"ok\""));
     }
 
     // ========== Field Extraction Verification Tests ==========
@@ -494,18 +494,18 @@ public class RubyPatternTest {
         assertNotNull("Should match complete log line", captured);
 
         // Verify all fields are present
-        assertTrue("Should have timestamp field", captured.containsKey("timestamp"));
+        assertTrue("Should have timestamp field", captured.containsKey("log_timestamp"));
         assertTrue("Should have pid field", captured.containsKey("pid"));
         assertTrue("Should have loglevel field", captured.containsKey("loglevel"));
         assertTrue("Should have progname field", captured.containsKey("progname"));
-        assertTrue("Should have message field", captured.containsKey("message"));
+        assertTrue("Should have message field", captured.containsKey("log_message"));
 
         // Verify all fields have correct values
-        assertEquals("2023-10-11T22:14:15.123456", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("WARN", captured.get("loglevel"));
         assertEquals("myapp", captured.get("progname"));
-        assertEquals("This is a complete test message", captured.get("message"));
+        assertEquals("This is a complete test message", captured.get("log_message"));
     }
 
     @Test
@@ -519,11 +519,11 @@ public class RubyPatternTest {
         assertNotNull("Should match log", captured);
 
         // Verify field types (all should be strings by default)
-        assertTrue("timestamp should be String", captured.get("timestamp") instanceof String);
+        assertTrue("log_timestamp should be String", captured.get("log_timestamp") instanceof String);
         assertTrue("pid should be String", captured.get("pid") instanceof String);
         assertTrue("loglevel should be String", captured.get("loglevel") instanceof String);
         assertTrue("progname should be String", captured.get("progname") instanceof String);
-        assertTrue("message should be String", captured.get("message") instanceof String);
+        assertTrue("log_message should be String", captured.get("log_message") instanceof String);
     }
 
     // ========== Pattern Combination Tests ==========
@@ -538,7 +538,7 @@ public class RubyPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match with default field names", captured);
-        assertEquals("Custom field test", captured.get("message"));
+        assertEquals("Custom field test", captured.get("log_message"));
     }
 
     @Test
@@ -557,9 +557,9 @@ public class RubyPatternTest {
             Match match = grok.match(logLine);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match log line: " + logLine, captured);
-            assertNotNull("Should have timestamp", captured.get("timestamp"));
+            assertNotNull("Should have timestamp", captured.get("log_timestamp"));
             assertNotNull("Should have loglevel", captured.get("loglevel"));
-            assertNotNull("Should have message", captured.get("message"));
+            assertNotNull("Should have message", captured.get("log_message"));
         }
     }
 

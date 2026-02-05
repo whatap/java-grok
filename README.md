@@ -1,5 +1,9 @@
 # Java Grok
 
+> **WhaTap Log Monitoring Grok Parser**
+>
+> This is a fork of [io.krakens:java-grok](https://github.com/thekrakken/java-grok), customized for [WhaTap](https://www.whatap.io) Log Monitoring service. It provides enhanced pattern support, ECS-style field names, and reserved keyword handling for WhaTap's internal processing.
+
 Java Grok is a powerful API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
 
 ## ✨ Features
@@ -13,6 +17,41 @@ Java Grok is a powerful API that allows you to easily parse logs and other files
 - **🏷️ Type-safe Pattern Access**: Enum-based approach for better IDE support
 - **🔄 ECS Field Support**: Supports Elastic Common Schema style field names like `[log][level]`
 - **🔄 Backward Compatibility**: Drop-in replacement for io.krakens:java-grok
+
+-----------------------
+
+## ⚠️ Breaking Changes (v0.1.1)
+
+### Reserved Field Name Changes for WhaTap Log Monitoring
+
+WhaTap Log Monitoring uses certain field names as reserved keywords for internal processing. To avoid conflicts with these system fields, the following field names have been renamed in all built-in patterns:
+
+| Original Field | New Field | Reason (WhaTap Reserved) |
+|---------------|-----------|--------------------------|
+| `timestamp` | `log_timestamp` | `AbstractPack.time` |
+| `time` | `log_time` | `AbstractPack.time` |
+| `message` | `log_message` | System reserved |
+| `content` | `log_content` | `LogSinkPack.content` |
+| `category` | `log_category` | `LogSinkPack.category` |
+| `pcode` | `log_pcode` | `AbstractPack.pcode` |
+| `logContent` | `log_body` | System reserved |
+
+**Impact**: If you are using built-in patterns like `COMBINEDAPACHELOG`, `SYSLOG5424LINE`, `CATALINA_LOG`, etc., the extracted field names have changed. Update your code to use the new field names.
+
+**Example Migration**:
+```java
+// Before (v0.1.0)
+Map<String, Object> result = match.capture();
+String timestamp = (String) result.get("timestamp");
+String message = (String) result.get("message");
+
+// After (v0.1.1)
+Map<String, Object> result = match.capture();
+String timestamp = (String) result.get("log_timestamp");
+String message = (String) result.get("log_message");
+```
+
+**Note**: Custom field names defined in your own patterns (e.g., `%{TIMESTAMP_ISO8601:my_timestamp}`) are not affected by this change.
 
 -----------------------
 
@@ -31,7 +70,7 @@ Java Grok is a powerful API that allows you to easily parse logs and other files
 <dependency>
     <groupId>io.github.whatap</groupId>
     <artifactId>java-grok</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -39,7 +78,7 @@ Or with gradle
 
 ```gradle
 // https://mvnrepository.com/artifact/io.github.whatap/java-grok
-implementation 'io.github.whatap:java-grok:0.1.0'
+implementation 'io.github.whatap:java-grok:0.1.1'
 ```
 
 ### What is different from io.krakens:java-grok

@@ -189,7 +189,7 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match SYSLOGBASE", captured);
-        assertEquals("Oct 11 22:14:15", captured.get("timestamp"));
+        assertEquals("Oct 11 22:14:15", captured.get("log_timestamp"));
         assertEquals("mymachine", captured.get("logsource"));
         assertEquals("su", captured.get("program"));
         assertEquals("123", captured.get("pid"));
@@ -242,14 +242,14 @@ public class SyslogPatternTest {
 
         assertNotNull("Failed to match SYSLOGBASE2", captured);
         // timestamp is captured as ArrayList when there are alternations
-        Object timestampValue = captured.get("timestamp");
+        Object timestampValue = captured.get("log_timestamp");
         if (timestampValue instanceof java.util.List) {
             java.util.List timestamps = (java.util.List) timestampValue;
             assertEquals("Oct 11 22:14:15", timestamps.get(0));
         } else {
             assertEquals("Oct 11 22:14:15", timestampValue);
         }
-        assertEquals("mymachine", captured.get("[host][hostname]"));
+        assertEquals("mymachine", captured.get("host.hostname"));
     }
 
     @Test
@@ -262,7 +262,7 @@ public class SyslogPatternTest {
 
         assertNotNull("Failed to match SYSLOGBASE2 with ISO8601", captured);
         // timestamp is captured as ArrayList when there are alternations
-        Object timestampValue = captured.get("timestamp");
+        Object timestampValue = captured.get("log_timestamp");
         if (timestampValue instanceof java.util.List) {
             java.util.List timestamps = (java.util.List) timestampValue;
             // Find the non-null value
@@ -278,7 +278,7 @@ public class SyslogPatternTest {
         } else {
             assertEquals("2023-10-11T22:14:15Z", timestampValue);
         }
-        assertEquals("server01", captured.get("[host][hostname]"));
+        assertEquals("server01", captured.get("host.hostname"));
     }
 
     @Test
@@ -291,15 +291,15 @@ public class SyslogPatternTest {
 
         assertNotNull("Failed to match SYSLOGLINE", captured);
         // timestamp is captured as ArrayList when there are alternations
-        Object timestampValue = captured.get("timestamp");
+        Object timestampValue = captured.get("log_timestamp");
         if (timestampValue instanceof java.util.List) {
             java.util.List timestamps = (java.util.List) timestampValue;
             assertEquals("Oct 11 22:14:15", timestamps.get(0));
         } else {
             assertEquals("Oct 11 22:14:15", timestampValue);
         }
-        assertEquals("mymachine", captured.get("[host][hostname]"));
-        assertEquals("'su root' failed for lonvick on /dev/pts/8", captured.get("message"));
+        assertEquals("mymachine", captured.get("host.hostname"));
+        assertEquals("'su root' failed for lonvick on /dev/pts/8", captured.get("log_message"));
     }
 
     // ========== PAM Session Pattern Tests ==========
@@ -313,14 +313,14 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match PAM session log", captured);
-        assertEquals("Oct 11 22:14:15", captured.get("timestamp"));
+        assertEquals("Oct 11 22:14:15", captured.get("log_timestamp"));
         assertEquals("server", captured.get("logsource"));
         assertEquals("sshd", captured.get("program"));
         assertEquals("12345", captured.get("pid"));
-        assertEquals("pam_unix", captured.get("[system][auth][pam][module]"));
-        assertEquals("sshd:session", captured.get("[system][auth][pam][origin]"));
-        assertEquals("opened", captured.get("[system][auth][pam][session_state]"));
-        assertEquals("admin", captured.get("[user][name]"));
+        assertEquals("pam_unix", captured.get("system.auth.pam.module"));
+        assertEquals("sshd:session", captured.get("system.auth.pam.origin"));
+        assertEquals("opened", captured.get("system.auth.pam.session_state"));
+        assertEquals("admin", captured.get("user.name"));
     }
 
     @Test
@@ -332,8 +332,8 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match PAM session closed log", captured);
-        assertEquals("closed", captured.get("[system][auth][pam][session_state]"));
-        assertEquals("admin", captured.get("[user][name]"));
+        assertEquals("closed", captured.get("system.auth.pam.session_state"));
+        assertEquals("admin", captured.get("user.name"));
     }
 
     @Test
@@ -345,10 +345,10 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match PAM session with 'by' clause", captured);
-        assertEquals("pam_unix", captured.get("[system][auth][pam][module]"));
-        assertEquals("su:session", captured.get("[system][auth][pam][origin]"));
-        assertEquals("opened", captured.get("[system][auth][pam][session_state]"));
-        assertEquals("root", captured.get("[user][name]"));
+        assertEquals("pam_unix", captured.get("system.auth.pam.module"));
+        assertEquals("su:session", captured.get("system.auth.pam.origin"));
+        assertEquals("opened", captured.get("system.auth.pam.session_state"));
+        assertEquals("root", captured.get("user.name"));
     }
 
     @Test
@@ -362,15 +362,15 @@ public class SyslogPatternTest {
         assertNotNull("Failed to match PAM log", captured);
 
         // Verify all ECS-style field names are present
-        assertTrue("Missing [system][auth][pam][module]", captured.containsKey("[system][auth][pam][module]"));
-        assertTrue("Missing [system][auth][pam][origin]", captured.containsKey("[system][auth][pam][origin]"));
-        assertTrue("Missing [system][auth][pam][session_state]", captured.containsKey("[system][auth][pam][session_state]"));
-        assertTrue("Missing [user][name]", captured.containsKey("[user][name]"));
+        assertTrue("Missing system.auth.pam.module", captured.containsKey("system.auth.pam.module"));
+        assertTrue("Missing system.auth.pam.origin", captured.containsKey("system.auth.pam.origin"));
+        assertTrue("Missing system.auth.pam.session_state", captured.containsKey("system.auth.pam.session_state"));
+        assertTrue("Missing user.name", captured.containsKey("user.name"));
 
-        assertEquals("pam_unix", captured.get("[system][auth][pam][module]"));
-        assertEquals("sshd:session", captured.get("[system][auth][pam][origin]"));
-        assertEquals("opened", captured.get("[system][auth][pam][session_state]"));
-        assertEquals("testuser", captured.get("[user][name]"));
+        assertEquals("pam_unix", captured.get("system.auth.pam.module"));
+        assertEquals("sshd:session", captured.get("system.auth.pam.origin"));
+        assertEquals("opened", captured.get("system.auth.pam.session_state"));
+        assertEquals("testuser", captured.get("user.name"));
     }
 
     // ========== Cron Pattern Tests ==========
@@ -403,13 +403,13 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match CRONLOG", captured);
-        assertEquals("Oct 11 22:14:15", captured.get("timestamp"));
+        assertEquals("Oct 11 22:14:15", captured.get("log_timestamp"));
         assertEquals("server", captured.get("logsource"));
         assertEquals("CRON", captured.get("program"));
         assertEquals("12345", captured.get("pid"));
-        assertEquals("root", captured.get("[user][name]"));
-        assertEquals("CMD", captured.get("[system][cron][action]"));
-        assertEquals("/usr/local/bin/backup.sh", captured.get("message"));
+        assertEquals("root", captured.get("user.name"));
+        assertEquals("CMD", captured.get("system.cron.action"));
+        assertEquals("/usr/local/bin/backup.sh", captured.get("log_message"));
     }
 
     @Test
@@ -421,9 +421,9 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match cron log with www-data user", captured);
-        assertEquals("www-data", captured.get("[user][name]"));
-        assertEquals("CMD", captured.get("[system][cron][action]"));
-        assertEquals("/var/www/scripts/cleanup.sh", captured.get("message"));
+        assertEquals("www-data", captured.get("user.name"));
+        assertEquals("CMD", captured.get("system.cron.action"));
+        assertEquals("/var/www/scripts/cleanup.sh", captured.get("log_message"));
     }
 
     @Test
@@ -435,9 +435,9 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match cron RELOAD", captured);
-        assertEquals("root", captured.get("[user][name]"));
-        assertEquals("RELOAD", captured.get("[system][cron][action]"));
-        assertEquals("crontab update", captured.get("message"));
+        assertEquals("root", captured.get("user.name"));
+        assertEquals("RELOAD", captured.get("system.cron.action"));
+        assertEquals("crontab update", captured.get("log_message"));
     }
 
     @Test
@@ -451,11 +451,11 @@ public class SyslogPatternTest {
         assertNotNull("Failed to match cron log", captured);
 
         // Verify ECS-style field names
-        assertTrue("Missing [user][name]", captured.containsKey("[user][name]"));
-        assertTrue("Missing [system][cron][action]", captured.containsKey("[system][cron][action]"));
+        assertTrue("Missing user.name", captured.containsKey("user.name"));
+        assertTrue("Missing system.cron.action", captured.containsKey("system.cron.action"));
 
-        assertEquals("admin", captured.get("[user][name]"));
-        assertEquals("CMD", captured.get("[system][cron][action]"));
+        assertEquals("admin", captured.get("user.name"));
+        assertEquals("CMD", captured.get("system.cron.action"));
     }
 
     // ========== RFC 5424 Syslog Format Tests ==========
@@ -636,8 +636,8 @@ public class SyslogPatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match real log: " + log, captured);
-            assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
-            assertTrue("Should contain message", captured.containsKey("message"));
+            assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
+            assertTrue("Should contain message", captured.containsKey("log_message"));
         }
     }
 
@@ -675,8 +675,8 @@ public class SyslogPatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match SSH PAM log: " + log, captured);
-            assertTrue("Should contain user name", captured.containsKey("[user][name]"));
-            assertTrue("Should contain session state", captured.containsKey("[system][auth][pam][session_state]"));
+            assertTrue("Should contain user name", captured.containsKey("user.name"));
+            assertTrue("Should contain session state", captured.containsKey("system.auth.pam.session_state"));
         }
     }
 
@@ -694,8 +694,8 @@ public class SyslogPatternTest {
             Match match = grok.match(log);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match cron log: " + log, captured);
-            assertTrue("Should contain user name", captured.containsKey("[user][name]"));
-            assertTrue("Should contain cron action", captured.containsKey("[system][cron][action]"));
+            assertTrue("Should contain user name", captured.containsKey("user.name"));
+            assertTrue("Should contain cron action", captured.containsKey("system.cron.action"));
         }
     }
 
@@ -709,14 +709,14 @@ public class SyslogPatternTest {
 
         assertNotNull("Failed to match kernel log", captured);
         // Handle timestamp as ArrayList
-        Object timestampValue = captured.get("timestamp");
+        Object timestampValue = captured.get("log_timestamp");
         if (timestampValue instanceof java.util.List) {
             java.util.List timestamps = (java.util.List) timestampValue;
             assertEquals("Oct 11 22:14:15", timestamps.get(0));
         } else {
             assertEquals("Oct 11 22:14:15", timestampValue);
         }
-        assertEquals("server", captured.get("[host][hostname]"));
+        assertEquals("server", captured.get("host.hostname"));
     }
 
     @Test
@@ -730,7 +730,7 @@ public class SyslogPatternTest {
         assertNotNull("Failed to match systemd log", captured);
         assertEquals("systemd", captured.get("program"));
         assertEquals("1", captured.get("pid"));
-        assertEquals("Started Session 123 of user admin.", captured.get("message"));
+        assertEquals("Started Session 123 of user admin.", captured.get("log_message"));
     }
 
     // ========== Edge Cases and Validation ==========
@@ -745,7 +745,7 @@ public class SyslogPatternTest {
 
         assertNotNull("Should match log with empty message", captured);
         // GREEDYDATA captures everything after the colon including the space
-        String message = (String) captured.get("message");
+        String message = (String) captured.get("log_message");
         assertNotNull("Message should not be null", message);
         assertTrue("Message should be empty or whitespace", message.trim().isEmpty());
     }
@@ -771,7 +771,7 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match hostname with dashes", captured);
-        assertEquals("web-server-01", captured.get("[host][hostname]"));
+        assertEquals("web-server-01", captured.get("host.hostname"));
     }
 
     @Test

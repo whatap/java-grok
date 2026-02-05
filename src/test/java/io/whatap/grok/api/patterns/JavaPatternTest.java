@@ -99,9 +99,9 @@ public class JavaPatternTest {
 
         String patternDef = patterns.get("JAVASTACKTRACEPART");
         assertNotNull("JAVASTACKTRACEPART definition should not be null", patternDef);
-        assertTrue("Pattern should contain class name", patternDef.contains("[java][log][origin][class][name]"));
-        assertTrue("Pattern should contain function name", patternDef.contains("[log][origin][function]"));
-        assertTrue("Pattern should contain file name", patternDef.contains("[log][origin][file][name]"));
+        assertTrue("Pattern should contain class name", patternDef.contains("java.log.origin.class.name"));
+        assertTrue("Pattern should contain function name", patternDef.contains("log.origin.function"));
+        assertTrue("Pattern should contain file name", patternDef.contains("log.origin.file.name"));
     }
 
     @Test
@@ -110,25 +110,25 @@ public class JavaPatternTest {
         // This tests the building blocks without the complex optional group issue
 
         // Test class name part with ECS field name
-        Grok classGrok = compiler.compile("%{JAVACLASS:[java][log][origin][class][name]}");
+        Grok classGrok = compiler.compile("%{JAVACLASS:java.log.origin.class.name}");
         Match classMatch = classGrok.match("com.example.MyClass");
         Map<String, Object> classCaptured = classMatch.capture();
         assertNotNull("Should match class", classCaptured);
-        assertEquals("com.example.MyClass", classCaptured.get("[java][log][origin][class][name]"));
+        assertEquals("com.example.MyClass", classCaptured.get("java.log.origin.class.name"));
 
         // Test method name part with ECS field name
-        Grok methodGrok = compiler.compile("%{JAVAMETHOD:[log][origin][function]}");
+        Grok methodGrok = compiler.compile("%{JAVAMETHOD:log.origin.function}");
         Match methodMatch = methodGrok.match("myMethod");
         Map<String, Object> methodCaptured = methodMatch.capture();
         assertNotNull("Should match method", methodCaptured);
-        assertEquals("myMethod", methodCaptured.get("[log][origin][function]"));
+        assertEquals("myMethod", methodCaptured.get("log.origin.function"));
 
         // Test file name part with ECS field name
-        Grok fileGrok = compiler.compile("%{JAVAFILE:[log][origin][file][name]}");
+        Grok fileGrok = compiler.compile("%{JAVAFILE:log.origin.file.name}");
         Match fileMatch = fileGrok.match("MyClass.java");
         Map<String, Object> fileCaptured = fileMatch.capture();
         assertNotNull("Should match file", fileCaptured);
-        assertEquals("MyClass.java", fileCaptured.get("[log][origin][file][name]"));
+        assertEquals("MyClass.java", fileCaptured.get("log.origin.file.name"));
 
         // Test line number part with simple field name (without type modifier to avoid issues)
         Grok lineGrok = compiler.compile("%{INT:line}");
@@ -149,7 +149,7 @@ public class JavaPatternTest {
     public void testSimplifiedStackTracePart() throws Exception {
         // Test a simplified version without the problematic optional nested group
         // This pattern matches the core structure without the optional line number
-        String pattern = "%{SPACE}at %{JAVACLASS:[java][log][origin][class][name]}\\.%{JAVAMETHOD:[log][origin][function]}\\(%{JAVAFILE:[log][origin][file][name]}\\)";
+        String pattern = "%{SPACE}at %{JAVACLASS:java.log.origin.class.name}\\.%{JAVAMETHOD:log.origin.function}\\(%{JAVAFILE:log.origin.file.name}\\)";
         Grok grok = compiler.compile(pattern);
 
         String stackTrace = "    at com.example.MyClass.myMethod(Native Method)";
@@ -157,9 +157,9 @@ public class JavaPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match simplified stack trace", captured);
-        assertEquals("com.example.MyClass", captured.get("[java][log][origin][class][name]"));
-        assertEquals("myMethod", captured.get("[log][origin][function]"));
-        assertEquals("Native Method", captured.get("[log][origin][file][name]"));
+        assertEquals("com.example.MyClass", captured.get("java.log.origin.class.name"));
+        assertEquals("myMethod", captured.get("log.origin.function"));
+        assertEquals("Native Method", captured.get("log.origin.file.name"));
     }
 
     @Test
@@ -229,11 +229,11 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Catalina 7 log", captured);
 
-        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("timestamp"));
-        assertEquals("org.apache.catalina.startup.HostConfig", captured.get("[java][log][origin][class][name]"));
-        assertEquals("deployDirectory", captured.get("[log][origin][function]"));
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("Deploying web application directory ROOT", captured.get("message"));
+        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("log_timestamp"));
+        assertEquals("org.apache.catalina.startup.HostConfig", captured.get("java.log.origin.class.name"));
+        assertEquals("deployDirectory", captured.get("log.origin.function"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("Deploying web application directory ROOT", captured.get("log_message"));
     }
 
     @Test
@@ -246,10 +246,10 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Catalina 7 log without level", captured);
 
-        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("timestamp"));
-        assertEquals("org.apache.catalina.core.StandardEngine", captured.get("[java][log][origin][class][name]"));
-        assertEquals("startInternal", captured.get("[log][origin][function]"));
-        assertEquals("Starting Servlet Engine", captured.get("message"));
+        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("log_timestamp"));
+        assertEquals("org.apache.catalina.core.StandardEngine", captured.get("java.log.origin.class.name"));
+        assertEquals("startInternal", captured.get("log.origin.function"));
+        assertEquals("Starting Servlet Engine", captured.get("log_message"));
     }
 
     @Test
@@ -262,10 +262,10 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Catalina 7 log without method", captured);
 
-        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("timestamp"));
-        assertEquals("org.apache.coyote.AbstractProtocol", captured.get("[java][log][origin][class][name]"));
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("Initializing ProtocolHandler", captured.get("message"));
+        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("log_timestamp"));
+        assertEquals("org.apache.coyote.AbstractProtocol", captured.get("java.log.origin.class.name"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("Initializing ProtocolHandler", captured.get("log_message"));
     }
 
     // ========== Catalina 8 (Tomcat 8.5/9.0) Tests ==========
@@ -298,12 +298,12 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Catalina 8 log", captured);
 
-        assertEquals("31-Jul-2020 16:40:38", captured.get("timestamp"));
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("main", captured.get("[java][log][origin][thread][name]"));
-        assertEquals("org.apache.catalina.startup.VersionLoggerListener", captured.get("[java][log][origin][class][name]"));
-        assertEquals("log", captured.get("[log][origin][function]"));
-        assertEquals("Server version name: Apache Tomcat/8.5.57", captured.get("message"));
+        assertEquals("31-Jul-2020 16:40:38", captured.get("log_timestamp"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("main", captured.get("java.log.origin.thread.name"));
+        assertEquals("org.apache.catalina.startup.VersionLoggerListener", captured.get("java.log.origin.class.name"));
+        assertEquals("log", captured.get("log.origin.function"));
+        assertEquals("Server version name: Apache Tomcat/8.5.57", captured.get("log_message"));
     }
 
     @Test
@@ -316,10 +316,10 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Catalina 8 log with complex thread", captured);
 
-        assertEquals("SEVERE", captured.get("[log][level]"));
-        assertEquals("http-nio-8080-exec-1", captured.get("[java][log][origin][thread][name]"));
-        assertEquals("org.apache.catalina.core.StandardWrapperValve", captured.get("[java][log][origin][class][name]"));
-        assertEquals("invoke", captured.get("[log][origin][function]"));
+        assertEquals("SEVERE", captured.get("log.level"));
+        assertEquals("http-nio-8080-exec-1", captured.get("java.log.origin.thread.name"));
+        assertEquals("org.apache.catalina.core.StandardWrapperValve", captured.get("java.log.origin.class.name"));
+        assertEquals("invoke", captured.get("log.origin.function"));
     }
 
     // ========== Combined Catalina Pattern Tests ==========
@@ -345,7 +345,7 @@ public class JavaPatternTest {
         Match match7 = grok7.match(log7);
         Map<String, Object> captured7 = match7.capture();
         assertNotNull("Failed to match Catalina 7 format", captured7);
-        assertEquals("INFO", captured7.get("[log][level]"));
+        assertEquals("INFO", captured7.get("log.level"));
 
         // Test Catalina 8 specific format with CATALINA8_LOG
         Grok grok8 = compiler.compile("%{CATALINA8_LOG}");
@@ -353,8 +353,8 @@ public class JavaPatternTest {
         Match match8 = grok8.match(log8);
         Map<String, Object> captured8 = match8.capture();
         assertNotNull("Failed to match Catalina 8 format", captured8);
-        assertEquals("INFO", captured8.get("[log][level]"));
-        assertEquals("main", captured8.get("[java][log][origin][thread][name]"));
+        assertEquals("INFO", captured8.get("log.level"));
+        assertEquals("main", captured8.get("java.log.origin.thread.name"));
     }
 
     // ========== Tomcat 7 Tests ==========
@@ -368,10 +368,10 @@ public class JavaPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match Tomcat 7 log", captured);
-        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("timestamp"));
-        assertEquals("org.apache.catalina.startup.Catalina", captured.get("[java][log][origin][class][name]"));
-        assertEquals("start", captured.get("[log][origin][function]"));
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("Jan 9, 2014 7:13:13 AM", captured.get("log_timestamp"));
+        assertEquals("org.apache.catalina.startup.Catalina", captured.get("java.log.origin.class.name"));
+        assertEquals("start", captured.get("log.origin.function"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     // ========== Tomcat 8 Tests ==========
@@ -385,11 +385,11 @@ public class JavaPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match Tomcat 8 log", captured);
-        assertEquals("31-Jul-2020 16:40:38", captured.get("timestamp"));
-        assertEquals("WARNING", captured.get("[log][level]"));
-        assertEquals("main", captured.get("[java][log][origin][thread][name]"));
-        assertEquals("org.apache.catalina.startup.SetContextPropertiesRule", captured.get("[java][log][origin][class][name]"));
-        assertEquals("begin", captured.get("[log][origin][function]"));
+        assertEquals("31-Jul-2020 16:40:38", captured.get("log_timestamp"));
+        assertEquals("WARNING", captured.get("log.level"));
+        assertEquals("main", captured.get("java.log.origin.thread.name"));
+        assertEquals("org.apache.catalina.startup.SetContextPropertiesRule", captured.get("java.log.origin.class.name"));
+        assertEquals("begin", captured.get("log.origin.function"));
     }
 
     // ========== Tomcat Legacy Tests ==========
@@ -423,10 +423,10 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Tomcat legacy log", captured);
 
-        assertEquals("2014-01-09 07:13:13", captured.get("timestamp"));
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("org.apache.catalina.startup.Catalina", captured.get("[java][log][origin][class][name]"));
-        assertEquals("Server startup completed", captured.get("message"));
+        assertEquals("2014-01-09 07:13:13", captured.get("log_timestamp"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("org.apache.catalina.startup.Catalina", captured.get("java.log.origin.class.name"));
+        assertEquals("Server startup completed", captured.get("log_message"));
     }
 
     @Test
@@ -439,10 +439,10 @@ public class JavaPatternTest {
 
         assertNotNull("Failed to match Tomcat legacy log with timezone", captured);
 
-        assertEquals("2014-01-09 07:13:13 +0900", captured.get("timestamp"));
-        assertEquals("ERROR", captured.get("[log][level]"));
-        assertEquals("com.example.MyClass", captured.get("[java][log][origin][class][name]"));
-        assertEquals("An error occurred", captured.get("message"));
+        assertEquals("2014-01-09 07:13:13 +0900", captured.get("log_timestamp"));
+        assertEquals("ERROR", captured.get("log.level"));
+        assertEquals("com.example.MyClass", captured.get("java.log.origin.class.name"));
+        assertEquals("An error occurred", captured.get("log_message"));
     }
 
     // ========== Combined Tomcat Pattern Tests ==========
@@ -472,8 +472,8 @@ public class JavaPatternTest {
         Match match8 = grok8.match(log8);
         Map<String, Object> captured8 = match8.capture();
         assertNotNull("Failed to match Tomcat 8 format", captured8);
-        assertEquals("INFO", captured8.get("[log][level]"));
-        assertEquals("main", captured8.get("[java][log][origin][thread][name]"));
+        assertEquals("INFO", captured8.get("log.level"));
+        assertEquals("main", captured8.get("java.log.origin.thread.name"));
 
         // Test Tomcat 7 format
         Grok grok7 = compiler.compile("%{TOMCAT7_LOG}");
@@ -481,7 +481,7 @@ public class JavaPatternTest {
         Match match7 = grok7.match(log7);
         Map<String, Object> captured7 = match7.capture();
         assertNotNull("Failed to match Tomcat 7 format", captured7);
-        assertEquals("INFO", captured7.get("[log][level]"));
+        assertEquals("INFO", captured7.get("log.level"));
 
         // Test Legacy format
         Grok grokLegacy = compiler.compile("%{TOMCATLEGACY_LOG}");
@@ -489,7 +489,7 @@ public class JavaPatternTest {
         Match matchLegacy = grokLegacy.match(logLegacy);
         Map<String, Object> captured = matchLegacy.capture();
         assertNotNull("Failed to match legacy format", captured);
-        assertEquals("INFO", captured.get("[log][level]"));
+        assertEquals("INFO", captured.get("log.level"));
     }
 
     // ========== ECS Field Name Tests ==========
@@ -505,22 +505,22 @@ public class JavaPatternTest {
         assertNotNull("Failed to match log", captured);
 
         // Verify all ECS-style field names are captured correctly
-        assertTrue("Missing [log][level]", captured.containsKey("[log][level]"));
-        assertTrue("Missing [java][log][origin][thread][name]", captured.containsKey("[java][log][origin][thread][name]"));
-        assertTrue("Missing [java][log][origin][class][name]", captured.containsKey("[java][log][origin][class][name]"));
-        assertTrue("Missing [log][origin][function]", captured.containsKey("[log][origin][function]"));
-        assertTrue("Missing message", captured.containsKey("message"));
+        assertTrue("Missing log.level", captured.containsKey("log.level"));
+        assertTrue("Missing java.log.origin.thread.name", captured.containsKey("java.log.origin.thread.name"));
+        assertTrue("Missing java.log.origin.class.name", captured.containsKey("java.log.origin.class.name"));
+        assertTrue("Missing log.origin.function", captured.containsKey("log.origin.function"));
+        assertTrue("Missing message", captured.containsKey("log_message"));
 
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("http-nio-8080-exec-5", captured.get("[java][log][origin][thread][name]"));
-        assertEquals("org.springframework.web.servlet.DispatcherServlet", captured.get("[java][log][origin][class][name]"));
-        assertEquals("initServletBean", captured.get("[log][origin][function]"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("http-nio-8080-exec-5", captured.get("java.log.origin.thread.name"));
+        assertEquals("org.springframework.web.servlet.DispatcherServlet", captured.get("java.log.origin.class.name"));
+        assertEquals("initServletBean", captured.get("log.origin.function"));
     }
 
     @Test
     public void testECSFieldNamesInStackTrace() throws Exception {
         // Test ECS-style field names using a simplified pattern (without the problematic optional nested group)
-        String pattern = "%{SPACE}at %{JAVACLASS:[java][log][origin][class][name]}\\.%{JAVAMETHOD:[log][origin][function]}\\(%{JAVAFILE:[log][origin][file][name]}\\)";
+        String pattern = "%{SPACE}at %{JAVACLASS:java.log.origin.class.name}\\.%{JAVAMETHOD:log.origin.function}\\(%{JAVAFILE:log.origin.file.name}\\)";
         Grok grok = compiler.compile(pattern);
 
         String stackTrace = "    at org.springframework.boot.SpringApplication.run(SpringApplication.java)";
@@ -530,13 +530,13 @@ public class JavaPatternTest {
         assertNotNull("Failed to match stack trace", captured);
 
         // Verify all ECS-style field names in stack trace
-        assertTrue("Missing [java][log][origin][class][name]", captured.containsKey("[java][log][origin][class][name]"));
-        assertTrue("Missing [log][origin][function]", captured.containsKey("[log][origin][function]"));
-        assertTrue("Missing [log][origin][file][name]", captured.containsKey("[log][origin][file][name]"));
+        assertTrue("Missing java.log.origin.class.name", captured.containsKey("java.log.origin.class.name"));
+        assertTrue("Missing log.origin.function", captured.containsKey("log.origin.function"));
+        assertTrue("Missing log.origin.file.name", captured.containsKey("log.origin.file.name"));
 
-        assertEquals("org.springframework.boot.SpringApplication", captured.get("[java][log][origin][class][name]"));
-        assertEquals("run", captured.get("[log][origin][function]"));
-        assertEquals("SpringApplication.java", captured.get("[log][origin][file][name]"));
+        assertEquals("org.springframework.boot.SpringApplication", captured.get("java.log.origin.class.name"));
+        assertEquals("run", captured.get("log.origin.function"));
+        assertEquals("SpringApplication.java", captured.get("log.origin.file.name"));
     }
 
     // ========== Real-world Log Examples ==========
@@ -550,8 +550,8 @@ public class JavaPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match real Spring Boot log", captured);
-        assertEquals("INFO", captured.get("[log][level]"));
-        assertEquals("http-nio-8080-exec-10", captured.get("[java][log][origin][thread][name]"));
+        assertEquals("INFO", captured.get("log.level"));
+        assertEquals("http-nio-8080-exec-10", captured.get("java.log.origin.thread.name"));
     }
 
     @Test
@@ -563,15 +563,15 @@ public class JavaPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match exception log", captured);
-        assertEquals("SEVERE", captured.get("[log][level]"));
-        assertEquals("org.apache.catalina.core.StandardWrapperValve", captured.get("[java][log][origin][class][name]"));
-        assertEquals("invoke", captured.get("[log][origin][function]"));
+        assertEquals("SEVERE", captured.get("log.level"));
+        assertEquals("org.apache.catalina.core.StandardWrapperValve", captured.get("java.log.origin.class.name"));
+        assertEquals("invoke", captured.get("log.origin.function"));
     }
 
     @Test
     public void testMultipleStackTraceLines() throws Exception {
         // Test multiple stack trace lines using simplified pattern
-        String pattern = "%{SPACE}at %{JAVACLASS:[java][log][origin][class][name]}\\.%{JAVAMETHOD:[log][origin][function]}\\(%{JAVAFILE:[log][origin][file][name]}\\)";
+        String pattern = "%{SPACE}at %{JAVACLASS:java.log.origin.class.name}\\.%{JAVAMETHOD:log.origin.function}\\(%{JAVAFILE:log.origin.file.name}\\)";
         Grok grok = compiler.compile(pattern);
 
         String[] stackTraceLines = {
@@ -585,8 +585,8 @@ public class JavaPatternTest {
             Match match = grok.match(line);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match stack trace line: " + line, captured);
-            assertNotNull("Missing class name in: " + line, captured.get("[java][log][origin][class][name]"));
-            assertNotNull("Missing function in: " + line, captured.get("[log][origin][function]"));
+            assertNotNull("Missing class name in: " + line, captured.get("java.log.origin.class.name"));
+            assertNotNull("Missing function in: " + line, captured.get("log.origin.function"));
         }
     }
 }

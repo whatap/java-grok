@@ -392,7 +392,7 @@ public class HttpdPatternTest {
             Map<String, Object> result = match.capture();
 
             assertNotNull("Timestamp " + ts + " should match", result);
-            assertTrue("Should contain timestamp field", result.containsKey("timestamp"));
+            assertTrue("Should contain timestamp field", result.containsKey("log_timestamp"));
         }
     }
 }

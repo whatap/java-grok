@@ -203,16 +203,16 @@ public class DnsPatternTest {
         String querylogBase = patterns.get("BIND9_QUERYLOGBASE");
 
         // Verify pattern definition contains ECS-style field references
-        assertTrue("BIND9_QUERYLOGBASE should reference [client][ip]",
-                querylogBase.contains("[client][ip]"));
-        assertTrue("BIND9_QUERYLOGBASE should reference [client][port]:integer",
-                querylogBase.contains("[client][port]:integer"));
-        assertTrue("BIND9_QUERYLOGBASE should reference [dns][question][name]",
-                querylogBase.contains("[dns][question][name]"));
-        assertTrue("BIND9_QUERYLOGBASE should reference [dns][question][type]",
-                querylogBase.contains("[dns][question][type]"));
-        assertTrue("BIND9_QUERYLOGBASE should reference [server][ip]",
-                querylogBase.contains("[server][ip]"));
+        assertTrue("BIND9_QUERYLOGBASE should reference client.ip",
+                querylogBase.contains("client.ip"));
+        assertTrue("BIND9_QUERYLOGBASE should reference client.port:integer",
+                querylogBase.contains("client.port:integer"));
+        assertTrue("BIND9_QUERYLOGBASE should reference dns.question.name",
+                querylogBase.contains("dns.question.name"));
+        assertTrue("BIND9_QUERYLOGBASE should reference dns.question.type",
+                querylogBase.contains("dns.question.type"));
+        assertTrue("BIND9_QUERYLOGBASE should reference server.ip",
+                querylogBase.contains("server.ip"));
     }
 
     @Test
@@ -275,18 +275,18 @@ public class DnsPatternTest {
         String broHttp = patterns.get("BRO_HTTP");
 
         // Verify pattern contains ECS field references
-        assertTrue("BRO_HTTP should reference [zeek][session_id]",
-                broHttp.contains("[zeek][session_id]"));
-        assertTrue("BRO_HTTP should reference [source][ip]",
-                broHttp.contains("[source][ip]"));
-        assertTrue("BRO_HTTP should reference [source][port]:integer",
-                broHttp.contains("[source][port]:integer"));
-        assertTrue("BRO_HTTP should reference [http][request][method]",
-                broHttp.contains("[http][request][method]"));
-        assertTrue("BRO_HTTP should reference [http][response][status_code]:integer",
-                broHttp.contains("[http][response][status_code]:integer"));
-        assertTrue("BRO_HTTP should reference [user_agent][original]",
-                broHttp.contains("[user_agent][original]"));
+        assertTrue("BRO_HTTP should reference zeek.session_id",
+                broHttp.contains("zeek.session_id"));
+        assertTrue("BRO_HTTP should reference source.ip",
+                broHttp.contains("source.ip"));
+        assertTrue("BRO_HTTP should reference source.port:integer",
+                broHttp.contains("source.port:integer"));
+        assertTrue("BRO_HTTP should reference http.request.method",
+                broHttp.contains("http.request.method"));
+        assertTrue("BRO_HTTP should reference http.response.status_code:integer",
+                broHttp.contains("http.response.status_code:integer"));
+        assertTrue("BRO_HTTP should reference user_agent.original",
+                broHttp.contains("user_agent.original"));
     }
 
     @Test
@@ -296,21 +296,21 @@ public class DnsPatternTest {
 
         // Verify key BRO HTTP fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:integer",
-            "[destination][ip]",
-            "[destination][port]:integer",
-            "[http][request][method]",
-            "[url][domain]",
-            "[url][original]",
-            "[http][request][referrer]",
-            "[user_agent][original]",
-            "[http][request][body][bytes]:integer",
-            "[http][response][body][bytes]:integer",
-            "[http][response][status_code]:integer",
-            "[http][request][mime_type]",
-            "[http][response][mime_type]"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:integer",
+            "destination.ip",
+            "destination.port:integer",
+            "http.request.method",
+            "url.domain",
+            "url.original",
+            "http.request.referrer",
+            "user_agent.original",
+            "http.request.body.bytes:integer",
+            "http.response.body.bytes:integer",
+            "http.response.status_code:integer",
+            "http.request.mime_type",
+            "http.response.mime_type"
         };
 
         for (String field : expectedFields) {
@@ -328,14 +328,14 @@ public class DnsPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String broDns = patterns.get("BRO_DNS");
 
-        assertTrue("BRO_DNS should reference [dns][id]:integer",
-                broDns.contains("[dns][id]:integer"));
-        assertTrue("BRO_DNS should reference [dns][question][name]",
-                broDns.contains("[dns][question][name]"));
-        assertTrue("BRO_DNS should reference [dns][question][type]",
-                broDns.contains("[dns][question][type]"));
-        assertTrue("BRO_DNS should reference [dns][response_code]",
-                broDns.contains("[dns][response_code]"));
+        assertTrue("BRO_DNS should reference dns.id:integer",
+                broDns.contains("dns.id:integer"));
+        assertTrue("BRO_DNS should reference dns.question.name",
+                broDns.contains("dns.question.name"));
+        assertTrue("BRO_DNS should reference dns.question.type",
+                broDns.contains("dns.question.type"));
+        assertTrue("BRO_DNS should reference dns.response_code",
+                broDns.contains("dns.response_code"));
     }
 
     @Test
@@ -345,20 +345,20 @@ public class DnsPatternTest {
 
         // Verify key BRO DNS fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:integer",
-            "[destination][ip]",
-            "[destination][port]:integer",
-            "[network][transport]",
-            "[dns][id]:integer",
-            "[dns][question][name]",
-            "[dns][question][type]",
-            "[dns][response_code]",
-            "[zeek][dns][AA]",
-            "[zeek][dns][TC]",
-            "[zeek][dns][RD]",
-            "[zeek][dns][RA]"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:integer",
+            "destination.ip",
+            "destination.port:integer",
+            "network.transport",
+            "dns.id:integer",
+            "dns.question.name",
+            "dns.question.type",
+            "dns.response_code",
+            "zeek.dns.AA",
+            "zeek.dns.TC",
+            "zeek.dns.RD",
+            "zeek.dns.RA"
         };
 
         for (String field : expectedFields) {
@@ -376,14 +376,14 @@ public class DnsPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String broConn = patterns.get("BRO_CONN");
 
-        assertTrue("BRO_CONN should reference [source][packets]:integer",
-                broConn.contains("[source][packets]:integer"));
-        assertTrue("BRO_CONN should reference [source][bytes]:integer",
-                broConn.contains("[source][bytes]:integer"));
-        assertTrue("BRO_CONN should reference [destination][packets]:integer",
-                broConn.contains("[destination][packets]:integer"));
-        assertTrue("BRO_CONN should reference [destination][bytes]:integer",
-                broConn.contains("[destination][bytes]:integer"));
+        assertTrue("BRO_CONN should reference source.packets:integer",
+                broConn.contains("source.packets:integer"));
+        assertTrue("BRO_CONN should reference source.bytes:integer",
+                broConn.contains("source.bytes:integer"));
+        assertTrue("BRO_CONN should reference destination.packets:integer",
+                broConn.contains("destination.packets:integer"));
+        assertTrue("BRO_CONN should reference destination.bytes:integer",
+                broConn.contains("destination.bytes:integer"));
     }
 
     @Test
@@ -393,19 +393,19 @@ public class DnsPatternTest {
 
         // Verify key BRO CONN fields are defined
         String[] expectedFields = {
-            "[zeek][session_id]",
-            "[source][ip]",
-            "[source][port]:integer",
-            "[destination][ip]",
-            "[destination][port]:integer",
-            "[network][transport]",
-            "[network][protocol]",
-            "[zeek][connection][duration]:float",
-            "[zeek][connection][state]",
-            "[source][packets]:integer",
-            "[source][bytes]:integer",
-            "[destination][packets]:integer",
-            "[destination][bytes]:integer"
+            "zeek.session_id",
+            "source.ip",
+            "source.port:integer",
+            "destination.ip",
+            "destination.port:integer",
+            "network.transport",
+            "network.protocol",
+            "zeek.connection.duration:float",
+            "zeek.connection.state",
+            "source.packets:integer",
+            "source.bytes:integer",
+            "destination.packets:integer",
+            "destination.bytes:integer"
         };
 
         for (String field : expectedFields) {
@@ -423,16 +423,16 @@ public class DnsPatternTest {
         Map<String, String> patterns = compiler.getPatternDefinitions();
         String broFiles = patterns.get("BRO_FILES");
 
-        assertTrue("BRO_FILES should reference [file][size]:integer",
-                broFiles.contains("[file][size]:integer"));
-        assertTrue("BRO_FILES should reference [file][mime_type]",
-                broFiles.contains("[file][mime_type]"));
-        assertTrue("BRO_FILES should reference [file][hash][md5]",
-                broFiles.contains("[file][hash][md5]"));
-        assertTrue("BRO_FILES should reference [file][hash][sha1]",
-                broFiles.contains("[file][hash][sha1]"));
-        assertTrue("BRO_FILES should reference [file][hash][sha256]",
-                broFiles.contains("[file][hash][sha256]"));
+        assertTrue("BRO_FILES should reference file.size:integer",
+                broFiles.contains("file.size:integer"));
+        assertTrue("BRO_FILES should reference file.mime_type",
+                broFiles.contains("file.mime_type"));
+        assertTrue("BRO_FILES should reference file.hash.md5",
+                broFiles.contains("file.hash.md5"));
+        assertTrue("BRO_FILES should reference file.hash.sha1",
+                broFiles.contains("file.hash.sha1"));
+        assertTrue("BRO_FILES should reference file.hash.sha256",
+                broFiles.contains("file.hash.sha256"));
     }
 
     @Test
@@ -442,15 +442,15 @@ public class DnsPatternTest {
 
         // Verify key BRO FILES fields are defined
         String[] expectedFields = {
-            "[zeek][files][fuid]",
-            "[server][ip]",
-            "[client][ip]",
-            "[file][mime_type]",
-            "[file][name]",
-            "[file][size]:integer",
-            "[file][hash][md5]",
-            "[file][hash][sha1]",
-            "[file][hash][sha256]"
+            "zeek.files.fuid",
+            "server.ip",
+            "client.ip",
+            "file.mime_type",
+            "file.name",
+            "file.size:integer",
+            "file.hash.md5",
+            "file.hash.sha1",
+            "file.hash.sha256"
         };
 
         for (String field : expectedFields) {

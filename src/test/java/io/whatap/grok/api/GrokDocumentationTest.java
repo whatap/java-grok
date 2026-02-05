@@ -36,7 +36,7 @@ public class GrokDocumentationTest {
     Assertions.assertThat(capture).hasSize(22);
 		final boolean debug = false;
 		final Object[] keywordArray = new Object[] { "COMBINEDAPACHELOG",
-				"COMMONAPACHELOG", "clientip", "ident", "auth", "timestamp", "MONTHDAY",
+				"COMMONAPACHELOG", "clientip", "ident", "auth", "log_timestamp", "MONTHDAY",
 				"MONTH", "YEAR", "TIME", "HOUR", "MINUTE", "SECOND", "INT", "verb",
 				"httpversion", "rawrequest", "request", "response", "bytes", "referrer",
 				"agent" };
