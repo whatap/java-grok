@@ -31,7 +31,7 @@ Java Grok is a powerful API that allows you to easily parse logs and other files
 <dependency>
     <groupId>io.github.whatap</groupId>
     <artifactId>java-grok</artifactId>
-    <version>0.0.3</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -39,7 +39,7 @@ Or with gradle
 
 ```gradle
 // https://mvnrepository.com/artifact/io.github.whatap/java-grok
-implementation 'io.github.whatap:java-grok:0.0.3'
+implementation 'io.github.whatap:java-grok:0.1.0'
 ```
 
 ### What is different from io.krakens:java-grok
