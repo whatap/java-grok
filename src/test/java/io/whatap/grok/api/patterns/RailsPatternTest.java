@@ -426,6 +426,6 @@ public class RailsPatternTest {
         assertEquals("GET", captured.get("http.request.method"));
         assertEquals("/users", captured.get("url.original"));
         assertEquals("127.0.0.1", captured.get("source.address"));
-        assertEquals("2023-10-11 22:14:15 +0000", captured.get("timestamp"));
+        assertEquals("2023-10-11 22:14:15 +0000", captured.get("log_timestamp"));
     }
 }

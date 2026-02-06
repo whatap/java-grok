@@ -52,7 +52,7 @@ public class RedisPatternTest {
             Match match = grok.match(timestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp: " + timestamp, captured);
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -70,7 +70,7 @@ public class RedisPatternTest {
             Match match = grok.match(timestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp with leading zero: " + timestamp, captured);
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -88,7 +88,7 @@ public class RedisPatternTest {
             Match match = grok.match(timestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp without leading zero: " + timestamp, captured);
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -106,7 +106,7 @@ public class RedisPatternTest {
             Match match = grok.match(timestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp with month: " + month, captured);
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 

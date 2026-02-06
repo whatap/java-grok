@@ -170,7 +170,7 @@ public class EximPatternTest {
             Match match = grok.match(date);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match date: " + date, captured);
-            assertEquals(date, captured.get("timestamp"));
+            assertEquals(date, captured.get("log_timestamp"));
         }
     }
 
@@ -184,7 +184,7 @@ public class EximPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match date", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
     }
 
     @Test
@@ -196,7 +196,7 @@ public class EximPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match log line", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("1a2B3c-4D5e6F-7G", captured.get("msgid"));
     }
@@ -337,7 +337,7 @@ public class EximPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match combined pattern", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
         assertEquals("1a2B3c-4D5e6F-7G", captured.get("msgid"));
         assertEquals("<=", captured.get("flags"));
     }
@@ -372,7 +372,7 @@ public class EximPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Failed to match arrival log", captured);
-        assertEquals("2023-10-11 22:14:15", captured.get("timestamp"));
+        assertEquals("2023-10-11 22:14:15", captured.get("log_timestamp"));
         assertEquals("12345", captured.get("pid"));
         assertEquals("1a2B3c-4D5e6F-7G", captured.get("msgid"));
         assertEquals("<=", captured.get("flags"));
@@ -393,7 +393,7 @@ public class EximPatternTest {
             Match match = grok.match(logLine);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match delivery log: " + logLine, captured);
-            assertTrue("Should contain timestamp", captured.containsKey("timestamp"));
+            assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
             assertTrue("Should contain msgid", captured.containsKey("msgid"));
             assertTrue("Should contain flags", captured.containsKey("flags"));
         }

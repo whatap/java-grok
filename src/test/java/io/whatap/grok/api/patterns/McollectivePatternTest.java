@@ -298,7 +298,7 @@ public class McollectivePatternTest {
 
         assertNotNull("Failed to match audit log with message", captured);
         assertEquals("2023-10-11T22:14:15.123456", captured.get("log_timestamp"));
-        assertEquals("user=admin action=deploy target=server01", captured.get("message"));
+        assertEquals("user=admin action=deploy target=server01", captured.get("log_message"));
     }
 
     @Test
@@ -352,7 +352,7 @@ public class McollectivePatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match real audit log: " + log, captured);
             assertTrue("Should contain timestamp", captured.containsKey("log_timestamp"));
-            assertTrue("Should contain message", captured.containsKey("message"));
+            assertTrue("Should contain message", captured.containsKey("log_message"));
         }
     }
 

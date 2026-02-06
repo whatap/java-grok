@@ -155,7 +155,7 @@ public class BaculaPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp: " + timestamp, captured);
             assertFalse("Match should not be empty for: " + timestamp, captured.isEmpty());
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 

@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,14 +31,38 @@ public class GrokCompiler implements Serializable {
   private static final Pattern patternLinePattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
 
   /**
+   * WhaTap reserved field name mappings.
+   * These field names are used internally by WhaTap Log Monitoring and must be renamed
+   * to avoid conflicts with system fields.
+   */
+  private static final Map<String, String> RESERVED_KEYWORDS;
+  static {
+    Map<String, String> m = new HashMap<>();
+    m.put("timestamp", "log_timestamp");
+    m.put("time", "log_time");
+    m.put("message", "log_message");
+    m.put("content", "log_content");
+    m.put("category", "log_category");
+    m.put("pcode", "log_pcode");
+    m.put("logContent", "log_body");
+    RESERVED_KEYWORDS = Collections.unmodifiableMap(m);
+  }
+
+  /**
    * {@code Grok} patterns definitions.
    */
   private final Map<String, String> grokPatternDefinitions = new ConcurrentHashMap<>();
-  
+
   /**
    * Cache for compiled patterns to improve performance.
    */
   private final GrokCache cache = new GrokCache();
+
+  /**
+   * Whether to rename reserved keywords during compilation.
+   * Enabled by default for WhaTap Log Monitoring compatibility.
+   */
+  private boolean reservedKeywordRenaming = true;
 
   private GrokCompiler() {}
 
@@ -47,6 +72,33 @@ public class GrokCompiler implements Serializable {
 
   public Map<String, String> getPatternDefinitions() {
     return grokPatternDefinitions;
+  }
+
+  /**
+   * Enable or disable reserved keyword renaming during compilation.
+   *
+   * @param enabled true to rename reserved keywords (default), false to keep original names
+   */
+  public void setReservedKeywordRenaming(boolean enabled) {
+    this.reservedKeywordRenaming = enabled;
+  }
+
+  /**
+   * Check if reserved keyword renaming is enabled.
+   *
+   * @return true if reserved keyword renaming is enabled
+   */
+  public boolean isReservedKeywordRenaming() {
+    return reservedKeywordRenaming;
+  }
+
+  /**
+   * Get the reserved keyword mappings.
+   *
+   * @return unmodifiable map of reserved keyword to renamed keyword
+   */
+  public static Map<String, String> getReservedKeywords() {
+    return RESERVED_KEYWORDS;
   }
 
   /**
@@ -182,7 +234,7 @@ public class GrokCompiler implements Serializable {
     }
     
     // Check cache first
-    String cacheKey = pattern + ":" + defaultTimeZone + ":" + namedOnly;
+    String cacheKey = pattern + ":" + defaultTimeZone + ":" + namedOnly + ":" + reservedKeywordRenaming;
     Grok cached = cache.getGrok(cacheKey);
     if (cached != null) {
       return cached;
@@ -232,8 +284,14 @@ public class GrokCompiler implements Serializable {
           if (namedOnly && group.get("subname") == null) {
             replacement = String.format("(?:%s)", definitionOfPattern);
           }
-          namedRegexCollection.put("name" + index,
-              (group.get("subname") != null ? group.get("subname") : group.get("name")));
+          String subname = group.get("subname") != null ? group.get("subname") : group.get("name");
+          if (reservedKeywordRenaming && group.get("subname") != null) {
+            String renamed = RESERVED_KEYWORDS.get(subname);
+            if (renamed != null) {
+              subname = renamed;
+            }
+          }
+          namedRegexCollection.put("name" + index, subname);
           
           // Use StringBuilder for efficient string replacement
           String currentRegex = namedRegex.toString();

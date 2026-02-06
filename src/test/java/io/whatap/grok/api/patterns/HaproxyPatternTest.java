@@ -113,7 +113,7 @@ public class HaproxyPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match time: " + time, captured);
             assertFalse("Match should not be empty for: " + time, captured.isEmpty());
-            assertEquals(time, captured.get("time"));
+            assertEquals(time, captured.get("log_time"));
         }
     }
 

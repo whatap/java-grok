@@ -230,7 +230,7 @@ public class PostfixPatternTest {
             Match match = grok.match(time);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match time unit: " + time, captured);
-            assertEquals(time, captured.get("time"));
+            assertEquals(time, captured.get("log_time"));
         }
     }
 

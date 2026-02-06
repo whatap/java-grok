@@ -84,7 +84,7 @@ public class SyslogPatternTest {
             Match match = grok.match(timestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match timestamp: " + timestamp, captured);
-            assertEquals(timestamp, captured.get("timestamp"));
+            assertEquals(timestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -535,7 +535,7 @@ public class SyslogPatternTest {
         assertNotNull("Failed to match RFC 5424 base", captured);
         assertEquals(34, captured.get("priority"));
         assertEquals("1", captured.get("version"));
-        assertEquals("2023-10-11T22:14:15.003Z", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.003Z", captured.get("log_timestamp"));
         assertEquals("mymachine.example.com", captured.get("hostname"));
         assertEquals("su", captured.get("appname"));
         assertEquals(12345, captured.get("procid"));
@@ -571,11 +571,11 @@ public class SyslogPatternTest {
         assertNotNull("Failed to match RFC 5424 complete line", captured);
         assertEquals(34, captured.get("priority"));
         assertEquals("1", captured.get("version"));
-        assertEquals("2023-10-11T22:14:15.003Z", captured.get("timestamp"));
+        assertEquals("2023-10-11T22:14:15.003Z", captured.get("log_timestamp"));
         assertEquals("mymachine.example.com", captured.get("hostname"));
         assertEquals("su", captured.get("appname"));
         assertEquals("ID47", captured.get("msgid"));
-        assertEquals("'su root' failed for lonvick on /dev/pts/8", captured.get("message"));
+        assertEquals("'su root' failed for lonvick on /dev/pts/8", captured.get("log_message"));
     }
 
     @Test
@@ -592,7 +592,7 @@ public class SyslogPatternTest {
         assertEquals("evntslog", captured.get("appname"));
         assertEquals(12345, captured.get("procid"));
         assertNotNull("Should have structured data", captured.get("structdata"));
-        assertEquals("An application event", captured.get("message"));
+        assertEquals("An application event", captured.get("log_message"));
     }
 
     @Test
@@ -657,7 +657,7 @@ public class SyslogPatternTest {
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match real RFC 5424 log: " + log, captured);
             assertTrue("Should contain priority", captured.containsKey("priority"));
-            assertTrue("Should contain message", captured.containsKey("message"));
+            assertTrue("Should contain message", captured.containsKey("log_message"));
         }
     }
 
@@ -759,7 +759,7 @@ public class SyslogPatternTest {
         Map<String, Object> captured = match.capture();
 
         assertNotNull("Should match timestamp with multiple spaces", captured);
-        assertEquals(timestamp, captured.get("timestamp"));
+        assertEquals(timestamp, captured.get("log_timestamp"));
     }
 
     @Test

@@ -195,7 +195,7 @@ public class JavaPatternTest {
             Match match = grok.match(message);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match message: " + message, captured);
-            assertEquals(message, captured.get("message"));
+            assertEquals(message, captured.get("log_message"));
         }
     }
 
@@ -215,7 +215,7 @@ public class JavaPatternTest {
             Match match = grok.match(datestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match datestamp: " + datestamp, captured);
-            assertEquals(datestamp, captured.get("timestamp"));
+            assertEquals(datestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -284,7 +284,7 @@ public class JavaPatternTest {
             Match match = grok.match(datestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match Catalina 8 datestamp: " + datestamp, captured);
-            assertEquals(datestamp, captured.get("timestamp"));
+            assertEquals(datestamp, captured.get("log_timestamp"));
         }
     }
 
@@ -409,7 +409,7 @@ public class JavaPatternTest {
             Match match = grok.match(datestamp);
             Map<String, Object> captured = match.capture();
             assertNotNull("Failed to match legacy datestamp: " + datestamp, captured);
-            assertEquals(datestamp, captured.get("timestamp"));
+            assertEquals(datestamp, captured.get("log_timestamp"));
         }
     }
 
