@@ -63,7 +63,7 @@ public class PatternRepositoryTest {
         // Check specific categories
         assertTrue("Should have Core category", categories.containsKey("Core"));
         assertTrue("Should have Databases category", categories.containsKey("Databases"));
-        assertTrue("Should have Applications category", categories.containsKey("Applications"));
+        assertTrue("Should have Application Servers & Frameworks category", categories.containsKey("Application Servers & Frameworks"));
         
         // Check that core contains PATTERNS
         List<PatternType> corePatterns = categories.get("Core");

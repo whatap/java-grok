@@ -55,36 +55,12 @@ public class PatternRepository {
      */
     public Map<String, List<PatternType>> getPatternTypesByCategory() {
         Map<String, List<PatternType>> categories = new LinkedHashMap<>();
-        
-        // Core patterns
-        categories.put("Core", Arrays.asList(PatternType.PATTERNS));
-        
-        // Cloud & Infrastructure
-        categories.put("Cloud & Infrastructure", Arrays.asList(
-            PatternType.AWS, PatternType.HAPROXY, PatternType.HTTPD
-        ));
-        
-        // Databases
-        categories.put("Databases", Arrays.asList(
-            PatternType.MONGODB, PatternType.POSTGRESQL
-        ));
-        
-        // System & Network
-        categories.put("System & Network", Arrays.asList(
-            PatternType.LINUX_SYSLOG, PatternType.FIREWALLS, PatternType.BIND, 
-            PatternType.JUNOS, PatternType.BRO
-        ));
-        
-        // Applications
-        categories.put("Applications", Arrays.asList(
-            PatternType.JAVA, PatternType.RAILS, PatternType.RUBY, PatternType.POSTFIX
-        ));
-        
-        // Monitoring & Backup
-        categories.put("Monitoring & Backup", Arrays.asList(
-            PatternType.NAGIOS, PatternType.BACULA, PatternType.MCOLLECTIVE
-        ));
-        
+
+        for (PatternType type : PatternType.values()) {
+            String categoryName = type.getCategory().getDisplayName();
+            categories.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(type);
+        }
+
         return categories;
     }
     
