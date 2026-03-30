@@ -1,0 +1,8 @@
+# Nginx log patterns
+# Access log: default "combined" format is identical to Apache combined format
+# Error log: custom Nginx format
+
+NGINX_ACCESS %{IPORHOST:source.address} - (?:-|%{DATA:user.name}) \[%{HTTPDATE:log_timestamp}\] "(?:%{WORD:http.request.method} %{NOTSPACE:url.original}(?: HTTP/%{NUMBER:http.version})?|%{DATA:nginx.access.info})" (?:-|%{INT:http.response.status_code:integer}) (?:-|%{INT:http.response.body.bytes:integer}) "(?:-|%{DATA:http.request.referrer})" "(?:-|%{DATA:user_agent.original})"
+
+NGINX_ERROR_LOG_TIMESTAMP %{YEAR}/%{MONTHNUM}/%{MONTHDAY} %{TIME}
+NGINX_ERROR %{NGINX_ERROR_LOG_TIMESTAMP:log_timestamp} \[%{LOGLEVEL:log.level}\] %{POSINT:process.pid:integer}#%{INT:nginx.error.tid:integer}:(?:\s\*%{INT:nginx.error.connection_id:integer})? %{GREEDYDATA:log_message}

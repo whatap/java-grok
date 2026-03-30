@@ -72,6 +72,11 @@ public enum PatternType {
      * Nagios monitoring patterns.
      */
     NAGIOS("nagios", "Nagios monitoring log patterns"),
+
+    /**
+     * Nginx web server patterns.
+     */
+    NGINX("nginx", "Nginx web server log patterns"),
     
     /**
      * Base patterns (core Grok patterns).
