@@ -126,7 +126,52 @@ public enum PatternType {
     /**
      * Zeek network security monitoring patterns.
      */
-    ZEEK("zeek", "Zeek network security monitoring patterns");
+    ZEEK("zeek", "Zeek network security monitoring patterns"),
+
+    /**
+     * Kubernetes container and component patterns.
+     */
+    KUBERNETES("kubernetes", "Kubernetes log patterns"),
+
+    /**
+     * Docker daemon and container patterns.
+     */
+    DOCKER("docker", "Docker log patterns"),
+
+    /**
+     * Elasticsearch server patterns.
+     */
+    ELASTICSEARCH("elasticsearch", "Elasticsearch log patterns"),
+
+    /**
+     * Apache Kafka patterns.
+     */
+    KAFKA("kafka", "Apache Kafka log patterns"),
+
+    /**
+     * MySQL/MariaDB database patterns.
+     */
+    MYSQL("mysql", "MySQL/MariaDB database log patterns"),
+
+    /**
+     * Spring Boot application patterns.
+     */
+    SPRINGBOOT("springboot", "Spring Boot application log patterns"),
+
+    /**
+     * Log4j/Logback logging framework patterns.
+     */
+    LOG4J("log4j", "Log4j/Logback log patterns"),
+
+    /**
+     * IIS web server patterns.
+     */
+    IIS("iis", "IIS web server log patterns"),
+
+    /**
+     * Oracle Database patterns.
+     */
+    ORACLE("oracle", "Oracle Database log patterns");
 
     private final String fileName;
     private final String description;

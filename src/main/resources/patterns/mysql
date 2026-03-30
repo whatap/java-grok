@@ -1,0 +1,13 @@
+# MySQL/MariaDB log patterns
+
+# MySQL log levels (includes Note which is not in standard LOGLEVEL)
+MYSQL_LOGLEVEL (?:[Nn]ote|NOTE|%{LOGLEVEL})
+
+# MySQL error log (5.7+/8.0)
+MYSQL_ERROR %{TIMESTAMP_ISO8601:log_timestamp} %{INT:process.pid:integer} \[%{MYSQL_LOGLEVEL:log.level}\] \[%{DATA:mysql.error.code}\] \[%{DATA:mysql.error.subsystem}\] %{GREEDYDATA:log_message}
+
+# MySQL error log (older format)
+MYSQL_ERROR_LEGACY %{NUMBER:log_timestamp} %{POSINT:mysql.thread_id:integer} \[%{LOGLEVEL:log.level}\] %{GREEDYDATA:log_message}
+
+# MySQL slow query log
+MYSQL_SLOWLOG # Time: %{TIMESTAMP_ISO8601:log_timestamp}\n# User@Host: %{USER:mysql.slowlog.user}\[%{USER}\] @ (?:%{HOSTNAME:mysql.slowlog.host})? \[%{IP:source.ip}?\]\s+Id:\s+%{INT:mysql.slowlog.id:integer}\n# Query_time: %{NUMBER:mysql.slowlog.query_time.sec:float}\s+Lock_time: %{NUMBER:mysql.slowlog.lock_time.sec:float}\s+Rows_sent: %{INT:mysql.slowlog.rows_sent:integer}\s+Rows_examined: %{INT:mysql.slowlog.rows_examined:integer}

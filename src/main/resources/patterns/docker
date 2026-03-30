@@ -1,0 +1,10 @@
+# Docker log patterns
+
+# Docker daemon log
+DOCKER_DAEMON time="%{TIMESTAMP_ISO8601:log_timestamp}" level=%{LOGLEVEL:log.level} msg="%{DATA:log_message}"(?:\s+%{GREEDYDATA:docker.daemon.attributes})?
+
+# Docker container JSON log format (default logging driver)
+DOCKER_CONTAINER_JSON \{"log":"%{DATA:log_message}","stream":"%{WORD:docker.container.stream}","time":"%{TIMESTAMP_ISO8601:log_timestamp}"\}
+
+# Docker compose log format
+DOCKER_COMPOSE %{DATA:docker.container.name}\s+\| %{GREEDYDATA:log_message}

@@ -1,0 +1,13 @@
+# Oracle Database log patterns
+
+# Oracle alert log (12c+/19c)
+ORACLE_ALERT %{TIMESTAMP_ISO8601:log_timestamp}\n%{GREEDYDATA:log_message}
+
+# Oracle alert log (traditional format)
+ORACLE_ALERT_LEGACY %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}
+
+# Oracle listener log
+ORACLE_LISTENER %{TIMESTAMP_ISO8601:log_timestamp} \* \(%{DATA:oracle.listener.protocol_info}\) \* \(%{DATA:oracle.listener.address_info}\) \* establish \* %{DATA:oracle.listener.service_name} \* %{INT:oracle.listener.status:integer}
+
+# Oracle audit log
+ORACLE_AUDIT %{TIMESTAMP_ISO8601:log_timestamp}\nLENGTH\s?:\s?"%{INT:oracle.audit.length:integer}"\nACTION\s?:\[%{INT:oracle.audit.action_number:integer}\]\s'%{DATA:oracle.audit.action}'\nDATABASE USER:\[%{INT}\]\s'%{DATA:user.name}'

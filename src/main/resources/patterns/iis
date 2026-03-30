@@ -1,0 +1,10 @@
+# IIS (Internet Information Services) log patterns
+
+# IIS W3C Extended Log Format (default)
+IIS_LOG %{TIMESTAMP_ISO8601:log_timestamp} %{NOTSPACE:iis.site.name} %{NOTSPACE:destination.address} %{WORD:http.request.method} %{NOTSPACE:url.original} (?:-|%{NOTSPACE:url.query}) %{INT:destination.port:integer} (?:-|%{NOTSPACE:user.name}) %{IPORHOST:source.address} %{NOTSPACE:user_agent.original} (?:-|%{NOTSPACE:http.request.referrer}) %{INT:http.response.status_code:integer} %{INT:iis.response.sub_status:integer} %{INT:iis.response.win32_status:integer} %{INT:event.duration:integer}
+
+# IIS simplified log (common fields)
+IIS_LOG_SIMPLE %{TIMESTAMP_ISO8601:log_timestamp} %{WORD:http.request.method} %{NOTSPACE:url.original} (?:-|%{NOTSPACE:url.query}) %{INT:destination.port:integer} (?:-|%{NOTSPACE:user.name}) %{IPORHOST:source.address} %{INT:http.response.status_code:integer} %{INT:iis.response.sub_status:integer} %{INT:iis.response.win32_status:integer} %{INT:event.duration:integer}
+
+# IIS error log (HTTPERR)
+IIS_HTTPERR %{TIMESTAMP_ISO8601:log_timestamp} %{IPORHOST:source.address} %{INT:source.port:integer} %{IPORHOST:destination.address} %{INT:destination.port:integer} (?:HTTP/%{NUMBER:http.version})? %{WORD:http.request.method} %{NOTSPACE:url.original} (?:-|%{INT:http.response.status_code:integer}) (?:-|%{INT:iis.site.id:integer}) %{DATA:iis.error.reason} %{NOTSPACE:iis.error.queue_name}

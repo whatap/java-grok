@@ -1,0 +1,16 @@
+# Kubernetes log patterns
+
+# Container log format (JSON driver): timestamp stream(stdout/stderr) flags message
+KUBE_CONTAINER_LOG %{TIMESTAMP_ISO8601:log_timestamp} (?:stdout|stderr) [FP] %{GREEDYDATA:log_message}
+
+# klog severity: I=Info, W=Warning, E=Error, F=Fatal
+KLOG_LEVEL [IWEF]
+
+# Kubelet log format
+KUBE_KUBELET %{KLOG_LEVEL:log.level}%{MONTHNUM}%{MONTHDAY} %{TIME} %{POSINT:process.pid:integer} %{DATA:log.origin.file.name}:%{INT:log.origin.file.line:integer}\] %{GREEDYDATA:log_message}
+
+# Kube-apiserver / controller-manager / scheduler log format (same klog format)
+KUBE_APISERVER %{KLOG_LEVEL:log.level}%{MONTHNUM}%{MONTHDAY} %{TIME} %{POSINT:process.pid:integer} %{DATA:log.origin.file.name}:%{INT:log.origin.file.line:integer}\] %{GREEDYDATA:log_message}
+
+# Kubernetes audit log key fields (JSON-based, single line summary)
+KUBE_AUDIT %{TIMESTAMP_ISO8601:log_timestamp} AUDIT: id="%{DATA:kubernetes.audit.id}" stage="%{DATA:kubernetes.audit.stage}" ip="%{IP:source.ip}" method="%{WORD:http.request.method}" uri="%{DATA:url.original}" response="%{INT:http.response.status_code:integer}"

@@ -1,0 +1,13 @@
+# Spring Boot log patterns
+
+# Spring Boot logger name (supports brackets, dots, slashes in class names)
+SPRINGBOOT_LOGGER [a-zA-Z0-9$./_\[\]]+(?:\.[a-zA-Z0-9$./_\[\]]+)*
+
+# Spring Boot default log format
+SPRINGBOOT_LOG %{TIMESTAMP_ISO8601:log_timestamp} %{SPACE}%{LOGLEVEL:log.level} %{POSINT:process.pid:integer} --- \[%{SPACE}%{DATA:process.thread.name}\] %{SPRINGBOOT_LOGGER:java.log.origin.class.name}%{SPACE}: %{GREEDYDATA:log_message}
+
+# Spring Boot startup banner log
+SPRINGBOOT_STARTUP %{TIMESTAMP_ISO8601:log_timestamp} %{SPACE}%{LOGLEVEL:log.level} %{POSINT:process.pid:integer} --- \[%{SPACE}%{DATA:process.thread.name}\] %{SPRINGBOOT_LOGGER:java.log.origin.class.name}%{SPACE}: %{DATA:springboot.application.name} %{GREEDYDATA:log_message}
+
+# Spring Boot actuator health log
+SPRINGBOOT_ACTUATOR %{TIMESTAMP_ISO8601:log_timestamp} %{SPACE}%{LOGLEVEL:log.level} %{POSINT:process.pid:integer} --- \[%{SPACE}%{DATA:process.thread.name}\] %{SPRINGBOOT_LOGGER:java.log.origin.class.name}%{SPACE}: %{GREEDYDATA:log_message}

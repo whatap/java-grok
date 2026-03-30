@@ -1,0 +1,13 @@
+# Log4j / Logback log patterns
+
+# Log4j default pattern: timestamp [thread] level class - message
+LOG4J %{TIMESTAMP_ISO8601:log_timestamp} \[%{DATA:process.thread.name}\] %{LOGLEVEL:log.level}%{SPACE}%{JAVACLASS:java.log.origin.class.name} - %{GREEDYDATA:log_message}
+
+# Log4j with MDC context
+LOG4J_MDC %{TIMESTAMP_ISO8601:log_timestamp} \[%{DATA:process.thread.name}\] %{LOGLEVEL:log.level}%{SPACE}%{JAVACLASS:java.log.origin.class.name} \{%{DATA:log4j.mdc}\} - %{GREEDYDATA:log_message}
+
+# Logback default pattern: timestamp level [thread] class - message
+LOGBACK %{TIMESTAMP_ISO8601:log_timestamp} %{LOGLEVEL:log.level}%{SPACE}\[%{DATA:process.thread.name}\] %{JAVACLASS:java.log.origin.class.name} - %{GREEDYDATA:log_message}
+
+# Log4j2 pattern with pid
+LOG4J2 %{TIMESTAMP_ISO8601:log_timestamp} %{LOGLEVEL:log.level}%{SPACE}%{POSINT:process.pid:integer} --- \[%{DATA:process.thread.name}\] %{JAVACLASS:java.log.origin.class.name} : %{GREEDYDATA:log_message}

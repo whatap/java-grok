@@ -1,0 +1,13 @@
+# Elasticsearch log patterns
+
+# ES 7.x+ JSON-style log (plaintext rendering)
+ES_LOG \[%{TIMESTAMP_ISO8601:log_timestamp}\]\[%{LOGLEVEL:log.level}%{SPACE}\]\[%{DATA:elasticsearch.component}%{SPACE}\] \[%{DATA:elasticsearch.node.name}\]%{SPACE}%{GREEDYDATA:log_message}
+
+# ES slow log
+ES_SLOWLOG \[%{TIMESTAMP_ISO8601:log_timestamp}\]\[%{LOGLEVEL:log.level}%{SPACE}\]\[%{DATA:elasticsearch.component}%{SPACE}\] \[%{DATA:elasticsearch.node.name}\] \[%{DATA:elasticsearch.index.name}\]\[%{INT:elasticsearch.shard.id:integer}\]%{SPACE}took\[%{DATA:elasticsearch.slowlog.took}\],%{SPACE}took_millis\[%{INT:elasticsearch.slowlog.took_millis:integer}\],%{SPACE}%{GREEDYDATA:log_message}
+
+# ES deprecation log
+ES_DEPRECATION \[%{TIMESTAMP_ISO8601:log_timestamp}\]\[DEPRECATION\]\[%{DATA:elasticsearch.component}%{SPACE}\] \[%{DATA:elasticsearch.node.name}\]%{SPACE}%{GREEDYDATA:log_message}
+
+# ES GC log
+ES_GC \[%{TIMESTAMP_ISO8601:log_timestamp}\]\[%{INT:process.pid:integer}\]\[%{DATA:elasticsearch.gc.collector}\]%{SPACE}%{GREEDYDATA:log_message}

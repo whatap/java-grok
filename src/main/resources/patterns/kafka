@@ -1,0 +1,10 @@
+# Kafka log patterns
+
+# Kafka server log (Log4j format)
+KAFKA_LOG \[%{TIMESTAMP_ISO8601:log_timestamp}\] %{LOGLEVEL:log.level} %{GREEDYDATA:log_message} \(%{JAVACLASS:java.log.origin.class.name}\)
+
+# Kafka controller log
+KAFKA_CONTROLLER \[%{TIMESTAMP_ISO8601:log_timestamp}\] %{LOGLEVEL:log.level} \[%{DATA:kafka.log.component}\]: %{GREEDYDATA:log_message} \(%{JAVACLASS:java.log.origin.class.name}\)
+
+# Kafka GC log
+KAFKA_GC %{NUMBER:log_timestamp}: \[%{DATA:kafka.gc.type} %{DATA:kafka.gc.cause}\] %{GREEDYDATA:log_message}
