@@ -43,9 +43,56 @@ WhaTap Grok 패턴 파싱 라이브러리 (io.krakens 포크).
   - `registerPatterns(PatternType...)` — 선택적 등록
   - `registerAllPatterns()` — 전체 등록
 
-## 배포 좌표
+## 배포
 
+### 좌표
 ```
 groupId: io.github.whatap
 artifactId: java-grok
 ```
+
+### 로컬 배포 (개발/테스트)
+```bash
+./gradlew publishJavaGrokMavenPublicationToMavenLocal
+# → ~/.m2/repository/io/github/whatap/java-grok/{version}/
+```
+
+### Maven Central 배포 (릴리즈)
+
+자동 배포(`publishToSonatype`)가 402 에러로 실패할 경우 **Central Portal 수동 업로드** 사용:
+
+1. **번들 ZIP 생성** (스킬 `/maven-central-deploy` 사용 또는 수동):
+```bash
+M2=~/.m2/repository/io/github/whatap/java-grok/{VERSION}
+OUT=/tmp/java-grok-{VERSION}-bundle
+mkdir -p $OUT/io/github/whatap/java-grok/{VERSION}
+DEST=$OUT/io/github/whatap/java-grok/{VERSION}
+
+# 아티팩트 복사
+for f in java-grok-{VERSION}.jar java-grok-{VERSION}-sources.jar java-grok-{VERSION}-javadoc.jar java-grok-{VERSION}.pom; do
+  cp "$M2/$f" "$M2/${f}.asc" "$DEST/"
+  md5 -q "$DEST/$f" > "$DEST/${f}.md5"
+  shasum -a 1 "$DEST/$f" | awk '{print $1}' > "$DEST/${f}.sha1"
+done
+
+cd $OUT && zip -r /tmp/java-grok-{VERSION}-bundle.zip .
+```
+
+2. **Central Portal 업로드**:
+   - https://central.sonatype.com → Deployments → Upload
+   - Deployment Name: `java-grok-{VERSION}-bundle.zip`
+   - ZIP 파일 업로드 → 검증 통과 → Publish
+
+### 필수 아티팩트 (Central 검증 기준)
+| 파일 | 필수 |
+|------|------|
+| `*.jar` | ✅ |
+| `*-sources.jar` | ✅ |
+| `*-javadoc.jar` | ✅ |
+| `*.pom` | ✅ |
+| `*.asc` (GPG 서명) | ✅ 각 파일별 |
+| `*.md5` + `*.sha1` (체크섬) | ✅ jar/pom별 |
+
+### 버전 관리
+- `variable.gradle`의 `VERSION` 수정
+- 배포 후 git tag 추가: `git tag v{VERSION} && git push --tags`
