@@ -1,0 +1,11 @@
+{
+  "HAPROXYTIME": "13:55:36",
+  "HAPROXYDATE": "11/Oct/2023:22:14:15.123",
+  "HAPROXYCAPTUREDREQUESTHEADERS": "example.com|10.0.0.2|en-US|https://example.com/|Mozilla/5.0",
+  "HAPROXYCAPTUREDRESPONSEHEADERS": "text/html|gzip|no-cache|Thu, 01 Jan 2023 00:00:00 GMT",
+  "HAPROXYURI": "http://www.example.com:8080/path?query=1",
+  "HAPROXYHTTPREQUESTLINE": "GET http://www.example.com/path HTTP/1.1",
+  "HAPROXYHTTPBASE": "10.0.0.1:12345 [11/Oct/2023:22:14:15.123] frontend1 backend1/server1 10/0/30/69/109 200 1234 - - ---- 1/1/0/1/0 0/0 \"GET http://www.example.com/path HTTP/1.1\"",
+  "HAPROXYHTTP": "Oct 11 22:14:15 lb01 haproxy[12345]: 10.0.0.1:12345 [11/Oct/2023:22:14:15.123] frontend1 backend1/server1 10/0/30/69/109 200 1234 - - ---- 1/1/0/1/0 0/0 \"GET http://www.example.com/path HTTP/1.1\"",
+  "HAPROXYTCP": "Oct 11 22:14:15 lb01 haproxy[12345]: 10.0.0.1:12345 [11/Oct/2023:22:14:15.123] frontend1 backend1/server1 0/30/109 1234 ---- 1/1/0/1/0 0/0"
+}

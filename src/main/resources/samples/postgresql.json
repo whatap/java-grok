@@ -1,0 +1,3 @@
+{
+  "POSTGRESQL": "2023-10-11 22:14:15 EST postgres user@mydb[12345] LOG: statement: SELECT * FROM users;"
+}

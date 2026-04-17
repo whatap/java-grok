@@ -1,0 +1,3 @@
+{
+  "S3_REQUEST_LINE": "GET /my-bucket/path/to/file.jpg HTTP/1.1"
+}

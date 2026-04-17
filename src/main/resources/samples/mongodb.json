@@ -1,0 +1,7 @@
+{
+  "MONGO_LOG": "Oct 11 22:14:15.003 [conn1] insert mydb.users",
+  "MONGO_WORDDASH": "my-database",
+  "MONGO3_SEVERITY": "I",
+  "MONGO3_COMPONENT": "NETWORK",
+  "MONGO3_LOG": "2023-10-11T22:14:15.003+0000 I NETWORK  [listener] connection accepted from 127.0.0.1:12345 #1"
+}

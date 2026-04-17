@@ -1,0 +1,6 @@
+{
+  "HTTPDERROR_DATE": "Mon Oct 11 22:14:15 2023",
+  "HTTPD20_ERRORLOG": "[Mon Oct 11 22:14:15 2023] [error] [client 192.168.1.1] File not found: /var/www/html/missing.html",
+  "COMMONAPACHELOG": "192.168.1.1 - john [10/Oct/2023:13:55:36 -0700] \"GET /index.html HTTP/1.1\" 200 1234",
+  "COMBINEDAPACHELOG": "192.168.1.1 - john [10/Oct/2023:13:55:36 -0700] \"GET /index.html HTTP/1.1\" 200 1234 \"http://example.com/\" \"Mozilla/5.0\""
+}

@@ -1,0 +1,5 @@
+{
+  "KAFKA_LOG": "[2024-01-15 08:30:00,123] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)",
+  "KAFKA_CONTROLLER": "[2024-01-15 08:30:00,789] INFO [Controller id=0]: Starting controller (kafka.controller.KafkaController)",
+  "KAFKA_GC": "1.234: [GC young] GC pause 50ms"
+}

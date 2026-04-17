@@ -1,0 +1,8 @@
+{
+  "BRO_BOOL": "T",
+  "BRO_DATA": "example.com",
+  "BRO_HTTP": "1234567890.123456\tCYFu2v1jP3GCNmXXSh\t10.0.0.1\t12345\t192.168.1.1\t80\t1\tGET\twww.example.com\t/index.html\t-\tMozilla/5.0\t0\t1234\t200\tOK\t-\t-\t-\t(empty)\t-\t-\t-\tF1234\ttext/html\tF5678\ttext/html",
+  "BRO_DNS": "1234567890.123456\tCYFu2v1jP3GCNmXXSh\t10.0.0.1\t12345\t192.168.1.1\t53\tudp\t1234\twww.example.com\t1\tC_INTERNET\t1\tA\t0\tNOERROR\tF\tF\tT\tF\t0\t93.184.216.34\t3600.000000\tF",
+  "BRO_CONN": "1234567890.123456\tCYFu2v1jP3GCNmXXSh\t10.0.0.1\t12345\t192.168.1.1\t80\ttcp\thttp\t1.234\t100\t200\tSF\tT\t0\tShADadfF\t5\t300\t4\t250\t(empty)",
+  "BRO_FILES": "1234567890.123456\tF1234567\t192.168.1.1\t10.0.0.1\tCYFu2v1jP3GCNmXXSh\tHTTP\t0\tSHA1,MD5\ttext/html\tindex.html\t0.5\t-\tF\t1024\t2048\t0\t0\tF\t-\taabbccdd\teeff0011\t22334455\t-"
+}

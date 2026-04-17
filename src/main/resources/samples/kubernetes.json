@@ -1,0 +1,6 @@
+{
+  "KUBE_CONTAINER_LOG": "2024-01-15T08:30:00.123456789Z stdout F {\"level\":\"info\",\"msg\":\"server started\"}",
+  "KUBE_KUBELET": "I0115 08:30:00.123456 12345 kubelet.go:1234] Started kubelet",
+  "KUBE_APISERVER": "I0115 08:30:00.123456 12345 apiserver.go:100] Serving securely on 0.0.0.0:6443",
+  "KUBE_AUDIT": "2024-01-15T08:30:00.123456Z AUDIT: id=\"abc123\" stage=\"ResponseComplete\" ip=\"10.0.0.1\" method=\"GET\" uri=\"/api/v1/pods\" response=\"200\""
+}

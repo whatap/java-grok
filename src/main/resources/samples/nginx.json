@@ -1,0 +1,5 @@
+{
+  "NGINX_ACCESS": "192.168.1.1 - - [10/Oct/2023:13:55:36 +0900] \"GET /index.html HTTP/1.1\" 200 1234 \"-\" \"Mozilla/5.0\"",
+  "NGINX_ERROR_LOG_TIMESTAMP": "2023/10/10 13:55:36",
+  "NGINX_ERROR": "2023/10/10 13:55:36 [error] 1234#0: *5678 open() \"/var/www/html/favicon.ico\" failed (2: No such file or directory), client: 192.168.1.1, server: example.com, request: \"GET /favicon.ico HTTP/1.1\", host: \"example.com\""
+}

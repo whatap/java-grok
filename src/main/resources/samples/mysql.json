@@ -1,0 +1,5 @@
+{
+  "MYSQL_ERROR": "2024-01-15T08:30:00.123456Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.",
+  "MYSQL_ERROR_LEGACY": "140115  8:30:00 1 [Warning] Aborted connection",
+  "MYSQL_SLOWLOG": "# Time: 2024-01-15T08:30:00.123456Z\n# User@Host: root[root] @ localhost [127.0.0.1]  Id:     1\n# Query_time: 10.000000  Lock_time: 0.000000  Rows_sent: 1  Rows_examined: 1000000"
+}

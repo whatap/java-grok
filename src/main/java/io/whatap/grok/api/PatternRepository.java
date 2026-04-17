@@ -25,6 +25,11 @@ public class PatternRepository {
      * Cache for loaded patterns to avoid repeated file I/O.
      */
     private final Map<PatternType, Map<String, String>> patternCache = new HashMap<>();
+
+    /**
+     * Cache for loaded sample logs to avoid repeated file I/O.
+     */
+    private final Map<PatternType, Map<String, String>> sampleCache = new HashMap<>();
     
     private PatternRepository() {
         // Singleton pattern
@@ -219,6 +224,131 @@ public class PatternRepository {
      */
     public void clearCache() {
         patternCache.clear();
+        sampleCache.clear();
+    }
+
+    /**
+     * Load sample logs for a specific pattern type.
+     *
+     * @param patternType the pattern type
+     * @return map of pattern names to sample log strings (empty map if no samples found)
+     */
+    public Map<String, String> getSampleLogs(PatternType patternType) {
+        Map<String, String> cached = sampleCache.get(patternType);
+        if (cached != null) {
+            return new HashMap<>(cached);
+        }
+
+        Map<String, String> samples = new HashMap<>();
+        String resourcePath = "/samples/" + patternType.getFileName() + ".json";
+        InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+        if (inputStream == null) {
+            sampleCache.put(patternType, samples);
+            return samples;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            samples = parseSimpleJson(sb.toString());
+        } catch (IOException e) {
+            // Return empty map on error
+        }
+
+        sampleCache.put(patternType, samples);
+        return new HashMap<>(samples);
+    }
+
+    /**
+     * Parse a simple flat JSON object {"key":"value", ...} into a Map.
+     * Handles escaped characters in values.
+     */
+    private Map<String, String> parseSimpleJson(String json) {
+        Map<String, String> result = new HashMap<>();
+        if (json == null || json.trim().isEmpty()) {
+            return result;
+        }
+
+        json = json.trim();
+        if (!json.startsWith("{") || !json.endsWith("}")) {
+            return result;
+        }
+
+        // Remove outer braces
+        json = json.substring(1, json.length() - 1).trim();
+        if (json.isEmpty()) {
+            return result;
+        }
+
+        int i = 0;
+        while (i < json.length()) {
+            // Skip whitespace
+            while (i < json.length() && Character.isWhitespace(json.charAt(i))) i++;
+            if (i >= json.length()) break;
+
+            // Expect opening quote for key
+            if (json.charAt(i) != '"') break;
+            i++;
+            int keyStart = i;
+            while (i < json.length() && json.charAt(i) != '"') {
+                if (json.charAt(i) == '\\') i++; // skip escaped char
+                i++;
+            }
+            String key = unescapeJson(json.substring(keyStart, i));
+            i++; // closing quote
+
+            // Skip whitespace and colon
+            while (i < json.length() && (Character.isWhitespace(json.charAt(i)) || json.charAt(i) == ':')) i++;
+
+            // Expect opening quote for value
+            if (i >= json.length() || json.charAt(i) != '"') break;
+            i++;
+            int valueStart = i;
+            while (i < json.length() && json.charAt(i) != '"') {
+                if (json.charAt(i) == '\\') i++; // skip escaped char
+                i++;
+            }
+            String value = unescapeJson(json.substring(valueStart, i));
+            i++; // closing quote
+
+            result.put(key, value);
+
+            // Skip whitespace and comma
+            while (i < json.length() && (Character.isWhitespace(json.charAt(i)) || json.charAt(i) == ',')) i++;
+        }
+
+        return result;
+    }
+
+    /**
+     * Unescape JSON string escape sequences.
+     */
+    private String unescapeJson(String s) {
+        if (s == null || !s.contains("\\")) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\' && i + 1 < s.length()) {
+                char next = s.charAt(i + 1);
+                switch (next) {
+                    case '"': sb.append('"'); i++; break;
+                    case '\\': sb.append('\\'); i++; break;
+                    case '/': sb.append('/'); i++; break;
+                    case 'n': sb.append('\n'); i++; break;
+                    case 't': sb.append('\t'); i++; break;
+                    case 'r': sb.append('\r'); i++; break;
+                    default: sb.append(c); break;
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
     
     /**

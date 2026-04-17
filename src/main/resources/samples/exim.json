@@ -1,0 +1,17 @@
+{
+  "EXIM_MSGID": "1a2B3c-4D5e6F-7G",
+  "EXIM_FLAGS": "<=",
+  "EXIM_DATE": "2023-10-11 22:14:15",
+  "EXIM_PID": "[12345]",
+  "EXIM_QT": "1h30m5s",
+  "EXIM_EXCLUDE_TERMS": "Message is frozen",
+  "EXIM_REMOTE_HOST": "H=mail.example.com (mail.example.com) [192.168.1.100]:25",
+  "EXIM_INTERFACE": "I=[10.0.0.1]:25",
+  "EXIM_PROTOCOL": "P=esmtp",
+  "EXIM_MSG_SIZE": "S=1234",
+  "EXIM_HEADER_ID": "id=abc123@example.com",
+  "EXIM_QUOTED_CONTENT": "Hello World",
+  "EXIM_SUBJECT": "T=\"Test email subject\"",
+  "EXIM_UNKNOWN_FIELD": "R=accept",
+  "EXIM_NAMED_FIELDS": " H=mail.example.com (relay.example.com) [192.168.1.100]:25 I=[10.0.0.1]:25 P=esmtp S=1234 id=abc123@example.com T=\"Test email subject\""
+}

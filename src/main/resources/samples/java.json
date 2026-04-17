@@ -1,0 +1,20 @@
+{
+  "JAVACLASS": "com.example.MyClass",
+  "JAVAFILE": "MyClass.java",
+  "JAVAMETHOD": "doFilter",
+  "JAVASTACKTRACEPART": "  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)",
+  "JAVATHREAD": "TP-Processor1",
+  "JAVALOGMESSAGE": "Server startup completed successfully",
+  "CATALINA7_DATESTAMP": "Jan 9, 2014 7:13:13 AM",
+  "CATALINA7_LOG": "Jan 9, 2014 7:13:13 AM org.apache.catalina.startup.HostConfig deployDirectory INFO: Deploying web application directory ROOT",
+  "CATALINA8_DATESTAMP": "31-Jul-2020 16:40:38",
+  "CATALINA8_LOG": "31-Jul-2020 16:40:38 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name: Apache Tomcat/8.5.57",
+  "CATALINA_DATESTAMP": "31-Jul-2020 16:40:38",
+  "CATALINALOG": "31-Jul-2020 16:40:38 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name: Apache Tomcat/8.5.57",
+  "TOMCAT7_LOG": "Jan 9, 2014 7:13:13 AM org.apache.catalina.startup.Catalina start INFO: Server startup in 1234 ms",
+  "TOMCAT8_LOG": "31-Jul-2020 16:40:38 WARNING [main] org.apache.catalina.startup.SetContextPropertiesRule.begin Configuration error",
+  "TOMCATLEGACY_DATESTAMP": "2014-01-09 07:13:13",
+  "TOMCATLEGACY_LOG": "2014-01-09 07:13:13 | INFO | org.apache.catalina.startup.Catalina - Server startup completed",
+  "TOMCAT_DATESTAMP": "31-Jul-2020 16:40:38",
+  "TOMCATLOG": "31-Jul-2020 16:40:38 INFO [http-nio-8080-exec-5] org.springframework.web.servlet.DispatcherServlet.initServletBean Initializing Servlet"
+}

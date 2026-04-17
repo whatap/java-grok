@@ -1,0 +1,12 @@
+{
+  "SYSLOGLINE": "Oct 11 22:14:15 mymachine su[123]: 'su root' failed for lonvick on /dev/pts/8",
+  "SYSLOG5424PRINTASCII": "application",
+  "SYSLOGBASE2": "Oct 11 22:14:15 mymachine syslogd:",
+  "SYSLOGPAMSESSION": "Oct 11 22:14:15 mymachine sshd[12345]: pam_unix(sshd:session): session opened for user admin by (uid=0)",
+  "CRON_ACTION": "CMD",
+  "CRONLOG": "Oct 11 22:14:15 mymachine CRON[12345]: (root) CMD (/usr/local/bin/cleanup.sh)",
+  "SYSLOG5424PRI": "<165>",
+  "SYSLOG5424SD": "[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"]",
+  "SYSLOG5424BASE": "<165>1 2023-10-11T22:14:15.000003-07:00 mymachine evntslog 12345 ID47 [exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"]",
+  "SYSLOG5424LINE": "<165>1 2023-10-11T22:14:15.000003-07:00 mymachine evntslog 12345 ID47 [exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOMAn application event log entry"
+}

@@ -1,0 +1,4 @@
+{
+  "SQUID3_STATUS": "200",
+  "SQUID3": "1612345678.123    100 192.168.1.1 TCP_MISS/200 1234 GET http://example.com/ user DIRECT/93.184.216.34 text/html"
+}

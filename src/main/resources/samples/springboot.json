@@ -1,0 +1,5 @@
+{
+  "SPRINGBOOT_LOG": "2024-01-15 08:30:00.123  INFO 12345 --- [           main] o.s.b.w.e.t.TomcatWebServer             : Tomcat started on port(s): 8080 (http)",
+  "SPRINGBOOT_STARTUP": "2024-01-15 08:30:00.123  INFO 12345 --- [           main] c.e.demo.DemoApplication                : MyApp Starting DemoApplication v1.0",
+  "SPRINGBOOT_ACTUATOR": "2024-01-15 08:30:00.123  INFO 12345 --- [           main] o.s.b.a.e.web.EndpointLinksResolver     : Exposing 2 endpoint(s) beneath base path '/actuator'"
+}

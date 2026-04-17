@@ -1,0 +1,5 @@
+{
+  "IIS_LOG": "2024-01-15 08:30:00 W3SVC1 192.168.1.10 GET /index.html - 80 - 10.0.0.1 Mozilla/5.0 - 200 0 0 125",
+  "IIS_LOG_SIMPLE": "2024-01-15 08:30:00 GET /index.html - 80 - 10.0.0.1 200 0 0 125",
+  "IIS_HTTPERR": "2024-01-15 08:30:00 10.0.0.1 54321 192.168.1.10 80 HTTP/1.1 GET /index.html 503 1 ConnLimit DefaultAppPool"
+}

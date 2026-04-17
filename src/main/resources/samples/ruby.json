@@ -1,0 +1,4 @@
+{
+  "RUBY_LOGLEVEL": "INFO",
+  "RUBY_LOGGER": "I, [2023-10-11T22:14:15.123456 #12345]   INFO -- myapp: Info message"
+}

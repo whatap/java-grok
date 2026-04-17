@@ -1,0 +1,6 @@
+{
+  "ES_LOG": "[2024-01-15T08:30:00,123][INFO ][o.e.c.m.MetadataCreateIndexService] [node-1] [my-index] creating index",
+  "ES_SLOWLOG": "[2024-01-15T08:30:00,123][WARN ][i.s.s.query              ] [node-1] [my-index][0] took[5.2s], took_millis[5200], search query slow",
+  "ES_DEPRECATION": "[2024-01-15T08:30:00,123][DEPRECATION][o.e.d.a.a.i.t.p.PutIndexTemplateAction] [node-1] index template [logstash] has been deprecated",
+  "ES_GC": "[2024-01-15T08:30:00,123][12345][gc] GC run with duration 250ms"
+}

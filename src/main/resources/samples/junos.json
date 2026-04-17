@@ -1,0 +1,6 @@
+{
+  "RT_FLOW_TAG": "RT_FLOW_SESSION_CREATE",
+  "RT_FLOW1": "RT_FLOW_SESSION_CLOSE: session closed TCP FIN: 10.0.0.1/12345->192.168.1.1/80 http 10.0.0.2/12345->192.168.1.2/80 src-nat-rule dst-nat-rule 6 policy1 trust untrust 12345 10(1024) 8(2048) 60 reason",
+  "RT_FLOW2": "RT_FLOW_SESSION_CREATE: session created 10.0.0.1/12345->192.168.1.1/80 http 10.0.0.2/12345->192.168.1.2/80 src-nat-rule dst-nat-rule 6 policy1 trust untrust 12345 info",
+  "RT_FLOW3": "RT_FLOW_SESSION_DENY: session denied 10.0.0.1/12345->192.168.1.1/80 http 6(1) default-deny trust untrust info"
+}

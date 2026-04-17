@@ -1,0 +1,5 @@
+{
+  "DOCKER_DAEMON": "time=\"2024-01-15T08:30:00.123456789Z\" level=info msg=\"Starting up\"",
+  "DOCKER_CONTAINER_JSON": "{\"log\":\"Hello from container\",\"stream\":\"stdout\",\"time\":\"2024-01-15T08:30:00.123456789Z\"}",
+  "DOCKER_COMPOSE": "web-1  | 2024-01-15 08:30:00 INFO Server started on port 8080"
+}

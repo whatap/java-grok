@@ -1,0 +1,6 @@
+{
+  "LOG4J": "2024-01-15 08:30:00,123 [main] INFO  com.example.Application - Application started successfully",
+  "LOG4J_MDC": "2024-01-15 08:30:00,123 [main] INFO  com.example.Application {requestId=abc123} - Processing request",
+  "LOGBACK": "2024-01-15 08:30:00,123 INFO  [main] com.example.Application - Server started on port 8080",
+  "LOG4J2": "2024-01-15 08:30:00,123 INFO  12345 --- [main] com.example.Application : Application started"
+}
