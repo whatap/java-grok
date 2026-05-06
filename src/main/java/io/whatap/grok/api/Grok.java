@@ -1,13 +1,16 @@
 package io.whatap.grok.api;
 
+import io.whatap.grok.api.engine.CompiledPattern;
+import io.whatap.grok.api.engine.EngineMatcher;
+import io.whatap.grok.api.engine.HybridEngine;
+import io.whatap.grok.api.engine.RegexEngine;
+
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * {@code Grok} parse arbitrary text and structure it.
@@ -43,10 +46,10 @@ public class Grok implements Serializable {
    */
   private final String originalGrokPattern;
   /**
-   * Pattern of the namedRegex.
+   * Compiled engine-agnostic pattern of the namedRegex.
    */
-  private final Pattern compiledNamedRegex;
-  
+  private final CompiledPattern compiledPattern;
+
   /**
    * ThreadLocal matcher pool for improved performance.
    */
@@ -76,15 +79,37 @@ public class Grok implements Serializable {
       Map<String, String> namedRegexCollection,
       Map<String, String> patternDefinitions,
       ZoneId defaultTimeZone) {
+    this(pattern, namedRegex, namedRegexCollection, patternDefinitions, defaultTimeZone,
+        defaultEngine());
+  }
+
+  public Grok(String pattern,
+      String namedRegex,
+      Map<String, String> namedRegexCollection,
+      Map<String, String> patternDefinitions,
+      ZoneId defaultTimeZone,
+      RegexEngine engine) {
     this.originalGrokPattern = pattern;
     this.namedRegex = namedRegex;
-    this.compiledNamedRegex = Pattern.compile(namedRegex);
-    this.matcherPool = new MatcherPool(compiledNamedRegex);
+    this.compiledPattern = engine.compile(namedRegex);
+    this.matcherPool = new MatcherPool(compiledPattern);
     this.namedRegexCollection = namedRegexCollection;
     this.namedGroups = GrokUtils.getNameGroups(namedRegex);
     this.groupTypes = Converter.getGroupTypes(namedRegexCollection.values());
     this.converters = Converter.getConverters(namedRegexCollection.values(), defaultTimeZone);
     this.grokPatternDefinition = patternDefinitions;
+  }
+
+  private static RegexEngine defaultEngine() {
+    return new HybridEngine(0L, 1024);
+  }
+
+  public CompiledPattern getCompiledPattern() {
+    return compiledPattern;
+  }
+
+  public String getEngineName() {
+    return compiledPattern == null ? null : compiledPattern.getEngineName();
   }
 
   /**
@@ -216,7 +241,7 @@ public class Grok implements Serializable {
    * @throws IllegalArgumentException if input length exceeds maximum allowed length
    */
   public Match match(CharSequence text) {
-    if (compiledNamedRegex == null || text == null) {
+    if (compiledPattern == null || text == null) {
       return Match.EMPTY;
     }
 
@@ -227,7 +252,7 @@ public class Grok implements Serializable {
               text.length(), maxInputLength));
     }
 
-    Matcher matcher = matcherPool.getMatcher(text);
+    EngineMatcher matcher = matcherPool.getMatcher(text);
     if (matcher.find()) {
       return new Match(
           text, this, matcher, matcher.start(0), matcher.end(0)

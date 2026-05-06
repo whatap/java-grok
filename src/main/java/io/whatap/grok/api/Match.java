@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import io.whatap.grok.api.Converter.IConverter;
+import io.whatap.grok.api.engine.EngineMatcher;
 import io.whatap.grok.api.exception.GrokException;
 
 /**
@@ -21,7 +21,7 @@ import io.whatap.grok.api.exception.GrokException;
 public class Match {
   private final CharSequence subject;
   private final Grok grok;
-  private final Matcher match;
+  private final EngineMatcher match;
   private final int start;
   private final int end;
   private boolean keepEmptyCaptures = true;
@@ -30,7 +30,7 @@ public class Match {
   /**
    * Create a new {@code Match} object.
    */
-  public Match(CharSequence subject, Grok grok, Matcher match, int start, int end) {
+  public Match(CharSequence subject, Grok grok, EngineMatcher match, int start, int end) {
     this.subject = subject;
     this.grok = grok;
     this.match = match;
@@ -43,7 +43,7 @@ public class Match {
    */
   public static final Match EMPTY = new Match("", null, null, 0, 0);
 
-  public Matcher getMatch() {
+  public EngineMatcher getMatch() {
     return match;
   }
 
@@ -123,9 +123,6 @@ public class Match {
     }
 
     capture = new LinkedHashMap<>();
-
-    // _capture.put("LINE", this.line);
-    // _capture.put("LENGTH", this.line.length() +"");
 
     Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.grok.namedGroups);
 

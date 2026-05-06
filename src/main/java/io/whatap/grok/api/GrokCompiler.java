@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.whatap.grok.api.engine.HybridEngine;
+import io.whatap.grok.api.engine.RegexEngine;
 import io.whatap.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -218,23 +220,43 @@ public class GrokCompiler implements Serializable {
     return compile(pattern, ZoneOffset.systemDefault(), namedOnly);
   }
 
+  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly) throws IllegalArgumentException {
+    return compile(pattern, defaultTimeZone, namedOnly, defaultEngine());
+  }
+
+  public Grok compile(final String pattern, RegexEngine engine) throws IllegalArgumentException {
+    return compile(pattern, ZoneOffset.systemDefault(), false, engine);
+  }
+
+  public Grok compile(final String pattern, boolean namedOnly, RegexEngine engine) throws IllegalArgumentException {
+    return compile(pattern, ZoneOffset.systemDefault(), namedOnly, engine);
+  }
+
+  private static RegexEngine defaultEngine() {
+    return new HybridEngine(0L, 1024);
+  }
+
   /**
    * Compiles a given Grok pattern and returns a Grok object which can parse the pattern.
    *
    * @param pattern : Grok pattern (ex: %{IP})
    * @param defaultTimeZone : time zone used to parse a timestamp when it doesn't contain the time zone
    * @param namedOnly : Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+   * @param engine : regex engine implementation (re2j / java / hybrid)
    * @return a compiled pattern
    * @throws IllegalArgumentException when pattern definition is invalid
    */
-  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly) throws IllegalArgumentException {
+  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly, RegexEngine engine) throws IllegalArgumentException {
 
     if (StringUtils.isBlank(pattern)) {
       throw new IllegalArgumentException("{pattern} should not be empty or null");
     }
-    
+
+    RegexEngine resolvedEngine = engine != null ? engine : defaultEngine();
+
     // Check cache first
-    String cacheKey = pattern + ":" + defaultTimeZone + ":" + namedOnly + ":" + reservedKeywordRenaming;
+    String cacheKey = pattern + ":" + defaultTimeZone + ":" + namedOnly + ":" + reservedKeywordRenaming
+        + ":" + resolvedEngine.getName();
     Grok cached = cache.getGrok(cacheKey);
     if (cached != null) {
       return cached;
@@ -292,7 +314,7 @@ public class GrokCompiler implements Serializable {
             }
           }
           namedRegexCollection.put("name" + index, subname);
-          
+
           // Use StringBuilder for efficient string replacement
           String currentRegex = namedRegex.toString();
           int pos = currentRegex.indexOf(targetPattern);
@@ -313,12 +335,13 @@ public class GrokCompiler implements Serializable {
         namedRegex.toString(),
         namedRegexCollection,
         patternDefinitions,
-        defaultTimeZone
+        defaultTimeZone,
+        resolvedEngine
     );
-    
+
     // Cache the compiled result
     cache.putGrok(cacheKey, result);
-    
+
     return result;
   }
 }

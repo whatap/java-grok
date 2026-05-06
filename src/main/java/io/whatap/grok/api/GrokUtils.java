@@ -1,5 +1,7 @@
 package io.whatap.grok.api;
 
+import io.whatap.grok.api.engine.EngineMatcher;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -50,6 +52,20 @@ public class GrokUtils {
     Map<String, String> namedGroups = new LinkedHashMap<>();
     for (String groupName : groupNames) {
       String groupValue = matcher.group(groupName);
+      namedGroups.put(groupName, groupValue);
+    }
+    return namedGroups;
+  }
+
+  public static Map<String, String> namedGroups(EngineMatcher matcher, Set<String> groupNames) {
+    Map<String, String> namedGroups = new LinkedHashMap<>();
+    for (String groupName : groupNames) {
+      String groupValue;
+      try {
+        groupValue = matcher.group(groupName);
+      } catch (IllegalArgumentException e) {
+        groupValue = null;
+      }
       namedGroups.put(groupName, groupValue);
     }
     return namedGroups;
