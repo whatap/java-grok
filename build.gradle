@@ -201,7 +201,7 @@ task createCentralPortalBundle(type: Zip) {
     from("${System.getProperty('user.home')}/.m2/repository/io/github/whatap/${ARTIFACT_ID}/${VERSION}") {
         include "*"
         exclude "maven-metadata-local.xml"
-        exclude "_remote.repositories"
+        exclude "_remote.repositories*"
         into "io/github/whatap/${ARTIFACT_ID}/${VERSION}"
     }
 
